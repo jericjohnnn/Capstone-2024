@@ -14,9 +14,9 @@ const routes = [
   //   component: LoginPage
   // },
   // {
-  //   path: '/signup',
-  //   name: 'Signup',
-  //   component: SignupPage
+  //   path: '/register',
+  //   name: 'Register',
+  //   component: RegisterPage
   // },
 ];
 
