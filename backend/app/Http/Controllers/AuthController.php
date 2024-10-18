@@ -21,7 +21,7 @@ class AuthController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
-            'birthdate' => 'required',
+            'birthdate' => 'required|date',
             'gender' => 'in:male,female,other',  // Assuming these options
             'contact_number' => 'required|string',
         ]);
@@ -61,23 +61,32 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // $credentials = $request->validate([
-        //     'email' => 'required|email',
-        //     'password' => 'required',
-        // ]);
+        // VALIDATE INPUT
+        $validatedData = $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
 
-        // if (Auth::attempt($credentials)) {
-        //     $user = Auth::user();
-        //     $token = $user->createToken('api-token')->plainTextToken;
+        // FIND USER BY EMAIL
+        $user = User::where('email', $validatedData['email'])->first();
 
-        //     return response()->json([
-        //         'user' => $user,
-        //         'token' => $token
-        //     ], 200);
-        // }
+        // CHECK IF USER EXISTS AND PASSWORD MATCHES
+        if (!$user || !Hash::check($validatedData['password'], $user->password)) {
+            return response()->json([
+                'message' => 'Invalid email or password.',
+            ], 401); // Unauthorized
+        }
 
-        // return response()->json(['message' => 'Invalid credentials'], 401);
+        // GENERATE TOKEN
+        $token = $user->createToken('authToken')->plainTextToken;
+
+        // RETURN RESPONSE WITH TOKEN
+        return response()->json([
+            'message' => 'Login successful!',
+            'token' => $token,
+        ], 200);
     }
+
 
 
     public function logout(Request $request)
