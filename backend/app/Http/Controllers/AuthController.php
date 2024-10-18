@@ -3,28 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginUserRequest;
+use App\Http\Requests\Auth\LogoutUserRequest;
+use App\Http\Requests\Auth\RegisterUserRequest;
 use App\Models\User;
-use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(RegisterUserRequest $request)
     {
         // VALIDATE
-        $validatedData = $request->validate([
-            'user_type' => 'required|exists:user_types,id',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'birthdate' => 'required|date',
-            'gender' => 'in:male,female,other',  // Assuming these options
-            'contact_number' => 'required|string',
-        ]);
+        $validatedData = $request->validated();
 
         // REGISTER
         $user = User::create([
@@ -57,15 +48,10 @@ class AuthController extends Controller
     }
 
 
-
-
-    public function login(Request $request)
+    public function login(LoginUserRequest $request)
     {
         // VALIDATE INPUT
-        $validatedData = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+        $validatedData = $request->validated();
 
         // FIND USER BY EMAIL
         $user = User::where('email', $validatedData['email'])->first();
@@ -88,8 +74,7 @@ class AuthController extends Controller
     }
 
 
-
-    public function logout(Request $request)
+    public function logout(LogoutUserRequest $request)
     {
         $request->user()->currentAccessToken()->delete();
 

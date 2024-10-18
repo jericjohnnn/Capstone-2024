@@ -1,28 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import LandingPage from '@/pages/LandingPage.vue';
-
-
-const routes = [
-  {
-    path: '/',
-    name: 'Main',
-    component: LandingPage
-  },
-  // {
-  //   path: '/login',
-  //   name: 'Login',
-  //   component: LoginPage
-  // },
-  // {
-  //   path: '/register',
-  //   name: 'Register',
-  //   component: RegisterPage
-  // },
-];
+import authRoutes from './authRoutes';
+import tutorRoutes from './tutorRoutes';
+import studentRoutes from './studentRoutes';
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes: [...authRoutes, ...tutorRoutes, ...studentRoutes],
 });
 
 export default router;
