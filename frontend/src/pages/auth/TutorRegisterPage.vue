@@ -1,160 +1,165 @@
 <template>
-  <div class="container mx-auto">
-    <h1 class="text-3xl font-bold mb-6">Register as a Tutor</h1>
-    <form @submit.prevent="registerTutor">
-      <div class="mb-4">
-        <label for="user_type" class="block text-sm font-medium">User Type</label>
-        <select v-model="form.user_type" id="user_type" required class="mt-1 p-2 border rounded">
-          <option value="1">Tutor</option>
-        </select>
-      </div>
+  <div class="register-container">
+    <h2>Sign-up as TUTOR</h2>
 
-      <div class="mb-4">
-        <label for="email" class="block text-sm font-medium">Email</label>
-        <input
-          type="email"
-          id="email"
-          v-model="form.email"
-          required
-          class="mt-1 p-2 border rounded w-full"
-        />
-      </div>
-
-      <div class="mb-4">
-        <label for="password" class="block text-sm font-medium">Password</label>
+    <form @submit.prevent="handleSubmit">
+      <div class="input-group">
+        <input type="email" v-model="form.email" placeholder="Email" required />
+        <input type="password" v-model="form.password" placeholder="Password" required />
         <input
           type="password"
-          id="password"
-          v-model="form.password"
+          v-model="form.confirmPassword"
+          placeholder="Confirm password"
           required
-          class="mt-1 p-2 border rounded w-full"
-          minlength="8"
         />
       </div>
 
-      <div class="mb-4">
-        <label for="password_confirmation" class="block text-sm font-medium">Confirm Password</label>
-        <input
-          type="password"
-          id="password_confirmation"
-          v-model="form.password_confirmation"
-          required
-          class="mt-1 p-2 border rounded w-full"
-        />
+      <div class="input-group">
+        <input type="text" v-model="form.firstName" placeholder="First name" required />
+        <input type="text" v-model="form.lastName" placeholder="Last name" required />
       </div>
 
-      <div class="mb-4">
-        <label for="first_name" class="block text-sm font-medium">First Name</label>
-        <input
-          type="text"
-          id="first_name"
-          v-model="form.first_name"
-          required
-          class="mt-1 p-2 border rounded w-full"
-        />
-      </div>
-
-      <div class="mb-4">
-        <label for="last_name" class="block text-sm font-medium">Last Name</label>
-        <input
-          type="text"
-          id="last_name"
-          v-model="form.last_name"
-          required
-          class="mt-1 p-2 border rounded w-full"
-        />
-      </div>
-
-      <div class="mb-4">
-        <label for="address" class="block text-sm font-medium">Address</label>
-        <input
-          type="text"
-          id="address"
-          v-model="form.address"
-          required
-          class="mt-1 p-2 border rounded w-full"
-        />
-      </div>
-
-      <div class="mb-4">
-        <label for="birthdate" class="block text-sm font-medium">Birthdate</label>
-        <input
-          type="date"
-          id="birthdate"
-          v-model="form.birthdate"
-          required
-          class="mt-1 p-2 border rounded w-full"
-        />
-      </div>
-
-      <div class="mb-4">
-        <label for="gender" class="block text-sm font-medium">Gender</label>
-        <select v-model="form.gender" id="gender" class="mt-1 p-2 border rounded">
+      <div class="input-group">
+        <input type="text" v-model="form.address" placeholder="Address" required />
+        <input type="date" v-model="form.birthdate" placeholder="Birthdate" required />
+        <select v-model="form.gender" required>
+          <option value="" disabled>Select Gender</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
           <option value="other">Other</option>
         </select>
       </div>
 
-      <div class="mb-4">
-        <label for="contact_number" class="block text-sm font-medium">Contact Number</label>
-        <input
-          type="text"
-          id="contact_number"
-          v-model="form.contact_number"
-          required
-          class="mt-1 p-2 border rounded w-full"
-        />
+      <div class="input-group">
+        <input type="text" v-model="form.contactNo" placeholder="Contact no." required />
       </div>
 
-      <button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
-        Register
-      </button>
+      <div class="terms-group">
+        <input type="checkbox" v-model="form.agreeToTerms" required />
+        <label>I agree to <a href="#">Terms & Conditions</a></label>
+      </div>
 
-      <div v-if="errorMessage" class="mt-4 text-red-500">{{ errorMessage }}</div>
-      <div v-if="successMessage" class="mt-4 text-green-500">{{ successMessage }}</div>
+      <button type="submit" :disabled="!form.agreeToTerms">Sign-up</button>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { reactive } from 'vue';
 import axios from 'axios';
+import router from '@/router';
 
-const form = ref({
-  user_type: '1', // Set user_type to '1' for tutor
+const form = reactive({
   email: '',
   password: '',
-  password_confirmation: '',
-  first_name: '',
-  last_name: '',
+  confirmPassword: '',
+  firstName: '',
+  lastName: '',
   address: '',
   birthdate: '',
   gender: '',
-  contact_number: '',
+  contactNo: '',
+  agreeToTerms: false,
 });
 
-const errorMessage = ref('');
-const successMessage = ref('');
+const handleSubmit = async () => {
+  if (form.password !== form.confirmPassword) {
+    alert("Passwords do not match!");
+    return;
+  }
 
-const registerTutor = async () => {
+  const payload = {
+    user_type: 1,
+    email: form.email,
+    password: form.password,
+    password_confirmation: form.confirmPassword,
+    first_name: form.firstName,
+    last_name: form.lastName,
+    address: form.address,
+    birthdate: form.birthdate,
+    gender: form.gender,
+    contact_number: form.contactNo, // Fixed property name
+  };
+
   try {
-    errorMessage.value = '';
-    successMessage.value = '';
+    const response = await axios.post('api/register', payload);
+    const { message, user_type, token } = response.data
+    alert(message);
+    localStorage.setItem('authToken', token)
+    localStorage.setItem('user_type', user_type)
+    router.push('/tutor/profile')
 
-    const response = await axios.post('/api/register', form.value); // Adjust the URL based on your API setup
 
-    successMessage.value = response.data.message; // Display success message
   } catch (error) {
-    errorMessage.value = error.response?.data?.message || 'An error occurred during registration.';
+    alert("Registration failed: " + (error.response?.data?.message || error.message));
   }
 };
 </script>
 
 <style scoped>
-.container {
-  max-width: 600px;
-  margin: 0 auto;
+.register-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #e0f0ff;
+  text-align: center;
   padding: 20px;
+  border: 1px solid #4b8ff7;
+  border-radius: 8px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.input-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.input-group input,
+.input-group select {
+  flex: 1;
+  min-width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+input[type="date"] {
+  color: #555;
+}
+
+.terms-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+button {
+  background-color: #4b8ff7;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:disabled {
+  background-color: #c0c0c0;
+  cursor: not-allowed;
+}
+
+button:hover:enabled {
+  background-color: #3a7ddb;
 }
 </style>

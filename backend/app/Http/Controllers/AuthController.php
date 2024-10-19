@@ -39,10 +39,19 @@ class AuthController extends Controller
 
         // Generate token
         $token = $user->createToken('authToken')->plainTextToken;
+        $registeredUserType = $user->user_type;
+        $userType = "";
+
+        if ($registeredUserType == '1') {
+            $userType = 'tutor';
+        }else{
+            $userType = 'student';
+        }
 
         // Return JSON response
         return response()->json([
             'message' => 'User registered successfully!',
+            'user_type' => $userType,
             'token' => $token,
         ], 201);
     }
