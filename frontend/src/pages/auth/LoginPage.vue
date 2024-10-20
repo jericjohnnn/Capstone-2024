@@ -33,8 +33,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
 import { useRouter } from 'vue-router'
+import axiosInstance from '@/axiosInstance'
 
 // State for form inputs and error handling
 const email = ref('')
@@ -47,7 +47,7 @@ const router = useRouter()
 // Login handler function
 const handleLogin = async () => {
   try {
-    const response = await axios.post('api/login', {
+    const response = await axiosInstance.post('api/login', {
       email: email.value,
       password: password.value,
     })
