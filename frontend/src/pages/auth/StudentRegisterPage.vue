@@ -37,7 +37,7 @@
 
 <script setup>
 import { reactive } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/axiosInstance'
 import router from '@/router';
 
 const form = reactive({
@@ -71,7 +71,7 @@ const handleSubmit = async () => {
   };
 
   try {
-    const response = await axios.post('api/register', payload);
+    const response = await axiosInstance.post('api/register', payload);
     const { message, user_type, token } = response.data
     alert(message);
     localStorage.setItem('authToken', token)
