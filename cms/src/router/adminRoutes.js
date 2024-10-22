@@ -1,6 +1,5 @@
 import ActiveStudents from '@/components/ActiveStudents.vue'
 import ActiveTutors from '@/components/ActiveTutors.vue'
-
 import TutorApplication from '@/components/TutorApplication.vue'
 import UsersReport from '@/components/UsersReport.vue'
 import AdminPage from '@/pages/admin/AdminPage.vue'
