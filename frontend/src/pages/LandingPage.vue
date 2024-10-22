@@ -56,7 +56,7 @@ import { ref } from 'vue';
 const router = useRouter();
 
 // Authentication State (replace with actual logic if needed)
-const isAuthenticated = ref(!!localStorage.getItem('authToken')); // Boolean value from token
+const isAuthenticated = ref(!!localStorage.getItem('app_auth_token')); // Boolean value from token
 const userType = ref(localStorage.getItem('user_type')); // Get user type: 'tutor' or 'student'
 
 // Navigation Functions

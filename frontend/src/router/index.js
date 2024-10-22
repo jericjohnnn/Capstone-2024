@@ -5,7 +5,7 @@ import studentRoutes from './studentRoutes'
 import NotFoundPage from '@/pages/NotFoundPage.vue'
 
 function isAuthenticated() {
-  return !!localStorage.getItem('authToken')
+  return !!localStorage.getItem('app_auth_token')
 }
 
 function getUserType() {

@@ -16,7 +16,6 @@ class UserTypeSeeder extends Seeder
         $types = [
             ['type' => 'Tutor'],
             ['type' => 'Student'],
-            ['type' => 'Admin'],
         ];
 
         // Insert user types into the table

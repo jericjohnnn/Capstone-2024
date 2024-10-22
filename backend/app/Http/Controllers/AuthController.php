@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdminLoginRequest;
 use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Requests\Auth\LogoutUserRequest;
 use App\Http\Requests\Auth\RegisterUserRequest;
+use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -39,14 +41,12 @@ class AuthController extends Controller
 
         // Generate token
         $token = $user->createToken('authToken')->plainTextToken;
-        $registeredUserType = $user->user_type;
-        $userType = "";
 
-        if ($registeredUserType == '1') {
-            $userType = 'tutor';
-        }else{
-            $userType = 'student';
-        }
+        $userType = match ($user->user_type) {
+            1 => 'tutor',
+            2 => 'student',
+            default => 'unknown',
+        };
 
         // Return JSON response
         return response()->json([
@@ -57,7 +57,7 @@ class AuthController extends Controller
     }
 
 
-    public function login(LoginUserRequest $request)
+    public function userLogin(LoginUserRequest $request)
     {
         // VALIDATE INPUT
         $validatedData = $request->validated();
@@ -74,19 +74,44 @@ class AuthController extends Controller
 
         // GENERATE TOKEN
         $token = $user->createToken('authToken')->plainTextToken;
-        $loggedInUserType = $user->user_type;
-        $userType = "";
 
-        if ($loggedInUserType == '1') {
-            $userType = 'tutor';
-        }else{
-            $userType = 'student';
-        }
+        $userType = match ($user->user_type) {
+            1 => 'tutor',
+            2 => 'student',
+            default => 'unknown',
+        };
 
         // RETURN RESPONSE WITH TOKEN
         return response()->json([
             'message' => 'Login successful!',
             'user_type' => $userType,
+            'token' => $token,
+        ], 200);
+    }
+
+
+    public function adminLogin(LoginUserRequest $request)
+    {
+        // VALIDATE INPUT
+        $validatedData = $request->validated();
+
+        // FIND USER BY EMAIL
+        $admin = Admin::where('email', $validatedData['email'])->first();
+
+        // CHECK IF USER EXISTS AND PASSWORD MATCHES
+        if (!$admin || !Hash::check($validatedData['password'], $admin->password)) {
+            return response()->json([
+                'message' => 'Invalid email or password.',
+            ], 401); // Unauthorized
+        }
+
+        // GENERATE TOKEN
+        $token = $admin->createToken('authToken')->plainTextToken;
+
+        // RETURN RESPONSE WITH TOKEN
+        return response()->json([
+            'message' => 'Login successful!',
+            'user_type' => "admin",
             'token' => $token,
         ], 200);
     }

@@ -5,7 +5,7 @@ import App from './App.vue'
 import router from './router'
 import axios from 'axios'
 
-const token = localStorage.getItem('app_auth_token');
+const token = localStorage.getItem('cms_auth_token');
 if (token) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }

@@ -43,7 +43,7 @@ const router = useRouter();
 
 const handleLogout = () => {
   // Clear token and user type from local storage
-  localStorage.removeItem('authToken');
+  localStorage.removeItem('app_auth_token');
   localStorage.removeItem('user_type');
   // Redirect to the login page
   router.push('/login');
