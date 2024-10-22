@@ -52,14 +52,9 @@ class User extends Authenticatable
         return $this->hasOne(Tutor::class);
     }
 
-    public function client()
+    public function student()
     {
-        return $this->hasOne(Client::class);
-    }
-
-    public function admin()
-    {
-        return $this->hasOne(Admin::class);
+        return $this->hasOne(Student::class);
     }
 
     public function userType()

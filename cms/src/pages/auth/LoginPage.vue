@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <h1>Login</h1>
+    <h1 class="text-3xl font-bold underline">CMS Login</h1>
     <form @submit.prevent="handleLogin">
       <div class="input-group">
         <label for="email">Email</label>
@@ -47,7 +47,7 @@ const router = useRouter()
 // Login handler function
 const handleLogin = async () => {
   try {
-    const response = await axiosInstance.post('api/user-login', {
+    const response = await axiosInstance.post('api/admin-login', {
       email: email.value,
       password: password.value,
     })
@@ -55,15 +55,11 @@ const handleLogin = async () => {
     const { user_type, token } = response.data
 
     // Store token in localStorage
-    localStorage.setItem('app_auth_token', token)
+    localStorage.setItem('cms_auth_token', token)
     localStorage.setItem('user_type', user_type)
 
-    if (user_type === 'tutor') {
-      router.push('/tutor/profile')
-    }
-    if (user_type === 'student') {
-      router.push('/student/home')
-    }
+    router.push('/')
+
     // Redirect to home page or another protected route after successful login
   } catch (error) {
     // Handle error (e.g., incorrect credentials or API failure)

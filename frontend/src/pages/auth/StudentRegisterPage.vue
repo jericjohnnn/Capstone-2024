@@ -74,7 +74,7 @@ const handleSubmit = async () => {
     const response = await axiosInstance.post('api/register', payload);
     const { message, user_type, token } = response.data
     alert(message);
-    localStorage.setItem('authToken', token)
+    localStorage.setItem('app_auth_token', token)
     localStorage.setItem('user_type', user_type)
     router.push('/student/home')
 

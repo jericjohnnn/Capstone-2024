@@ -1,23 +1,40 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import NotFoundPage from '@/pages/NotFoundPage.vue'
+import authRoutes from './authRoutes'
+import adminRoutes from './adminRoutes'
+
+function isAuthenticated() {
+  return !!localStorage.getItem('cms_auth_token')
+}
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
+    ...authRoutes,
+    ...adminRoutes,
     {
-      path: '/',
-      name: 'home',
-      component: HomeView
+      path: '/:catchAll(.*)', // Catch all unmatched routes
+      name: 'NotFound',
+      component: NotFoundPage,
     },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+  ],
+})
+
+router.beforeEach((to, from, next) => {
+  const publicPages = ['Login']
+  const authRequired = !publicPages.includes(to.name)
+
+  if (authRequired && !isAuthenticated()) {
+    return next('/login')
+  }
+
+  if (isAuthenticated()) {
+    if (publicPages.includes(to.name)) {
+        return next('/')
+      }
     }
-  ]
+
+  next()
 })
 
 export default router

@@ -4,23 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
 class Admin extends Model
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $fillable = [
-        'user_id',
-        'name',
         'role_id',
+        'name',
+        'email',
+        'password',
     ];
 
     //relationships
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function role()
     {
         return $this->belongsTo(AdminRole::class);
