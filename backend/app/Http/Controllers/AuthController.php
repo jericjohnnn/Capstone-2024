@@ -79,8 +79,12 @@ class AuthController extends Controller
 
         if ($loggedInUserType == '1') {
             $userType = 'tutor';
-        }else{
+        }
+        if ($loggedInUserType == '2') {
             $userType = 'student';
+        }
+        if ($loggedInUserType == '3') {
+            $userType = 'admin';
         }
 
         // RETURN RESPONSE WITH TOKEN
