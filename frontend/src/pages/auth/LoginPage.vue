@@ -47,7 +47,7 @@ const router = useRouter()
 // Login handler function
 const handleLogin = async () => {
   try {
-    const response = await axiosInstance.post('api/user-login', {
+    const response = await axiosInstance.post('api/login', {
       email: email.value,
       password: password.value,
     })
@@ -58,10 +58,10 @@ const handleLogin = async () => {
     localStorage.setItem('app_auth_token', token)
     localStorage.setItem('user_type', user_type)
 
-    if (user_type === 'tutor') {
+    if (user_type === 'Tutor') {
       router.push('/tutor/profile')
     }
-    if (user_type === 'student') {
+    if (user_type === 'Student') {
       router.push('/student/home')
     }
     // Redirect to home page or another protected route after successful login

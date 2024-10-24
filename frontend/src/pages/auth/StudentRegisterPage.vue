@@ -59,7 +59,7 @@ const handleSubmit = async () => {
   }
 
   const payload = {
-    user_type: 2,
+    user_type: 1,
     email: form.email,
     password: form.password,
     password_confirmation: form.confirmPassword,
