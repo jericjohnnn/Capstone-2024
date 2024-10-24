@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ApprovalStatusRequest;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
 
 class TutorController extends Controller
 {
+    //NORMAL USER METHODS INSERT HERE
     public function createTutor($validatedDataWithUserId)
     {
         Tutor::create([
@@ -26,5 +28,42 @@ class TutorController extends Controller
         return [
             'message' => 'Tutor successfully created',
         ];
+    }
+
+
+
+
+    //ADMIN METHODS INSERT HERE
+    public function showAllTutors(Request $request)
+    {
+        // Retrieve all tutors
+        $tutors = Tutor::paginate(10);
+
+        return response()->json([
+            'message' => 'Tutors retrieved successfully.',
+            'all_tutors' => $tutors,
+        ]);
+    }
+
+    public function showAcceptedTutors(Request $request)
+    {
+        $acceptedTutors = Tutor::where('approval_status', 'Accepted')->paginate(10);
+
+        return response()->json([
+            'message' => 'Accepted tutors retrieved successfully.',
+            'accepted_tutors' => $acceptedTutors,
+        ]);
+    }
+
+    public function changeApprovalStatus(ApprovalStatusRequest $request, $tutor_id)
+    {
+        $validatedData = $request->validated();
+
+        $tutor = Tutor::findOrFail($tutor_id);
+
+        $tutor->approval_status = $validatedData['approval_status'];
+        $tutor->save();
+
+        return response()->json(['message' => 'Approval status updated successfully.']);
     }
 }

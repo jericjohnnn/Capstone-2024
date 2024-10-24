@@ -12,13 +12,13 @@ use Illuminate\Support\Facades\Route;
 Route::post('admin/login', [AuthController::class, 'adminLogin']);
 
 //USER CONTROLLER ROUTES
-Route::delete('admin/delete-user', [UserController::class, 'deleteUser']);
-Route::patch('admin/offense-status', [UserController::class, 'changeOffenseStatus']);
+Route::delete('admin/delete-user/{user_id}', [UserController::class, 'deleteUser']);
+Route::patch('admin/offense-status/{user_id}', [UserController::class, 'changeOffenseStatus']);
 
 //TUTOR CONTROLLER ROUTES
 Route::get('admin/all-tutors', [TutorController::class, 'showAllTutors']);
 Route::get('admin/accepted-tutors', [TutorController::class, 'showAcceptedTutors']);
-Route::patch('admin/approval-status', [TutorController::class, 'changeApprovalStatus']);
+Route::patch('admin/approval-status/{tutor_id}', [TutorController::class, 'changeApprovalStatus']);
 
 //STUDENT CONTROLLER ROUTES
 Route::get('admin/all-students', [StudentController::class, 'showAllStudents']);

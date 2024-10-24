@@ -56,6 +56,16 @@ class User extends Authenticatable
         return $this->hasOne(Tutor::class);
     }
 
+    public function complainantReports()
+    {
+        return $this->hasMany(Report::class, 'complainant_id');
+    }
+
+    public function offenderReports()
+    {
+        return $this->hasMany(Report::class, 'offender_id');
+    }
+
     public function student()
     {
         return $this->hasOne(Student::class);
