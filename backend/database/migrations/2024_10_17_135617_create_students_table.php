@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->date('birthdate')->nullable();
             $table->string('contact_number')->nullable();
+            $table->string('profile_image')->nullable();
+            $table->enum('offense_status', ['Unflagged', 'Warned', 'Penalized', 'Banned'])
+                ->default('Unflagged');
             $table->timestamps();
         });
     }

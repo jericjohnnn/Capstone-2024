@@ -15,15 +15,27 @@ class Student extends Model
         'address',
         'birthdate',
         'contact_number',
+        'profile_image',
+        'offense_status'
     ];
 
     protected $casts = [
         'birthdate' => 'date',
+        'offense_status' => 'string'
     ];
 
     //relationships
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
     }
 }

@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_type',
+        'user_type_id',
         'email',
         'password',
     ];
@@ -47,6 +47,10 @@ class User extends Authenticatable
     }
 
     //relationships
+    public function userType()
+    {
+        return $this->belongsTo(UserType::class);
+    }
     public function tutor()
     {
         return $this->hasOne(Tutor::class);
@@ -56,9 +60,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Student::class);
     }
-
-    public function userType()
+    public function notifications()
     {
-        return $this->belongsTo(UserType::class);
+        return $this->hasMany(Notification::class);
     }
 }

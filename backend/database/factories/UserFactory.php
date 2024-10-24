@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Models\UserType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -14,31 +16,52 @@ class UserFactory extends Factory
     /**
      * The current password being used by the factory.
      */
-    protected static ?string $password;
+    protected $model = User::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'user_type_id' => $this->faker->randomElement([1, 2]),
+            'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => bcrypt('password'), // You might want to change this default password
             'remember_token' => Str::random(10),
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Indicate that the user is a student.
      */
-    public function unverified(): static
+    public function student(): Factory
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->state(function (array $attributes) {
+            return [
+                'user_type_id' => UserType::where('type', 'Student')->first()->id
+            ];
+        });
+    }
+
+    /**
+     * Indicate that the user is a tutor.
+     */
+    public function tutor(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'user_type_id' => UserType::where('type', 'Tutor')->first()->id
+            ];
+        });
+    }
+
+    /**
+     * Indicate that the email is unverified.
+     */
+    public function unverified(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'email_verified_at' => null,
+            ];
+        });
     }
 }
