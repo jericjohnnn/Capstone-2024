@@ -23,10 +23,11 @@ return new class extends Migration
             $table->string('profile_image')->nullable();
             $table->integer('tutor_rate')->nullable();
             $table->text('biography')->nullable();
-            $table->string('school_id_number');
-            $table->enum('course', ['BSED', 'BEED', 'BSIT', 'BSHM', 'BSENTREP']);
-            $table->enum('year', ['1', '2', '3', '4']);
-            $table->enum('contacted_status', ['True', 'False'])->default('False');
+            $table->string('school_id_number')->nullable();
+            $table->enum('course', ['BSED', 'BEED', 'BSIT', 'BSHM', 'BSENTREP'])->nullable();
+            $table->enum('year', ['1', '2', '3', '4'])->nullable();
+            $table->enum('contacted_status', ['True', 'False'])
+                ->default('False');
             $table->enum('offense_status', ['Unflagged', 'Warned', 'Penalized', 'Banned'])
                 ->default('Unflagged');
             $table->enum('approval_status', ['Pending', 'Accepted', 'Rejected'])
