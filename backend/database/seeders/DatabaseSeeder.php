@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
                 AdminAccountSeeder::class,
                 StudentSeeder::class,
                 TutorSeeder::class,
+                RatingSeeder::class,
+                ReportSeeder::class,
             ]
         );
     }

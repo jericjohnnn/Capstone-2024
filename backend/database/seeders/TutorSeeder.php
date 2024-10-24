@@ -19,6 +19,31 @@ class TutorSeeder extends Seeder
      */
     public function run(): void
     {
+        Tutor::create([
+            'user_id' => User::create([
+                'user_type_id' => 2,
+                'email' => 'tutor@gmail.com',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password123'), // Predefined password
+                'remember_token' => null,
+            ])->id,
+            'first_name' => 'tutor',
+            'last_name' => 'account',
+            'address' => '123 Main St, City, Country',
+            'birthdate' => '2000-01-01',
+            'gender' => 'Female',
+            'contact_number' => '09123456789',
+            'profile_image' => 'https://picsum.photos/200/200?random=78',
+            'tutor_rate' => 300,
+            'biography' => "I'm a dedicated software engineer with a passion for teaching. I've been tutoring students of all ages in programming and computer science for 3 years. I believe in creating a supportive and engaging learning environment where students can thrive. Whether you're a beginner or looking to advance your skills, I'm here to help you achieve your goals. Let's connect and explore the exciting world of software development together!",
+            'school_id_number' => '20212345',
+            'course' => 'BSIT',
+            'year' => "4",
+            'contacted_status' => "True",
+            'offense_status' => 'Warned',
+            'approval_status' => 'Accepted'
+        ]);
+
         // this is an email verified seeder account. for unverified, you have to remove email_verified_at in factory
         Tutor::factory(20)->create()->each(function ($tutor) {
             // Create 2 certificates for each tutor
