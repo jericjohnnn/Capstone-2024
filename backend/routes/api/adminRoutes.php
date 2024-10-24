@@ -26,4 +26,4 @@ Route::get('admin/all-students', [StudentController::class, 'showAllStudents']);
 //REPORT CONTROLLER ROUTS
 Route::get('admin/all-reports', [ReportController::class, 'showAllReports']);
 Route::get('admin/{report_id}', [ReportController::class, 'showReport']);
-Route::patch('admin/report-status', [ReportController::class, 'changeReportStatus']);
+Route::patch('admin/report-status/{report_id}', [ReportController::class, 'changeReportStatus']);
