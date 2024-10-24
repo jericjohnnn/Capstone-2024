@@ -13,12 +13,7 @@ class AdminRoleSeeder extends Seeder
     public function run(): void
     {
         // Define the roles to insert
-        $roles = [
-            ['role' => 'Admin'],
-            ['role' => 'Viewer'],
-        ];
-
-        // Insert roles into the admin_roles table
-        AdminRole::insert($roles);
+        AdminRole::create(['role' => 'Admin']);
+        AdminRole::create(['role' => 'Viewer']);
     }
 }

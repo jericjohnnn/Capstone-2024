@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
+use App\Models\Subject;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\UserType;
 
-class UserTypeSeeder extends Seeder
+class SubjectSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        UserType::create(['type' => 'Student']);
-        UserType::create(['type' => 'Tutor']);
+        Subject::factory(15)->create();
     }
 }

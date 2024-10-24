@@ -17,9 +17,11 @@ class DatabaseSeeder extends Seeder
             [
                 AdminRoleSeeder::class,
                 UserTypeSeeder::class,
+                SubjectSeeder::class,
+                OnlineMeetingPlatformSeeder::class,
                 AdminAccountSeeder::class,
-                TutorAccountSeeder::class,
-                StudentAccountSeeder::class,
+                StudentSeeder::class,
+                TutorSeeder::class,
             ]
         );
     }
