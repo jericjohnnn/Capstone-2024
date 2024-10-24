@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('complainant_id')->constrained('users');
-            $table->foreignId('offender_id')->constrained('users');
+            $table->foreignId('complainant_id')->constrained('users')->onDelete('cascade');;
+            $table->foreignId('offender_id')->constrained('users')->onDelete('cascade');;
             $table->string('title');
             $table->text('message');
             $table->enum('status', ['Pending', 'Resolved'])->default('Pending');
