@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
+    //NORMAL USER METHODS INSERT HERE
     public function createStudent($validatedDataWithUserId)
     {
         Student::create([
@@ -22,4 +23,17 @@ class StudentController extends Controller
             'message' => 'Student successfully created',
         ];
     }
+
+
+    //ADMIN METHODS INSERT HERE
+    public function showAllStudents(Request $request)
+    {
+        $students = Student::paginate(10);
+
+        return response()->json([
+            'message' => 'Students retrieved successfully.',
+            'all_students' => $students,
+        ]);
+    }
+
 }
