@@ -47,7 +47,7 @@ const router = useRouter()
 // Login handler function
 const handleLogin = async () => {
   try {
-    const response = await axiosInstance.post('api/admin-login', {
+    const response = await axiosInstance.post('api/admin/login', {
       email: email.value,
       password: password.value,
     })

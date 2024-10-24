@@ -31,10 +31,8 @@ class RegisterUserRequest extends FormRequest
             'birthdate' => 'nullable|date',
             'gender' => 'in:male,female,other',
             'contact_number' => 'required|string',
-            'profile_image' => 'nullable|string|max:255',
 
             'tutor_rate' => 'nullable|integer',
-            'biography' => 'nullable|string',
             'school_id_number' => 'string|max:255',
             'course' => 'in:BSED,BEED,BSIT,BSHM,BSENTREP',
             'year' => 'in:1,2,3,4',

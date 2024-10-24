@@ -34,6 +34,41 @@
         <input type="text" v-model="form.contactNo" placeholder="Contact no." required />
       </div>
 
+      <!-- New Fields -->
+      <div class="input-group">
+        <input
+          type="number"
+          v-model="form.tutorRate"
+          placeholder="Tutor Rate (int)"
+          required
+        />
+        <input
+          type="text"
+          v-model="form.schoolIdNumber"
+          placeholder="School ID Number"
+          required
+        />
+      </div>
+
+      <div class="input-group">
+        <select v-model="form.course" required>
+          <option value="" disabled>Select Course</option>
+          <option value="BSED">BSED</option>
+          <option value="BEED">BEED</option>
+          <option value="BSIT">BSIT</option>
+          <option value="BSHM">BSHM</option>
+          <option value="BSENTREP">BSENTREP</option>
+        </select>
+
+        <select v-model="form.year" required>
+          <option value="" disabled>Select Year</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+
       <div class="terms-group">
         <input type="checkbox" v-model="form.agreeToTerms" required />
         <label>I agree to <a href="#">Terms & Conditions</a></label>
@@ -59,6 +94,10 @@ const form = reactive({
   birthdate: '',
   gender: '',
   contactNo: '',
+  tutorRate: '', // New field
+  schoolIdNumber: '', // New field
+  course: '', // New field
+  year: '', // New field
   agreeToTerms: false,
 });
 
@@ -69,7 +108,7 @@ const handleSubmit = async () => {
   }
 
   const payload = {
-    user_type: 1,
+    user_type_id: 2,
     email: form.email,
     password: form.password,
     password_confirmation: form.confirmPassword,
@@ -78,7 +117,11 @@ const handleSubmit = async () => {
     address: form.address,
     birthdate: form.birthdate,
     gender: form.gender,
-    contact_number: form.contactNo, // Fixed property name
+    contact_number: form.contactNo,
+    tutor_rate: form.tutorRate, // New field
+    school_id_number: form.schoolIdNumber, // New field
+    course: form.course, // New field
+    year: form.year, // New field
   };
 
   try {
@@ -88,7 +131,6 @@ const handleSubmit = async () => {
     localStorage.setItem('app_auth_token', token)
     localStorage.setItem('user_type', user_type)
     router.push('/tutor/profile')
-
 
   } catch (error) {
     alert("Registration failed: " + (error.response?.data?.message || error.message));

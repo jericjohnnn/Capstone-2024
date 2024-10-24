@@ -17,7 +17,6 @@ class StudentController extends Controller
             'address' => $validatedDataWithUserId['address'],
             'birthdate' => $validatedDataWithUserId['birthdate'],
             'contact_number' => $validatedDataWithUserId['contact_number'],
-            'profile_image' => $validatedDataWithUserId['profile_image'],
         ]);
         return [
             'message' => 'Student successfully created',

@@ -111,7 +111,7 @@ class AuthController extends Controller
         // RETURN RESPONSE WITH TOKEN
         return response()->json([
             'message' => 'Login successful!',
-            'user_type' => "admin",
+            'user_type' => "Admin",
             'token' => $token,
         ], 200);
     }
