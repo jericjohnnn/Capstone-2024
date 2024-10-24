@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tutor_work_days', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tutor_id')->constrained();
+            $table->foreignId('tutor_id')->constrained()->onDelete('cascade');;
             $table->enum('monday', ['True', 'False'])->default('False');
             $table->enum('tuesday', ['True', 'False'])->default('False');
             $table->enum('wednesday', ['True', 'False'])->default('False');

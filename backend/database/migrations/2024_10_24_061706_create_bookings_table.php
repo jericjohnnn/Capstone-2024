@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tutor_id')->constrained();
-            $table->foreignId('student_id')->constrained();
+            $table->foreignId('tutor_id')->constrained()->onDelete('cascade');;
+            $table->foreignId('student_id')->constrained()->onDelete('cascade');;
             $table->enum('learning_mode', ['Online', 'Face to Face', 'In School']);
             $table->string('location')->nullable();
             $table->foreignId('online_meeting_platform_id')->nullable()->constrained();

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tutor_id')->constrained();
-            $table->foreignId('student_id')->constrained();
+            $table->foreignId('tutor_id')->constrained()->onDelete('cascade');;
+            $table->foreignId('student_id')->constrained()->onDelete('cascade');;
             $table->text('comment')->nullable();
             $table->integer('rate')->unsigned()->check('rate >= 1 AND rate <= 5');
             $table->timestamps();
