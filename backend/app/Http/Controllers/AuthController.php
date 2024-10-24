@@ -21,7 +21,7 @@ class AuthController extends Controller
 
         // REGISTER
         $user = User::create([
-            'user_type' => $validatedData['user_type'],
+            'user_type_id' => $validatedData['user_type_id'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
         ]);
@@ -30,21 +30,21 @@ class AuthController extends Controller
         $validatedDataWithUserId = array_merge($validatedData, ['user_id' => $userId]);
 
         // LOGIC FOR STUDENT OR TUTOR REGISTRATION
-        $tutor = 1;
-        if ($validatedData['user_type'] == $tutor) {
+        $tutor = 2;
+        if ($validatedData['user_type_id'] == $tutor) {
             (new TutorController)->createTutor($validatedDataWithUserId);
         }
-        $student = 2;
-        if ($validatedData['user_type'] ==  $student) {
+        $student = 1;
+        if ($validatedData['user_type_id'] ==  $student) {
             (new StudentController)->createStudent($validatedDataWithUserId);
         }
 
         // Generate token
         $token = $user->createToken('authToken')->plainTextToken;
 
-        $userType = match ($user->user_type) {
-            1 => 'tutor',
-            2 => 'student',
+        $userType = match ($user->user_type_id) {
+            1 => 'Student',
+            2 => 'Tutor',
             default => 'unknown',
         };
 
@@ -75,9 +75,9 @@ class AuthController extends Controller
         // GENERATE TOKEN
         $token = $user->createToken('authToken')->plainTextToken;
 
-        $userType = match ($user->user_type) {
-            1 => 'tutor',
-            2 => 'student',
+        $userType = match ($user->user_type_id) {
+            1 => 'Student',
+            2 => 'Tutor',
             default => 'unknown',
         };
 

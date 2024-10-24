@@ -22,15 +22,22 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_type' => 'required|exists:user_types,id',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'birthdate' => 'required|date',
+            'user_type_id' => 'required|exists:user_types,id', //required
+            'email' => 'required|string|email|max:255|unique:users,email', //required
+            'password' => 'required|string|min:8|confirmed', //required
+            'first_name' => 'required|string|max:255', //required
+            'last_name' => 'required|string|max:255', //required
+            'address' => 'nullable|string|max:255',
+            'birthdate' => 'nullable|date',
             'gender' => 'in:male,female,other',
             'contact_number' => 'required|string',
+            'profile_image' => 'nullable|string|max:255',
+
+            'tutor_rate' => 'nullable|integer',
+            'biography' => 'nullable|string',
+            'school_id_number' => 'string|max:255',
+            'course' => 'in:BSED,BEED,BSIT,BSHM,BSENTREP',
+            'year' => 'in:1,2,3,4',
         ];
     }
 }
