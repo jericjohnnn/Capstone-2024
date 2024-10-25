@@ -29,6 +29,17 @@ class Student extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function complaints()
+    {
+        return $this->hasMany(Report::class, 'complaint_id', 'user_id');
+    }
+
+    public function offenses()
+    {
+        return $this->hasMany(Report::class, 'offender_id', 'user_id');
+    }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);
