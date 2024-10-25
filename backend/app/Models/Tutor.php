@@ -48,6 +48,16 @@ class Tutor extends Model
         return $this->hasOne(TutorWorkDay::class);
     }
 
+    public function complaints()
+    {
+        return $this->hasMany(Report::class, 'complaint_id', 'user_id');
+    }
+
+    public function offenses()
+    {
+        return $this->hasMany(Report::class, 'offender_id', 'user_id');
+    }
+
     public function schools()
     {
         return $this->hasMany(TutorSchool::class);
