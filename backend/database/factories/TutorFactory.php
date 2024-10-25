@@ -37,7 +37,7 @@ class TutorFactory extends Factory
             'school_id_number' => $this->faker->numerify('20##-#####'),
             'course' => $this->faker->randomElement(['BSED', 'BEED', 'BSIT', 'BSHM', 'BSENTREP']),
             'year' => $this->faker->randomElement([1, 2, 3, 4]),
-            'contacted_status' => $this->faker->randomElement(['True', 'False']),
+            'contacted_status' => $this->faker->boolean(),
             'offense_status' => 'Unflagged',
             'approval_status' => 'Pending'
         ];

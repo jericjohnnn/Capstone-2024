@@ -39,7 +39,7 @@ class TutorSeeder extends Seeder
             'school_id_number' => '20212345',
             'course' => 'BSIT',
             'year' => "4",
-            'contacted_status' => "True",
+            'contacted_status' => 1,
             'offense_status' => 'Warned',
             'approval_status' => 'Accepted'
         ]);
