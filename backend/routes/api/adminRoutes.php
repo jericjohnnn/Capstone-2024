@@ -19,6 +19,7 @@ Route::patch('admin/offense-status/{user_id}', [UserController::class, 'changeOf
 Route::get('admin/all-tutors', [TutorController::class, 'showAllTutors']);
 Route::get('admin/accepted-tutors', [TutorController::class, 'showAcceptedTutors']);
 Route::patch('admin/approval-status/{tutor_id}', [TutorController::class, 'changeApprovalStatus']);
+Route::patch('admin/contacted-status/{tutor_id}', [TutorController::class, 'changeContactedStatus']);
 
 //STUDENT CONTROLLER ROUTES
 Route::get('admin/all-students', [StudentController::class, 'showAllStudents']);

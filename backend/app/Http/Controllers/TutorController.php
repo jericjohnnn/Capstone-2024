@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ApprovalStatusRequest;
+use App\Http\Requests\Admin\ContactedStatusRequest;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
 
@@ -29,6 +30,50 @@ class TutorController extends Controller
             'message' => 'Tutor successfully created',
         ];
     }
+
+    public function showTutors(Request $request)
+    {
+        // Fetch tutors with pagination (adjust the perPage limit if needed)
+        $tutors = Tutor::with('subjects:id,name', 'ratings:id,tutor_id,rate')
+            ->paginate(10); // 10 items per page
+
+        // Map the paginated result to include desired fields
+        $tutorPreviews = $tutors->map(function ($tutor) {
+            $first_name = $tutor->first_name;
+            $last_name = $tutor->last_name;
+
+            return [
+                'id' => $tutor->id,
+                'tutor_name' => "$first_name $last_name",
+                'profile_image' => $tutor->profile_image,
+                'tutor_subjects' => $tutor->subjects->pluck('name'),
+                'tutor_rating' => $tutor->ratings->avg('rate'),
+            ];
+        });
+
+        // Return a paginated JSON response with additional metadata
+        return response()->json([
+            'message' => 'Tutors retrieved successfully.',
+            'tutor_previews' => $tutorPreviews,
+            'pagination' => [
+                'current_page' => $tutors->currentPage(),
+                'last_page' => $tutors->lastPage(),
+                'per_page' => $tutors->perPage(),
+                'total' => $tutors->total(),
+                'next_page_url' => $tutors->nextPageUrl(),
+                'prev_page_url' => $tutors->previousPageUrl(),
+            ],
+        ]);
+    }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -65,5 +110,15 @@ class TutorController extends Controller
         $tutor->save();
 
         return response()->json(['message' => 'Approval status updated successfully.']);
+    }
+
+    public function changeContactedStatus(Request $request, $tutor_id)
+    {
+        $tutor = Tutor::findOrFail($tutor_id);
+
+        $tutor->contacted_status = $request['contacted_status'];
+        $tutor->save();
+
+        return response()->json(['message' => 'Contacted status updated successfully.']);
     }
 }
