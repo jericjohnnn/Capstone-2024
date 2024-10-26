@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
+import "preline/preline";
 
 const token = localStorage.getItem('app_auth_token');
 if (token) {
