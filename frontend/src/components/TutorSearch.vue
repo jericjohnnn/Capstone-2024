@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div class="flex-wrap max-w-sm outline">
+    <div class="gap-4 flex justify-center">
       <!-- SEARCH BOX 1 -->
       <div
         class="relative"
@@ -118,11 +118,13 @@
         <!-- End SearchBox Dropdown -->
       </div>
       <!-- End SearchBox -->
+      <SearchButton>Search</SearchButton>
     </div>
 
   </div>
 </template>
 
 <script setup>
+import SearchButton from './SearchButton.vue'
 
 </script>

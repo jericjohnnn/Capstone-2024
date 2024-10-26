@@ -1,12 +1,14 @@
 <template>
-  <div class="min-h-screen  bg-blue-50">
+  <main class="bg-blue-50">
     <SideBar>
-      <main class="flex-1 p-6">
+      <main class="min-h-screen flex justify-center items-center outline outline-red-400">
 
-        <div class="mb-6">
+        <div class="Search-Component outline">
           <!-- Search Header -->
            <TutorSearch></TutorSearch>
           <!-- Subject Pills -->
+          <AllSubjects></AllSubjects>
+
         </div>
 
         <!-- Tutor Cards -->
@@ -16,13 +18,14 @@
 
       </main>
     </SideBar>
-  </div>
+  </main>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import SideBar from '@/components/SideBar.vue'
 import TutorSearch from '@/components/TutorSearch.vue';
+import AllSubjects from '@/components/AllSubjects.vue';
 import axiosInstance from '@/axiosInstance'
 
 const currentPage = ref(1)
