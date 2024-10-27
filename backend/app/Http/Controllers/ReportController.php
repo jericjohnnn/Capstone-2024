@@ -26,7 +26,7 @@ class ReportController extends Controller
     //ADMIN METHODS INSERT HERE
     public function showAllReports(Request $request)
     {
-        $reports = Report::with('complainant.tutor', 'complainant.student', 'complainant.userType')->get();
+        $reports = Report::with('complainant.tutor', 'complainant.student', 'complainant.userType')->paginate(10);
 
         $complainantReport = $reports->map(function ($report) {
             $first_name = $report->complainant->tutor?->first_name ??
