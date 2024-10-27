@@ -64,6 +64,11 @@ router.beforeEach((to, from, next) => {
       return next('/tutor/profile')
     }
   }
+
+  setTimeout(() => {
+    if (window.PRELINE) window.PRELINE.init()
+  }, 0)
+
   next()
 })
 

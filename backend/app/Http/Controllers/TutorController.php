@@ -35,7 +35,7 @@ class TutorController extends Controller
     {
         // Fetch tutors with pagination (adjust the perPage limit if needed)
         $tutors = Tutor::with('subjects:id,name', 'ratings:id,tutor_id,rate')
-            ->paginate(10); // 10 items per page
+            ->paginate(4); // 10 items per page
 
         // Map the paginated result to include desired fields
         $tutorPreviews = $tutors->map(function ($tutor) {

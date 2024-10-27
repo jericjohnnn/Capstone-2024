@@ -1,15 +1,15 @@
 <template>
   <div>
-    <!-- Pagination -->
-    <nav class="flex items-center gap-x-1" aria-label="Pagination">
+    <nav class="flex justify-between items-center gap-x-1" aria-label="Pagination">
       <button
         type="button"
-        class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+        :disabled="currentPage === 1"
+        @click="$emit('change-page', currentPage - 1)"
+        class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-2 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
         aria-label="Previous"
       >
         <svg
-          aria-hidden="true"
-          class="hidden shrink-0 size-3.5"
+          class="shrink-0 size-3.5"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
@@ -22,38 +22,35 @@
         >
           <path d="m15 18-6-6 6-6"></path>
         </svg>
-        <span>Previous</span>
+        <span aria-hidden="true" class="hidden sm:block">Previous</span>
       </button>
+
       <div class="flex items-center gap-x-1">
         <button
-          type="button"
-          class="min-h-[38px] min-w-[38px] flex justify-center items-center text-gray-800 hover:bg-gray-100 py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-          aria-current="page"
+          v-for="page in totalPages"
+          :key="page"
+          @click="$emit('change-page', page)"
+          :class="[
+            'min-h-[38px] min-w-[38px] flex justify-center items-center py-2 px-3 text-sm rounded-lg focus:outline-none',
+            currentPage === page
+              ? 'bg-gray-200 text-gray-800 dark:bg-neutral-600 dark:text-white'
+              : 'text-gray-800 hover:bg-gray-100 dark:text-white dark:hover:bg-white/10'
+          ]"
+          :aria-current="currentPage === page ? 'page' : null"
         >
-          1
-        </button>
-        <button
-          type="button"
-          class="min-h-[38px] min-w-[38px] flex justify-center items-center text-gray-800 hover:bg-gray-100 py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-        >
-          2
-        </button>
-        <button
-          type="button"
-          class="min-h-[38px] min-w-[38px] flex justify-center items-center text-gray-800 hover:bg-gray-100 py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-        >
-          3
+          {{ page }}
         </button>
       </div>
+
       <button
         type="button"
-        class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-        aria-label="Next"
+        :disabled="currentPage === totalPages"
+        @click="$emit('change-page', currentPage + 1)"
+        class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-2 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
       >
-        <span>Next</span>
+        <span aria-hidden="true" class="hidden sm:block">Next</span>
         <svg
-          aria-hidden="true"
-          class="hidden shrink-0 size-3.5"
+          class="shrink-0 size-3.5"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
@@ -68,9 +65,14 @@
         </svg>
       </button>
     </nav>
-    <!-- End Pagination -->
   </div>
 </template>
 
 <script setup>
+defineProps({
+  currentPage: Number,
+  totalPages: Number
+})
+
+defineEmits(['change-page'])
 </script>
