@@ -33,38 +33,28 @@ class TutorController extends Controller
 
     public function showTutors(Request $request)
     {
-        // Fetch tutors with pagination (adjust the perPage limit if needed)
+        // Fetch tutors with pagination (4 items per page)
         $tutors = Tutor::with('subjects:id,name', 'ratings:id,tutor_id,rate')
-            ->paginate(4); // 10 items per page
+            ->paginate(4);
 
-        // Map the paginated result to include desired fields
-        $tutorPreviews = $tutors->map(function ($tutor) {
-            $first_name = $tutor->first_name;
-            $last_name = $tutor->last_name;
-
+        // Use 'through()' to transform each item while keeping pagination intact
+        $tutors->through(function ($tutor) {
             return [
                 'id' => $tutor->id,
-                'tutor_name' => "$first_name $last_name",
+                'tutor_name' => "{$tutor->first_name} {$tutor->last_name}",
                 'profile_image' => $tutor->profile_image,
                 'tutor_subjects' => $tutor->subjects->pluck('name'),
                 'tutor_rating' => $tutor->ratings->avg('rate'),
             ];
         });
 
-        // Return a paginated JSON response with additional metadata
+        // Return the paginated data with metadata
         return response()->json([
             'message' => 'Tutors retrieved successfully.',
-            'tutor_previews' => $tutorPreviews,
-            'pagination' => [
-                'current_page' => $tutors->currentPage(),
-                'last_page' => $tutors->lastPage(),
-                'per_page' => $tutors->perPage(),
-                'total' => $tutors->total(),
-                'next_page_url' => $tutors->nextPageUrl(),
-                'prev_page_url' => $tutors->previousPageUrl(),
-            ],
+            'tutor_previews' => $tutors, // Includes paginated data and metadata
         ]);
     }
+
 
 
 

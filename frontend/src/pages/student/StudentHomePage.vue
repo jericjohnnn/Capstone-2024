@@ -33,6 +33,7 @@
             <TutorDetailsCard></TutorDetailsCard>
           </div>
         </div>
+        <button @click="goToPage()">Go to Page 2</button>
       </main>
     </SideBar>
 
@@ -43,6 +44,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router';
 import SideBar from '@/components/SideBar.vue'
 import TutorSearch from '@/components/TutorSearch.vue'
 import AllSubjects from '@/components/AllSubjects.vue'
@@ -51,6 +53,8 @@ import TutorCard from '@/components/TutorCard.vue'
 import PaginationLinks from '@/components/PaginationLinks.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
+
+const router = useRouter();
 
 const tutors = ref([])
 const loading = ref(false)
@@ -61,7 +65,7 @@ const fetchTutors = async page => {
   try {
     loading.value = true
     const response = await axiosInstance.get(`/api/tutors?page=${page}`)
-    tutors.value = response.data.tutor_previews
+    tutors.value = response.data.tutor_previews.data
     currentPage.value = response.data.current_page
     totalPages.value = response.data.last_page
   } catch (err) {
@@ -71,11 +75,13 @@ const fetchTutors = async page => {
   }
 }
 
-const handlePageChange = page => {
-  if (page !== currentPage.value) {
-    fetchTutors(page)
-  }
+
+function goToPage() {
+  fetchTutors(2)
+  // router.push({ query: { page: pageNumber } });
 }
+
+
 
 onMounted(() => {
   fetchTutors(currentPage.value)
