@@ -4,7 +4,7 @@ use App\Http\Controllers\TutorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
+Route::get('/tutor-detail/{tutor_id}', [TutorController::class, 'showTutorDetail']);
 Route::get('/tutors', [TutorController::class, 'showTutors']);
 
 Route::post('/test', [TutorController::class, '']);

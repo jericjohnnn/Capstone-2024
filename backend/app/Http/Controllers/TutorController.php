@@ -55,7 +55,17 @@ class TutorController extends Controller
         ]);
     }
 
+    public function showTutorDetail(Request $request, $tutor_id)
+    {
+        $tutor = Tutor::where('id', $tutor_id)
+            ->with('workDays', 'schools', 'certificates', 'subjects', 'ratings')
+            ->first();
 
+        return response()->json([
+            'message' => 'Tutor retrieved successfully.',
+            'tutor' => $tutor,
+        ]);
+    }
 
 
 

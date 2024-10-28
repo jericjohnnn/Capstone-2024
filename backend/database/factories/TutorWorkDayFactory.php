@@ -25,13 +25,13 @@ class TutorWorkDayFactory extends Factory
         $endTime = $this->faker->numberBetween($startTime + 4, 19);
 
         return [
-            'monday' => $this->faker->boolean(80) ? 'True' : 'False',    // 80% chance of 'True'
-            'tuesday' => $this->faker->boolean(80) ? 'True' : 'False',   // 80% chance of 'True'
-            'wednesday' => $this->faker->boolean(80) ? 'True' : 'False', // 80% chance of 'True'
-            'thursday' => $this->faker->boolean(80) ? 'True' : 'False',  // 80% chance of 'True'
-            'friday' => $this->faker->boolean(80) ? 'True' : 'False',    // 80% chance of 'True'
-            'saturday' => $this->faker->boolean(40) ? 'True' : 'False',  // 40% chance of 'True'
-            'sunday' => $this->faker->boolean(20) ? 'True' : 'False',    // 20% chance of 'True'
+            'monday' => $this->faker->boolean(80) ? true : false,     // 80% chance of 'True'
+            'tuesday' => $this->faker->boolean(80) ? true : false,    // 80% chance of 'True'
+            'wednesday' => $this->faker->boolean(80) ? true : false,  // 80% chance of 'True'
+            'thursday' => $this->faker->boolean(80) ? true : false,   // 80% chance of 'True'
+            'friday' => $this->faker->boolean(80) ? true : false,     // 80% chance of 'True'
+            'saturday' => $this->faker->boolean(40) ? true : false,   // 40% chance of 'True'
+            'sunday' => $this->faker->boolean(20) ? true : false,    // 20% chance of 'True'
             'start_time' => $startTime,
             'end_time' => $endTime
         ];

@@ -14,19 +14,18 @@ return new class extends Migration
         Schema::create('tutor_work_days', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tutor_id')->constrained()->onDelete('cascade');;
-            $table->enum('monday', ['True', 'False'])->default('False');
-            $table->enum('tuesday', ['True', 'False'])->default('False');
-            $table->enum('wednesday', ['True', 'False'])->default('False');
-            $table->enum('thursday', ['True', 'False'])->default('False');
-            $table->enum('friday', ['True', 'False'])->default('False');
-            $table->enum('saturday', ['True', 'False'])->default('False');
-            $table->enum('sunday', ['True', 'False'])->default('False');
+            $table->boolean('monday')->default(false);
+            $table->boolean('tuesday')->default(false);
+            $table->boolean('wednesday')->default(false);
+            $table->boolean('thursday')->default(false);
+            $table->boolean('friday')->default(false);
+            $table->boolean('saturday')->default(false);
+            $table->boolean('sunday')->default(false);
             $table->integer('start_time'); // prone to change to date instead of int
             $table->integer('end_time'); // prone to change to date instead of int
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
