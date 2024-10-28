@@ -4,7 +4,7 @@
       <!-- Full Star -->
       <svg
         v-if="index <= Math.floor(rating)"
-        class="shrink-0 size-5 text-yellow-400 dark:text-yellow-600"
+        class="shrink-0 size-4 text-yellow-400 dark:text-yellow-600"
         xmlns="http://www.w3.org/2000/svg"
         width="16"
         height="16"
@@ -19,7 +19,7 @@
       <!-- Partial Star -->
       <svg
         v-else-if="index === Math.ceil(rating) && hasDecimal"
-        class="shrink-0 size-5"
+        class="shrink-0 size-4"
         xmlns="http://www.w3.org/2000/svg"
         width="16"
         height="16"
@@ -43,7 +43,7 @@
       <!-- Empty Star -->
       <svg
         v-else
-        class="shrink-0 size-5 text-gray-300 dark:text-neutral-600"
+        class="shrink-0 size-4 text-gray-300 dark:text-neutral-600"
         xmlns="http://www.w3.org/2000/svg"
         width="16"
         height="16"
@@ -63,7 +63,7 @@ import { computed } from 'vue'
 
 const props = defineProps({
   rating: {
-    type: Number,
+    type: [Number, null],
     required: true,
     validator: (value) => value >= 0 && value <= 5
   }

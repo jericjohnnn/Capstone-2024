@@ -26,34 +26,35 @@ class ReportController extends Controller
     //ADMIN METHODS INSERT HERE
     public function showAllReports(Request $request)
     {
-        $reports = Report::with('complainant.tutor', 'complainant.student', 'complainant.userType')->paginate(10);
+        // Fetch reports with related models, paginated (10 per page)
+        $reports = Report::with('complainant.tutor', 'complainant.student', 'complainant.userType')
+            ->paginate(10);
 
-        $complainantReport = $reports->map(function ($report) {
+        // Use 'through()' to transform each report while keeping pagination intact
+        $reports->through(function ($report) {
             $first_name = $report->complainant->tutor?->first_name ??
-                $report->complainant->student?->first_name ??
-                null;
+                $report->complainant->student?->first_name ?? null;
             $last_name = $report->complainant->tutor?->last_name ??
-                $report->complainant->student?->last_name ??
-                null;
+                $report->complainant->student?->last_name ?? null;
 
             return [
                 'id' => $report->id,
                 'complainant_name' => $first_name && $last_name ?
-                    "$first_name $last_name" :
-                    $first_name ?? $last_name ?? null,
+                    "$first_name $last_name" : $first_name ?? $last_name ?? null,
                 'complainant_profile_image' => $report->complainant->tutor?->profile_image ??
-                    $report->complainant->student?->profile_image ??
-                    null,
+                    $report->complainant->student?->profile_image ?? null,
                 'complainant_user_type' => $report->complainant->userType->type,
                 'report_status' => $report->status,
             ];
         });
 
+        // Return the paginated reports with metadata intact
         return response()->json([
             'message' => 'All reports retrieved successfully.',
-            'complainant_report' => $complainantReport,
+            'complainant_report' => $reports, // Includes pagination metadata
         ]);
     }
+
 
 
     public function showReport(Request $request, $report_id)
