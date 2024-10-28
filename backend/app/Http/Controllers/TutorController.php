@@ -10,48 +10,30 @@ use Illuminate\Http\Request;
 
 class TutorController extends Controller
 {
-    //NORMAL USER METHODS INSERT HERE
+    // NORMAL USER METHODS INSERT HERE
     public function createTutor($validatedDataWithUserId)
     {
-        Tutor::create([
-            'user_id' => $validatedDataWithUserId['user_id'],
-            'first_name' => $validatedDataWithUserId['first_name'],
-            'last_name' => $validatedDataWithUserId['last_name'],
-            'address' => $validatedDataWithUserId['address'],
-            'birthdate' => $validatedDataWithUserId['birthdate'],
-            'gender' => $validatedDataWithUserId['gender'],
-            'contact_number' => $validatedDataWithUserId['contact_number'],
-            'tutor_rate' => $validatedDataWithUserId['tutor_rate'],
-            'school_id_number' => $validatedDataWithUserId['school_id_number'],
-            'course' => $validatedDataWithUserId['course'],
-            'year' => $validatedDataWithUserId['year'],
-        ]);
-        return [
-            'message' => 'Tutor successfully created',
-        ];
+        Tutor::create($validatedDataWithUserId);
+        return response()->json(['message' => 'Tutor successfully created']);
     }
 
     public function showTutors(Request $request)
     {
-        // Fetch tutors with pagination (adjust the perPage limit if needed)
-        $tutors = Tutor::with('subjects:id,name', 'ratings:id,tutor_id,rate')
-            ->paginate(4); // 10 items per page
+        // Fetch tutors with pagination
+        $tutors = Tutor::with('subjects:id,name', 'ratings:id,tutor_id,rate')->paginate(4);
 
         // Map the paginated result to include desired fields
         $tutorPreviews = $tutors->map(function ($tutor) {
-            $first_name = $tutor->first_name;
-            $last_name = $tutor->last_name;
-
             return [
                 'id' => $tutor->id,
-                'tutor_name' => "$first_name $last_name",
+                'tutor_name' => "{$tutor->first_name} {$tutor->last_name}",
                 'profile_image' => $tutor->profile_image,
                 'tutor_subjects' => $tutor->subjects->pluck('name'),
                 'tutor_rating' => $tutor->ratings->avg('rate'),
             ];
         });
 
-        // Return a paginated JSON response with additional metadata
+        // Return a paginated JSON response
         return response()->json([
             'message' => 'Tutors retrieved successfully.',
             'tutor_previews' => $tutorPreviews,
@@ -66,19 +48,7 @@ class TutorController extends Controller
         ]);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    //ADMIN METHODS INSERT HERE
+    // ADMIN METHODS INSERT HERE
     public function showAllTutors(Request $request)
     {
         // Retrieve all tutors
@@ -103,22 +73,22 @@ class TutorController extends Controller
     public function changeApprovalStatus(ApprovalStatusRequest $request, $tutor_id)
     {
         $validatedData = $request->validated();
-
         $tutor = Tutor::findOrFail($tutor_id);
 
         $tutor->approval_status = $validatedData['approval_status'];
         $tutor->save();
 
-        return response()->json(['message' => 'Approval status updated successfully.']);
+        return response()->json(['message' => 'Approval status updated successfully.', 'tutor' => $tutor]);
     }
 
-    public function changeContactedStatus(Request $request, $tutor_id)
+    public function changeContactedStatus(ContactedStatusRequest $request, $tutor_id)
     {
+        $validatedData = $request->validated(); // Ensure validation here
         $tutor = Tutor::findOrFail($tutor_id);
 
-        $tutor->contacted_status = $request['contacted_status'];
+        $tutor->contacted_status = $validatedData['contacted_status'];
         $tutor->save();
 
-        return response()->json(['message' => 'Contacted status updated successfully.']);
+        return response()->json(['message' => 'Contacted status updated successfully.', 'tutor' => $tutor]);
     }
 }
