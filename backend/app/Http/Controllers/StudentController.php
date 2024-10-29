@@ -18,8 +18,13 @@ class StudentController extends Controller
     }
 
 
+
+
+
+
+
     //ADMIN METHODS INSERT HERE
-    public function showAllStudents(Request $request)
+    public function showAllStudents()
     {
         $students = Student::paginate(10);
 
