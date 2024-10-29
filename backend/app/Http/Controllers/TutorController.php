@@ -10,25 +10,11 @@ use Illuminate\Http\Request;
 
 class TutorController extends Controller
 {
-    //NORMAL USER METHODS INSERT HERE
+    // NORMAL USER METHODS INSERT HERE
     public function createTutor($validatedDataWithUserId)
     {
-        Tutor::create([
-            'user_id' => $validatedDataWithUserId['user_id'],
-            'first_name' => $validatedDataWithUserId['first_name'],
-            'last_name' => $validatedDataWithUserId['last_name'],
-            'address' => $validatedDataWithUserId['address'],
-            'birthdate' => $validatedDataWithUserId['birthdate'],
-            'gender' => $validatedDataWithUserId['gender'],
-            'contact_number' => $validatedDataWithUserId['contact_number'],
-            'tutor_rate' => $validatedDataWithUserId['tutor_rate'],
-            'school_id_number' => $validatedDataWithUserId['school_id_number'],
-            'course' => $validatedDataWithUserId['course'],
-            'year' => $validatedDataWithUserId['year'],
-        ]);
-        return [
-            'message' => 'Tutor successfully created',
-        ];
+        Tutor::create($validatedDataWithUserId);
+        return response()->json(['message' => 'Tutor successfully created']);
     }
 
     public function showTutors(Request $request)
@@ -95,22 +81,22 @@ class TutorController extends Controller
     public function changeApprovalStatus(ApprovalStatusRequest $request, $tutor_id)
     {
         $validatedData = $request->validated();
-
         $tutor = Tutor::findOrFail($tutor_id);
 
         $tutor->approval_status = $validatedData['approval_status'];
         $tutor->save();
 
-        return response()->json(['message' => 'Approval status updated successfully.']);
+        return response()->json(['message' => 'Approval status updated successfully.', 'tutor' => $tutor]);
     }
 
-    public function changeContactedStatus(Request $request, $tutor_id)
+    public function changeContactedStatus(ContactedStatusRequest $request, $tutor_id)
     {
+        $validatedData = $request->validated(); // Ensure validation here
         $tutor = Tutor::findOrFail($tutor_id);
 
-        $tutor->contacted_status = $request['contacted_status'];
+        $tutor->contacted_status = $validatedData['contacted_status'];
         $tutor->save();
 
-        return response()->json(['message' => 'Contacted status updated successfully.']);
+        return response()->json(['message' => 'Contacted status updated successfully.', 'tutor' => $tutor]);
     }
 }
