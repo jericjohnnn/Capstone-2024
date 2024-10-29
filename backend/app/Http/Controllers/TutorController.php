@@ -70,19 +70,11 @@ class TutorController extends Controller
 
 
 
-
-
-
-
-
-
-
-
     //ADMIN METHODS INSERT HERE
     public function showAllTutors(Request $request)
     {
         // Retrieve all tutors
-        $tutors = Tutor::paginate(10);
+        $tutors = Tutor::paginate(22);
 
         return response()->json([
             'message' => 'Tutors retrieved successfully.',
