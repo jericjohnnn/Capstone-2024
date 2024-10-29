@@ -14,7 +14,7 @@
         <div class="flex gap-7">
           <!-- Left Column - Tutor Cards -->
           <div
-            class="w-2/4 flex h-[calc(100vh-240px)] flex-col justify-between"
+            class="max-w-md flex h-[calc(100vh-240px)] flex-col justify-between"
           >
             <div class="flex-grow overflow-auto">
               <TutorCard
@@ -37,9 +37,9 @@
             </div>
           </div>
           <!-- Right Column - Tutor Details -->
-          <div class="w-3/5">
+          <div class="max-w-lg  outline">
             <div v-if="tutorDetails">
-              <TutorDetailsCard :tutor="tutorDetails"></TutorDetailsCard>
+              <TutorDetailsCard  :tutor="tutorDetails"></TutorDetailsCard>
             </div>
             <div v-else>
               <p class="text-center text-gray-500">Select a Tutor</p>

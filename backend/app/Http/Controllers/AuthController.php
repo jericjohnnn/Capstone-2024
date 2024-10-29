@@ -7,6 +7,8 @@ use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Requests\Auth\LogoutUserRequest;
 use App\Http\Requests\Auth\RegisterUserRequest;
 use App\Models\Admin;
+use App\Models\Student;
+use App\Models\Tutor;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -59,31 +61,34 @@ class AuthController extends Controller
 
     public function userLogin(LoginUserRequest $request)
     {
-        // VALIDATE INPUT
         $validatedData = $request->validated();
 
-        // FIND USER BY EMAIL
         $user = User::where('email', $validatedData['email'])->first();
 
-        // CHECK IF USER EXISTS AND PASSWORD MATCHES
         if (!$user || !Hash::check($validatedData['password'], $user->password)) {
             return response()->json([
                 'message' => 'Invalid email or password.',
             ], 401); // Unauthorized
         }
 
-        // GENERATE TOKEN
         $token = $user->createToken('authToken')->plainTextToken;
 
-        $userType = match ($user->user_type_id) {
-            1 => 'Student',
-            2 => 'Tutor',
-            default => 'unknown',
-        };
+        $userFullName = null;
+        $userType = null;
+        if ($user->user_type_id === 1) {
+            $student = Student::where('user_id', $user->id)->first();
+            $userFullName = "{$student->first_name} {$student->last_name}";
+            $userType = "Student";
+        } elseif ($user->user_type_id === 2) {
+            $tutor = Tutor::where('user_id', $user->id)->first();
+            $userFullName = "{$tutor->first_name} {$tutor->last_name}";
+            $userType = "Tutor";
+        }
 
-        // RETURN RESPONSE WITH TOKEN
         return response()->json([
             'message' => 'Login successful!',
+            'user_email' => $user->email,
+            'user_full_name' => $userFullName,
             'user_type' => $userType,
             'token' => $token,
         ], 200);
@@ -117,7 +122,7 @@ class AuthController extends Controller
     }
 
 
-    public function logout(LogoutUserRequest $request)
+    public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 

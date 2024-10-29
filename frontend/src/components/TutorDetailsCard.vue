@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col bg-white rounded-xl shadow-sm">
+  <div class="outline flex flex-col bg-white rounded-xl shadow-sm">
     <!-- Header Section with Blue Background -->
     <div class="bg-blue-600 p-4 rounded-t-xl flex justify-between items-center">
       <div class="flex items-center gap-3">
         <img
           alt="Tutor avatar"
           :src="tutor.profile_image"
-          class="w-16 h-16 rounded-full"
+          class="w-16 h-16 shrink-0 rounded-full"
         />
         <div class="text-white">
           <h2 class="font-medium text-lg">
@@ -147,7 +147,7 @@
         </div>
 
         <div v-else class="space-y-6">
-          <RatingsCarousel :ratingComments="ratingComments"></RatingsCarousel>
+          <RatingsCarousel class="w-full" :ratingComments="ratingComments"></RatingsCarousel>
         </div>
       </div>
     </div>

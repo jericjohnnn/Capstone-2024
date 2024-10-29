@@ -266,9 +266,9 @@
                 <!-- Placeholder Text -->
                 <div class="flex flex-col">
                   <span class="text-sm font-medium text-white"
-                    >Student Name</span
+                    >{{ userFullName }}</span
                   >
-                  <span class="text-xs text-white/70">student@example.com</span>
+                  <span class="text-xs text-white/70">{{ userEmail }}</span>
                 </div>
               </div>
               <!-- Logout Button -->
@@ -311,12 +311,28 @@
 </template>
 
 <script setup>
-// const logout = () => {
-//   // Add your logout logic here
-//   // For example:
-//   // 1. Clear authentication tokens
-//   // 2. Clear user data
-//   // 3. Redirect to login page
-//   console.log('Logout clicked')
-// }
+import { useRouter } from 'vue-router'
+import axiosInstance from '@/axiosInstance'
+
+const router = useRouter()
+
+const userEmail = localStorage.getItem('user_email');
+const userFullName = localStorage.getItem('user_full_name');
+
+async function logout() {
+  try {
+    await axiosInstance.post('/api/logout')
+
+    localStorage.removeItem('app_auth_token')
+    localStorage.removeItem('user_type')
+    localStorage.removeItem('user_email')
+    localStorage.removeItem('user_full_name')
+
+    delete axiosInstance.defaults.headers['Authorization']
+
+    router.push({ name: 'Login' })
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
+}
 </script>
