@@ -5,7 +5,12 @@
     <form @submit.prevent="handleSubmit">
       <div class="input-group">
         <input type="email" v-model="form.email" placeholder="Email" required />
-        <input type="password" v-model="form.password" placeholder="Password" required />
+        <input
+          type="password"
+          v-model="form.password"
+          placeholder="Password"
+          required
+        />
         <input
           type="password"
           v-model="form.confirmPassword"
@@ -15,14 +20,58 @@
       </div>
 
       <div class="input-group">
-        <input type="text" v-model="form.firstName" placeholder="First name" required />
-        <input type="text" v-model="form.lastName" placeholder="Last name" required />
+        <input
+          type="text"
+          v-model="form.firstName"
+          placeholder="First name"
+          required
+        />
+        <input
+          type="text"
+          v-model="form.lastName"
+          placeholder="Last name"
+          required
+        />
       </div>
 
       <div class="input-group">
-        <input type="text" v-model="form.address" placeholder="Address" required />
-        <input type="date" v-model="form.birthdate" placeholder="Birthdate" required />
-        <input type="text" v-model="form.contactNo" placeholder="Contact no." required />
+        <input
+          type="text"
+          v-model="form.address"
+          placeholder="Address"
+          required
+        />
+        <input
+          type="date"
+          v-model="form.birthdate"
+          placeholder="Birthdate"
+          required
+        />
+        <input
+          type="text"
+          v-model="form.contactNo"
+          placeholder="Contact no."
+          required
+        />
+        <select v-model="form.gradeYear" required>
+          <option value="" disabled>Select Grade Year</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+        <input
+          type="text"
+          v-model="form.schoolIdNo"
+          placeholder="School ID Number"
+          required
+        />
       </div>
 
       <div class="terms-group">
@@ -36,9 +85,9 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive } from 'vue'
 import axiosInstance from '@/axiosInstance'
-import router from '@/router';
+import router from '@/router'
 
 const form = reactive({
   email: '',
@@ -49,17 +98,19 @@ const form = reactive({
   address: '',
   birthdate: '',
   contactNo: '',
+  schoolIdNo: '',
+  gradeYear: '',
   agreeToTerms: false,
-});
+})
 
 const handleSubmit = async () => {
   if (form.password !== form.confirmPassword) {
-    alert("Passwords do not match!");
-    return;
+    alert('Passwords do not match!')
+    return
   }
 
   const payload = {
-    user_type: 1,
+    user_type_id: 1,
     email: form.email,
     password: form.password,
     password_confirmation: form.confirmPassword,
@@ -67,22 +118,28 @@ const handleSubmit = async () => {
     last_name: form.lastName,
     address: form.address,
     birthdate: form.birthdate,
-    contact_number: form.contactNo, // Fixed property name
-  };
+    school_id_number: form.schoolIdNo,
+    grade_year: form.gradeYear,
+    contact_number: form.contactNo,
+  }
 
   try {
-    const response = await axiosInstance.post('api/register', payload);
-    const { message, user_type, token } = response.data
-    alert(message);
+    const response = await axiosInstance.post('api/register', payload)
+    const { message, user_email, user_full_name, user_type, token } =
+      response.data
+    alert(message)
     localStorage.setItem('app_auth_token', token)
     localStorage.setItem('user_type', user_type)
+    localStorage.setItem('user_email', user_email)
+    localStorage.setItem('user_full_name', user_full_name)
     router.push('/student/home')
-
-
   } catch (error) {
-    alert("Registration failed: " + (error.response?.data?.message || error.message));
+    alert(
+      'Registration failed: ' +
+        (error.response?.data?.message || error.message),
+    )
   }
-};
+}
 </script>
 
 <style scoped>
@@ -97,6 +154,15 @@ const handleSubmit = async () => {
   padding: 20px;
   border: 1px solid #4b8ff7;
   border-radius: 8px;
+}
+
+.input-group select {
+  flex: 1;
+  min-width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
 form {
@@ -122,7 +188,7 @@ form {
   font-size: 1rem;
 }
 
-input[type="date"] {
+input[type='date'] {
   color: #555;
 }
 
