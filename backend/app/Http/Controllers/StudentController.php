@@ -11,14 +11,7 @@ class StudentController extends Controller
     //NORMAL USER METHODS INSERT HERE
     public function createStudent($validatedDataWithUserId)
     {
-        Student::create([
-            'user_id' => $validatedDataWithUserId['user_id'],
-            'first_name' => $validatedDataWithUserId['first_name'],
-            'last_name' => $validatedDataWithUserId['last_name'],
-            'address' => $validatedDataWithUserId['address'],
-            'birthdate' => $validatedDataWithUserId['birthdate'],
-            'contact_number' => $validatedDataWithUserId['contact_number'],
-        ]);
+        Student::create($validatedDataWithUserId);
         return [
             'message' => 'Student successfully created',
         ];

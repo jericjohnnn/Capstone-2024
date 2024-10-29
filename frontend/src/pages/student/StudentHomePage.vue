@@ -36,7 +36,6 @@
               />
             </div>
           </div>
-
           <!-- Right Column - Tutor Details -->
           <div class="w-3/5">
             <div v-if="tutorDetails">
@@ -49,7 +48,6 @@
         </div>
       </main>
     </SideBar>
-
     <!-- Help Button -->
     <HelpButton></HelpButton>
   </main>

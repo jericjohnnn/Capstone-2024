@@ -16,12 +16,13 @@ class Student extends Model
         'birthdate',
         'contact_number',
         'profile_image',
+        'school_id_number',
+        'grade_year',
         'offense_status'
     ];
 
     protected $casts = [
         'birthdate' => 'date',
-        'offense_status' => 'string'
     ];
 
     //relationships
