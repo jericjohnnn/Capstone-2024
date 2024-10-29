@@ -20,6 +20,8 @@ return new class extends Migration
             $table->date('birthdate')->nullable();
             $table->string('contact_number')->nullable();
             $table->string('profile_image')->nullable();
+            $table->string('school_id_number')->nullable();
+            $table->string('grade_year')->nullable();
             $table->enum('offense_status', ['Unflagged', 'Warned', 'Penalized', 'Banned'])
                 ->default('Unflagged');
             $table->timestamps();

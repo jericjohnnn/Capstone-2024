@@ -4,6 +4,7 @@ import tutorRoutes from './tutorRoutes'
 import studentRoutes from './studentRoutes'
 import NotFoundPage from '@/pages/NotFoundPage.vue'
 
+
 function isAuthenticated() {
   return !!localStorage.getItem('app_auth_token')
 }
@@ -65,11 +66,12 @@ router.beforeEach((to, from, next) => {
     }
   }
 
-  setTimeout(() => {
-    if (window.PRELINE) window.PRELINE.init()
-  }, 0)
+  // setTimeout(() => {
+  //   if (window.PRELINE) window.PRELINE.init()
+  // }, 0)
 
   next()
 })
+
 
 export default router

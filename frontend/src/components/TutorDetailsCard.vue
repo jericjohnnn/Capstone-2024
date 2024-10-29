@@ -15,7 +15,9 @@
           <p class="text-blue-100">{{ tutor.address }}</p>
         </div>
       </div>
-      <button class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-400">
+      <button
+        class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-400"
+      >
         BOOK
       </button>
     </div>
@@ -34,7 +36,11 @@
           <!-- Subjects Section -->
           <div class="mb-6">
             <h3 class="font-medium mb-2">Subjects offered:</h3>
-            <div v-for="subject in tutor.subjects" :key="subject.id" class="flex gap-2">
+            <div
+              v-for="subject in tutor.subjects"
+              :key="subject.id"
+              class="flex gap-2"
+            >
               <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full">{{
                 subject.name
               }}</span>
@@ -47,7 +53,7 @@
           </div>
         </div>
 
-
+        <!-- Availability Section -->
         <div v-if="!availableDays" class="text-gray-600">
           <p>No work days preference yet</p>
         </div>
@@ -66,20 +72,21 @@
           <div class="mb-6">
             <h3 class="font-medium mb-2">Hours available:</h3>
             <p class="text-blue-600 font-medium">
-              {{ tutor.work_days.start_time  }}
-              {{ tutor.work_days.end_time  }}
+              {{ tutor.work_days.start_time }}
+              {{ tutor.work_days.end_time }}
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Availability Section -->
-
       <!-- Education Section -->
       <div>
         <h3 class="text-xl font-bold text-gray-800 mb-6">Education</h3>
 
-        <div v-if="!tutor.schools || tutor.schools.length === 0" class="text-gray-600">
+        <div
+          v-if="!tutor.schools || tutor.schools.length === 0"
+          class="text-gray-600"
+        >
           <p>No education information available.</p>
         </div>
 
@@ -93,100 +100,120 @@
             <p class="text-sm text-gray-500 italic">{{ school.course }}</p>
             <p class="text-sm text-gray-600 mt-2">
               {{ formatDate(school.start_date) }} -
-              {{ school.end_date ? formatDate(school.end_date) : "Present" }}
+              {{ school.end_date ? formatDate(school.end_date) : 'Present' }}
             </p>
           </div>
         </div>
       </div>
 
-      <!-- See more link -->
-      <a
-        href="#"
-        class="mt-4 inline-flex items-center gap-x-1 text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline"
-      >
-        See more
-        <svg
-          class="shrink-0 size-4"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+      <!-- Certificates Section -->
+      <div>
+        <h3 class="text-xl font-bold text-gray-800 mb-6">Certifications</h3>
+
+        <div
+          v-if="!tutor.certificates || tutor.certificates.length === 0"
+          class="text-gray-600"
         >
-          <path d="m9 18 6-6-6-6"></path>
-        </svg>
-      </a>
+          <p>No certificates information available.</p>
+        </div>
+
+        <div v-else class="space-y-6">
+          <div
+            v-for="certificate in tutor.certificates"
+            :key="certificate.id"
+            class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg border border-gray-200 transition-shadow"
+          >
+            <p class="text-lg font-semibold text-gray-900">
+              {{ certificate.title }}
+            </p>
+            <p class="text-sm text-gray-500 italic">{{ certificate.issuer }}</p>
+            <p class="text-sm text-gray-600 mt-2">
+              {{ formatDate(certificate.date_issued) }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certificates Section -->
+      <div>
+        <StarRating :rating="averageRatings"></StarRating>
+        <h3 class="text-xl font-bold text-gray-800 mb-6">Ratings</h3>
+
+        <div
+          v-if="!tutor.ratings || tutor.ratings.length === 0"
+          class="text-gray-600"
+        >
+          <p>No ratings information available.</p>
+        </div>
+
+        <div v-else class="space-y-6">
+          <RatingsCarousel :ratingComments="ratingComments"></RatingsCarousel>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import StarRating from '@/components/StarRating.vue'
+import RatingsCarousel from './RatingsCarousel.vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   tutor: {
     type: Object,
     required: true,
   },
-});
+})
 
 const availableDays = computed(() => {
-  if (!props.tutor.work_days || Object.keys(props.tutor.work_days).length === 0) {
-    return null;
+  if (
+    !props.tutor.work_days ||
+    Object.keys(props.tutor.work_days).length === 0
+  ) {
+    return null
   }
 
   const daysOfWeek = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-  ];
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday',
+  ]
 
   return daysOfWeek
-    .filter((day) => props.tutor.work_days[day])
-    .map((day) => day.charAt(0).toUpperCase() + day.slice(1));
-});
+    .filter(day => props.tutor.work_days[day])
+    .map(day => day.charAt(0).toUpperCase() + day.slice(1))
+})
 
-const formatDate = (date) => {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(new Date(date));
-};
+const averageRatings = computed(() => {
+  const ratings = props.tutor.ratings.map(rating => rating.rate)
+  const total = ratings.reduce((sum, rate) => sum + rate, 0)
+  return total / ratings.length
+})
+
+const ratingComments = computed(() => {
+  const ratingsWithComments = props.tutor.ratings.filter(
+    rating => !!rating.comment,
+  )
+  return ratingsWithComments
+})
+
+const formatDate = date => {
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(date))
+}
 
 // const schools = computed(() => {
 //   if (!props.tutor.schools || props.tutor.schools.length === 0) {
 //     return null;
 //   }
 //   return props.tutor.schools;
-// });
-
-// const certificates = computed(() => {
-//   if (!props.tutor.certificates || props.tutor.certificates.length === 0) {
-//     return null;
-//   }
-//   return props.tutor.certificates;
-// });
-
-// const subjects = computed(() => {
-//   if (!props.tutor.subjects || props.tutor.subjects.length === 0) {
-//     return null;
-//   }
-//   return props.tutor.subjects;
-// });
-
-// const ratings = computed(() => {
-//   if (!props.tutor.ratings || props.tutor.ratings.length === 0) {
-//     return null;
-//   }
-//   return props.tutor.ratings;
 // });
 </script>
