@@ -1,80 +1,57 @@
 <template>
-    <div class="flex flex-row">
-        <AdminPage/>
-    <div class="flex flex-col">
-    <div class="ml-6 flex-grow">
+  <div class="flex flex-row">
+    <SideBar />
+    <div class="flex flex-col flex-grow">
+      <!-- Header Section -->
       <div class="flex items-center py-8">
-        <p class="text-4xl font-bold">Users Dashboard</p>
-        
-        <div class="flex items-center ml-[279px]">
-          <!-- Search Input -->
+
+        <div class="flex items-center ml-[150px]">
           <input
             type="text"
-            placeholder="Search users..."
+            placeholder="Search tutors..."
             class="px-4 py-2 border border-gray-300 rounded-lg w-[350px] focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <img 
-            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWJlbGwiPjxwYXRoIGQ9Ik02IDhhNiA2IDAgMCAxIDEyIDBjMCA3IDMgOSAzIDlIM3MzLTIgMy05Ii8+PHBhdGggZD0iTTEwLjMgMjFhMS45NCAxLjk0IDAgMCAwIDMuNCAwIi8+PC9zdmc+" 
-            alt="Bell Icon" 
-            class="ml-5 w-6 h-6"
-          />
+          <img src="data:image/svg+xml;base64,..." alt="Bell Icon" class="ml-5 w-6 h-6" />
           <div class="ml-5 w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
-            <span class="text-white font-bold">P</span> <!-- Placeholder text or icon -->
+            <span class="text-white font-bold">P</span>
           </div>
         </div>
       </div>
-      <div class="flex flex-col">
-        <!-- Header Row with 8 Columns -->
-        <div class="flex text-lg font-bold text-gray-700 border-b pb-2">
-          <div class="flex text-center">ID</div>
-          <div class="flex-1 text-center">Name</div>
-          <div class="flex-1 text-center">Address</div>
-          <div class="flex-1 text-center">Contact #</div>
-          <div class="flex-1 text-center">Course and Year Level</div>
-          <div class="flex-1 text-center">Subjects to Handle</div>
-          <div class="flex-1 text-center">Status</div>
-          <div class="flex-1 text-center">Actions</div>
-        </div>
-        <!-- Sample Data Row (You can replace this with actual data) -->
-        <div class="flex text-gray-600 py-2">
-          <div class="flex text-center">1</div>
-          <div class="flex-1 text-center">John Doe</div>
-          <div class="flex-1 text-center">123 Main St</div>
-          <div class="flex-1 text-center">123-456-7890</div>
-          <div class="flex-1 text-center">BSIT_4</div>
-          <div class="flex-1 text-center">Calculus, Algebra</div>
-          <div class="flex-1 text-center">Pending</div>
-          <div class="flex-1 text-center">
-             <div class="flex flex-col items-center">
-        <button class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mb-1">Call</button>
-        <button class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 mb-1">Accept</button>
-        <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Reject</button>
+    <!-- Breadcrumb Tabs -->
+    <div class="flex space-x-4 mb-4 ml-6 text-md font-bold">
+      <button @click="currentTab = 'all'" :class="currentTab === 'all' ? 'font-bold underline' : ''">All</button>
+      <button @click="currentTab = 'Pending'" :class="currentTab === 'Pending' ? 'font-bold underline' : ''">Pending</button>
+      <button @click="currentTab = 'Accepted'" :class="currentTab === 'Accepted' ? 'font-bold underline' : ''">Accepted</button>
+      <button @click="currentTab = 'Rejected'" :class="currentTab === 'Rejected' ? 'font-bold underline' : ''">Rejected</button>
     </div>
-          </div>
-        </div>
 
-        <div class="flex text-gray-600 py-2">
-          <div class="flex text-center">1</div>
-          <div class="flex-1 text-center">John Doe</div>
-          <div class="flex-1 text-center">123 Main St</div>
-          <div class="flex-1 text-center">123-456-7890</div>
-          <div class="flex-1 text-center">BSIT_4</div>
-          <div class="flex-1 text-center">Calculus, Algebra</div>
-          <div class="flex-1 text-center">Pending</div>
-          <div class="flex-1 text-center">
-             <div class="flex flex-col items-center">
-        <button class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mb-1">Call</button>
-        <button class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 mb-1">Accept</button>
-        <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Reject</button>
-    </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    </div>
-    </div>
+    <!-- Conditional Rendering of Tab Components -->
+    <component :is="currentComponent" :current-tab="currentTab" />
+  </div>
+  </div>
 </template>
+
 <script setup>
-import AdminPage from '@/pages/admin/AdminPage.vue';
+import { ref, computed } from 'vue';
+import AllTutors from './AllTutors.vue';
+import SideBar from './SideBar.vue';
+import PendingTutors from './PendingTutors.vue';
+import AcceptedTutors from './AcceptedTutors.vue';
+import RejectedTutors from './RejectedTutors.vue';
+
+const currentTab = ref('all');
+
+// Dynamically set the component to load based on the selected tab
+const currentComponent = computed(() => {
+  switch (currentTab.value) {
+    case 'Pending':
+      return PendingTutors;
+    case 'Accepted':
+      return AcceptedTutors;
+    case 'Rejected':
+      return RejectedTutors;
+    default:
+      return AllTutors;
+  }
+});
 </script>

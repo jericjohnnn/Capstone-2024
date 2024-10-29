@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-row">
-        <AdminPage/>
+        <SideBar/>
         <div class="flex flex-col">
             <div class="ml-6 flex-grow">
                 <div class="flex items-center py-8">
@@ -80,5 +80,6 @@
 </template>
 
 <script setup>
-import AdminPage from '@/pages/admin/AdminPage.vue';
+
+import SideBar from './SideBar.vue';
 </script>

@@ -1,6 +1,8 @@
 <template>
   <div class="register-container">
-    <h2>Sign-up as TUTOR</h2>
+    <div class="overflow-y-scroll">
+      <div class="mt-10">
+        <h2>Sign-up as TUTOR</h2>
 
     <form @submit.prevent="handleSubmit">
       <div class="input-group">
@@ -76,6 +78,8 @@
 
       <button type="submit" :disabled="!form.agreeToTerms">Sign-up</button>
     </form>
+      </div>
+    </div>
   </div>
 </template>
 
