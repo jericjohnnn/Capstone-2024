@@ -13,19 +13,7 @@ class TutorController extends Controller
     //NORMAL USER METHODS INSERT HERE
     public function createTutor($validatedDataWithUserId)
     {
-        Tutor::create([
-            'user_id' => $validatedDataWithUserId['user_id'],
-            'first_name' => $validatedDataWithUserId['first_name'],
-            'last_name' => $validatedDataWithUserId['last_name'],
-            'address' => $validatedDataWithUserId['address'],
-            'birthdate' => $validatedDataWithUserId['birthdate'],
-            'gender' => $validatedDataWithUserId['gender'],
-            'contact_number' => $validatedDataWithUserId['contact_number'],
-            'tutor_rate' => $validatedDataWithUserId['tutor_rate'],
-            'school_id_number' => $validatedDataWithUserId['school_id_number'],
-            'course' => $validatedDataWithUserId['course'],
-            'year' => $validatedDataWithUserId['year'],
-        ]);
+        Tutor::create($validatedDataWithUserId);
         return [
             'message' => 'Tutor successfully created',
         ];
@@ -58,7 +46,7 @@ class TutorController extends Controller
     public function showTutorDetail(Request $request, $tutor_id)
     {
         $tutor = Tutor::where('id', $tutor_id)
-            ->with('workDays', 'schools', 'certificates', 'subjects', 'ratings')
+            ->with('workDays', 'schools', 'certificates', 'subjects', 'ratings.student:id,first_name,last_name,profile_image')
             ->first();
 
         return response()->json([

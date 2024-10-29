@@ -31,6 +31,8 @@ class StudentFactory extends Factory
             'birthdate' => $this->faker->dateTimeBetween('-30 years', '-18 years'),
             'contact_number' => $this->faker->numerify('09#########'),
             'profile_image' => 'https://picsum.photos/200/200?random=' . $this->faker->randomNumber(),
+            'school_id_number' => $this->faker->numerify('20##-#####'),
+            'grade_year' => $this->faker->optional()->numberBetween(1, 10),
             'offense_status' => $this->faker->randomElement(['Unflagged', 'Warned', 'Penalized', 'Banned'])
         ];
     }
