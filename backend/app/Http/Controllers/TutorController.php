@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ApprovalStatusRequest;
-use App\Http\Requests\Admin\ContactedStatusRequest;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
 
@@ -19,13 +18,13 @@ class TutorController extends Controller
         ];
     }
 
-    public function showTutors(Request $request)
+    public function showTutors()
     {
-        // Fetch tutors with pagination (4 items per page)
         $tutors = Tutor::with('subjects:id,name', 'ratings:id,tutor_id,rate')
             ->paginate(4);
 
-        // Use 'through()' to transform each item while keeping pagination intact
+        // ignore lang ning red sa "through" kay wa pako kita
+        // sa extension nga modetect na siya, kay bag o na nga feature sa laravel
         $tutors->through(function ($tutor) {
             return [
                 'id' => $tutor->id,
@@ -36,14 +35,13 @@ class TutorController extends Controller
             ];
         });
 
-        // Return the paginated data with metadata
         return response()->json([
             'message' => 'Tutors retrieved successfully.',
-            'tutor_previews' => $tutors, // Includes paginated data and metadata
+            'tutor_previews' => $tutors,
         ]);
     }
 
-    public function showTutorDetail(Request $request, $tutor_id)
+    public function showTutorDetail($tutor_id)
     {
         $tutor = Tutor::where('id', $tutor_id)
             ->with('workDays', 'schools', 'certificates', 'subjects', 'ratings.student:id,first_name,last_name,profile_image')
@@ -64,12 +62,9 @@ class TutorController extends Controller
 
 
 
-
-
     //ADMIN METHODS INSERT HERE
-    public function showAllTutors(Request $request)
+    public function showAllTutors()
     {
-        // Retrieve all tutors
         $tutors = Tutor::paginate(10);
 
         return response()->json([
@@ -78,7 +73,7 @@ class TutorController extends Controller
         ]);
     }
 
-    public function showAcceptedTutors(Request $request)
+    public function showAcceptedTutors()
     {
         $acceptedTutors = Tutor::where('approval_status', 'Accepted')->paginate(10);
 

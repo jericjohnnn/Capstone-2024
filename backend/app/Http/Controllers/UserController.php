@@ -19,6 +19,9 @@ class UserController extends Controller
 
 
 
+
+
+
     //ADMIN METHODS INSERT HERE
     public function deleteUser($user_id)
     {

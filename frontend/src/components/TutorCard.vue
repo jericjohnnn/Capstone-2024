@@ -3,7 +3,7 @@
     <!-- Tutor Cards -->
     <div class="flex items-center justify-between p-3 w-11/12 bg-white">
       <div class="flex gap-x-3">
-        <div class="outline">
+        <div class="outline shrink-0">
           <img
             class="shrink-0 size-16 rounded-full"
             :src="tutors.profile_image"
@@ -11,7 +11,7 @@
           />
         </div>
 
-        <div class="">
+        <div class="outline">
           <h1 class="text-lg font-medium text-gray-800 dark:text-neutral-200">
             {{ tutors.tutor_name }}
           </h1>

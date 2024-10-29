@@ -5,13 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ReportStatusRequest;
 use App\Models\Report;
-use App\Models\Student;
-use App\Models\Tutor;
-use App\Models\User;
-use App\Models\UserType;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
+
 
 class ReportController extends Controller
 {
@@ -23,97 +18,88 @@ class ReportController extends Controller
 
 
 
+
+
+
     //ADMIN METHODS INSERT HERE
-    public function showAllReports(Request $request)
+    public function showAllReports()
     {
-        // Fetch reports with related models, paginated (10 per page)
         $reports = Report::with('complainant.tutor', 'complainant.student', 'complainant.userType')
             ->paginate(10);
 
-        // Use 'through()' to transform each report while keeping pagination intact
+        // ignore lang ning red sa "through" kay wa pako kita
+        // sa extension nga modetect na siya, kay bag o na nga feature sa laravel
         $reports->through(function ($report) {
-            $first_name = $report->complainant->tutor?->first_name ??
-                $report->complainant->student?->first_name ?? null;
-            $last_name = $report->complainant->tutor?->last_name ??
-                $report->complainant->student?->last_name ?? null;
+            $complainant = $report->complainant;
+            $first_name = $complainant->tutor?->first_name ?? $complainant->student?->first_name;
+            $last_name = $complainant->tutor?->last_name ?? $complainant->student?->last_name;
 
             return [
                 'id' => $report->id,
-                'complainant_name' => $first_name && $last_name ?
-                    "$first_name $last_name" : $first_name ?? $last_name ?? null,
-                'complainant_profile_image' => $report->complainant->tutor?->profile_image ??
-                    $report->complainant->student?->profile_image ?? null,
-                'complainant_user_type' => $report->complainant->userType->type,
+                'complainant_name' => $first_name && $last_name ? "$first_name $last_name" : null,
+                'complainant_profile_image' => $complainant->tutor?->profile_image ?? $complainant->student?->profile_image,
+                'complainant_user_type' => $complainant->userType->type,
                 'report_status' => $report->status,
             ];
         });
 
-        // Return the paginated reports with metadata intact
         return response()->json([
             'message' => 'All reports retrieved successfully.',
-            'complainant_report' => $reports, // Includes pagination metadata
+            'complainant_report' => $reports,
         ]);
     }
 
 
-
-    public function showReport(Request $request, $report_id)
+    public function showReport($report_id)
     {
-        $reports = Report::where('id', $report_id)
-            ->with('complainant.tutor', 'complainant.student', 'complainant.userType', 'offender.tutor', 'offender.student', 'offender.userType')
-            ->first();
+        $report = Report::where('id', $report_id)
+            ->with(
+                'complainant.tutor',
+                'complainant.student',
+                'complainant.userType',
+                'offender.tutor',
+                'offender.student',
+                'offender.userType'
+            )->first();
 
-        $complainant_first_name = $reports->complainant->tutor?->first_name ??
-            $reports->complainant->student?->first_name ??
-            null;
-        $complainant_last_name = $reports->complainant->tutor?->last_name ??
-            $reports->complainant->student?->last_name ??
-            null;
+        $getUserData = function ($user) {
+            $firstName = $user->tutor?->first_name ?? $user->student?->first_name ?? null;
+            $lastName = $user->tutor?->last_name ?? $user->student?->last_name ?? null;
 
-        $offender_first_name = $reports->offender->tutor?->first_name ??
-            $reports->offender->student?->first_name ??
-            null;
-        $offender_last_name = $reports->offender->tutor?->last_name ??
-            $reports->offender->student?->last_name ??
-            null;
+            return [
+                'full_name' => $firstName && $lastName ? "$firstName $lastName" : null,
+                'profile_image' => $user->tutor?->profile_image ?? $user->student?->profile_image ?? null,
+                'user_type' => $user->userType->type,
+                'offense_status' => $user->tutor?->offense_status ?? $user->student?->offense_status ?? null,
+                'contact_number' => $user->tutor?->contact_number ?? $user->student?->contact_number ?? null,
+                'address' => $user->tutor?->address ?? $user->student?->address ?? null,
+            ];
+        };
+
+        $complainantData = $getUserData($report->complainant);
+        $offenderData = $getUserData($report->offender);
 
         $report_data = [
             'message' => 'Report retrieved successfully.',
-            'report_id' => $reports->id,
-            'report_title' => $reports->title,
-            'report_message' => $reports->message,
-
-            'complainant_name' => $complainant_first_name && $complainant_last_name ?
-                "$complainant_first_name $complainant_last_name" :
-                $complainant_first_name ?? $complainant_last_name ?? null,
-            'complainant_profile_image' => $reports->complainant->tutor?->profile_image ??
-                $reports->complainant->student?->profile_image ??
-                null,
-            'complainant_user_type' => $reports->complainant->userType->type,
-            'offender_name' => $offender_first_name && $offender_last_name ?
-                "$offender_first_name $offender_last_name" :
-                $offender_first_name ?? $offender_last_name ?? null,
-            'offender_profile_image' => $reports->offender->tutor?->profile_image ??
-                $reports->offender->student?->profile_image ??
-                null,
-            'offender_user_type' => $reports->offender->userType->type,
-            'offender_offense_status' => $reports->offender->tutor?->offense_status ??
-                $reports->offender->student?->offense_status ??
-                null,
-            'offender_contact_number' => $reports->offender->tutor?->contact_number ??
-                $reports->offender->student?->contact_number ??
-                null,
-            'offender_address' => $reports->offender->tutor?->address ??
-                $reports->offender->student?->address ??
-                null,
-            'report_status' => $reports->status,
+            'report_id' => $report->id,
+            'report_title' => $report->title,
+            'report_message' => $report->message,
+            'complainant_name' => $complainantData['full_name'],
+            'complainant_profile_image' => $complainantData['profile_image'],
+            'complainant_user_type' => $complainantData['user_type'],
+            'offender_name' => $offenderData['full_name'],
+            'offender_profile_image' => $offenderData['profile_image'],
+            'offender_user_type' => $offenderData['user_type'],
+            'offender_offense_status' => $offenderData['offense_status'],
+            'offender_contact_number' => $offenderData['contact_number'],
+            'offender_address' => $offenderData['address'],
+            'report_status' => $report->status,
         ];
-        return response()->json(
-            [
-                'message' => 'Report retrieved successfully.',
-                'report_data' => $report_data,
-            ]
-        );
+
+        return response()->json([
+            'message' => 'Report retrieved successfully.',
+            'report_data' => $report_data,
+        ]);
     }
 
 

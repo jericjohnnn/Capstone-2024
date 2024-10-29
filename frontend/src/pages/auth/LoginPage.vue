@@ -52,11 +52,13 @@ const handleLogin = async () => {
       password: password.value,
     })
 
-    const { user_type, token } = response.data
+    const { user_email, user_full_name, user_type, token } = response.data
 
     // Store token in localStorage
     localStorage.setItem('app_auth_token', token)
     localStorage.setItem('user_type', user_type)
+    localStorage.setItem('user_email', user_email)
+    localStorage.setItem('user_full_name', user_full_name)
 
     if (user_type === 'Tutor') {
       router.push('/tutor/profile')
