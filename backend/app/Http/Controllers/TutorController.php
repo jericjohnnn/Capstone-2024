@@ -65,7 +65,7 @@ class TutorController extends Controller
     //ADMIN METHODS INSERT HERE
     public function showAllTutors()
     {
-        $tutors = Tutor::paginate(10);
+        $tutors = Tutor::paginate(8);
 
         return response()->json([
             'message' => 'Tutors retrieved successfully.',
@@ -75,7 +75,7 @@ class TutorController extends Controller
 
     public function showAcceptedTutors()
     {
-        $acceptedTutors = Tutor::where('approval_status', 'Accepted')->paginate(10);
+        $acceptedTutors = Tutor::where('approval_status', 'Accepted')->paginate(8);
 
         return response()->json([
             'message' => 'Accepted tutors retrieved successfully.',

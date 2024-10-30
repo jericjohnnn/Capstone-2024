@@ -1,23 +1,9 @@
 <template>
   <div class="flex flex-row">
-    <SideBar />
+    
     <div class="flex flex-col ml-6 flex-grow">
-      <!-- Header Section -->
-      <div class="flex items-center py-8">
-        <p class="text-4xl font-bold">Students Application Dashboard</p>
-        <div class="flex items-center ml-[150px]">
-          <input
-            type="text"
-            placeholder="Search students..."
-            class="px-4 py-2 border border-gray-300 rounded-lg w-[350px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <img src="data:image/svg+xml;base64,..." alt="Bell Icon" class="ml-5 w-6 h-6" />
-          <div class="ml-5 w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
-            <span class="text-white font-bold">P</span>
-          </div>
-        </div>
-      </div>
-
+      
+      
       <!-- Scrollable Table Section -->
       <div class="overflow-x-auto">
         <div class="flex flex-col w-[130rem] space-y-4 mr-6 ">

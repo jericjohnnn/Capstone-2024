@@ -1,8 +1,9 @@
-import ActiveStudents from '@/components/ActiveStudents.vue'
-import ActiveTutors from '@/components/ActiveTutors.vue'
-import TutorApplication from '@/components/TutorApplication.vue'
-import UsersReport from '@/components/UsersReport.vue'
+
 import AdminPage from '@/pages/admin/AdminPage.vue'
+import ActiveTutors from '@/pages/admin/ActiveTutors.vue'
+import TutorApplication from '@/pages/admin/TutorApplication.vue'
+import ActiveStudents from '@/pages/admin/ActiveStudents.vue'
+import UsersReport from '@/pages/admin/UsersReport.vue'
 
 const adminRoutes = [
   {

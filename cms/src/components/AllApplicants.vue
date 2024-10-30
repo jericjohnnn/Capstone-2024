@@ -4,7 +4,7 @@
       <!-- Header Row with Columns -->
       <div class="flex font-bold text-gray-700 bg-red-200 justify-center rounded-md border-b py-2 space-x-3 w-full">
         <div class="w-10 text-center">ID</div>
-        <div class="w-28 text-center">Full Name</div>
+        <div class="w-28 text-center">Name</div>
         <div class="w-16 text-center">Profile Image</div>
         <div class="w-32 text-center">Address</div>
         <div class="w-32 text-center">Contact Number</div>
@@ -20,7 +20,7 @@
 
       <!-- Scrollable Tutor Data Rows Container -->
       <div class="overflow-y-auto max-h-[400px] w-full">
-        <div v-for="tutor in paginatedTutors" :key="tutor.id" class="flex text-gray-600 py-2 space-x-3 w-full border-2 rounded-md bg-blue-200">
+        <div v-for="tutor in filteredTutors" :key="tutor.id" class="flex text-gray-600 py-2 space-x-3 w-full border-2 rounded-md bg-blue-200">
           <div class="w-10 text-center">{{ tutor.user_id }}</div>
           <div class="w-28 text-center">{{ tutor.first_name }} {{ tutor.last_name }}</div>
           <div class="w-16 text-center">
@@ -42,6 +42,7 @@
               {{ tutor.contacted_status ? 'Contacted' : 'Not Contacted' }}
             </button>
           </div>
+
           <div class="w-20 text-center">{{ tutor.approval_status }}</div>
           <div class="w-32 text-center">
             <div v-if="tutor.approval_status === 'Pending'">
@@ -79,41 +80,48 @@ import axiosInstance from '@/axiosInstance';
 const tutors = ref([]);
 const currentPage = ref(1);
 const totalPages = ref(0);
-const itemsPerPage = 8; // Define the number of items per page
+const currentTab = ref('all');
 
-async function fetchTutors() {
+// Fetch tutors and set pagination
+async function fetchTutors(page = 1) {
   try {
-    const response = await axiosInstance.get('/api/admin/all-tutors');
+    const response = await axiosInstance.get(`/api/admin/all-tutors?page=${page}`);
     tutors.value = response.data.all_tutors.data;
-    totalPages.value = Math.ceil(tutors.value.length / itemsPerPage);
-    currentPage.value = 1; // Start at first page on load
+    totalPages.value = response.data.all_tutors.last_page;
+    currentPage.value = response.data.all_tutors.current_page;
   } catch (error) {
     console.error('Error fetching tutors:', error);
   }
 }
 
-// Computed property to filter tutors for pagination
-const paginatedTutors = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  return tutors.value.slice(start, start + itemsPerPage);
-});
-
-function formatDate(dateString) {
-  return new Date(dateString).toLocaleDateString();
-}
-
 function prevPage() {
   if (currentPage.value > 1) {
-    currentPage.value--;
+    fetchTutors(currentPage.value - 1);
   }
 }
 
 function nextPage() {
   if (currentPage.value < totalPages.value) {
-    currentPage.value++;
+    fetchTutors(currentPage.value + 1);
   }
 }
 
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleDateString();
+}
+
+// Filter tutors based on the selected tab
+const filteredTutors = computed(() => {
+  if (currentTab.value === 'pending') return tutors.value.filter(tutor => tutor.approval_status === 'Pending');
+  if (currentTab.value === 'all') return tutors.value;
+  return tutors.value.filter(tutor => tutor.approval_status === capitalize(currentTab.value));
+});
+
+function capitalize(status) {
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+// Accept a tutor
 async function acceptTutor(tutorId) {
   try {
     await axiosInstance.patch(`/api/admin/approval-status/${tutorId}`, {
@@ -125,6 +133,7 @@ async function acceptTutor(tutorId) {
   }
 }
 
+// Reject a tutor
 async function rejectTutor(tutorId) {
   try {
     await axiosInstance.patch(`/api/admin/approval-status/${tutorId}`, {
@@ -136,14 +145,27 @@ async function rejectTutor(tutorId) {
   }
 }
 
-function updateTutorStatus(tutorId, newStatus) {
+function updateTutorStatus(tutorId, status) {
   const tutorIndex = tutors.value.findIndex((t) => t.id === tutorId);
   if (tutorIndex !== -1) {
     const tutor = tutors.value.splice(tutorIndex, 1)[0];
-    tutor.approval_status = newStatus;
+    tutor.approval_status = status;
     tutors.value.push(tutor);
   }
 }
 
-onMounted(fetchTutors);
+// Toggle contacted status
+async function toggleContactedStatus(tutor) {
+  try {
+    const newStatus = !tutor.contacted_status;
+    await axiosInstance.patch(`/api/admin/contacted-status/${tutor.id}`, {
+      contacted_status: newStatus,
+    });
+    tutor.contacted_status = newStatus;
+  } catch (error) {
+    console.error('Error updating contacted status:', error);
+  }
+}
+
+onMounted(() => fetchTutors(currentPage.value));
 </script>
