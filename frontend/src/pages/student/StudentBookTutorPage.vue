@@ -53,15 +53,34 @@
 
           <!-- click-to-navigate -->
           <vue-cal
-            :disable-views="['years', 'year']"
+            :disable-views="['years', 'year', 'week']"
+            hide-view-selector
             :time-from="6 * 60"
             :time-to="23 * 60"
-            active-view="month"
             :min-date="minDate"
             :special-hours="specialHours"
             :events="events"
             :hide-weekdays="hiddenWeekDays"
-          ></vue-cal>
+            @cell-click="addE"
+            click-to-navigate
+            :editable-events="{ title: true, delete: true, create: true }"
+            overlaps-per-time-step
+            @event-drag-create="onEventCreate"
+            :snap-to-time="30"
+            class="vuecal--full-height-delete"
+            style="height: 600px"
+          >
+            <template #title="{ view }">
+              🎉
+              <span v-if="view.id === 'month'">{{
+                view.startDate.format('MMMM YYYY')
+              }}</span>
+              <span v-if="view.id === 'day'">{{
+                view.startDate.format('dddd D MMMM (YYYY)')
+              }}</span>
+              🎉
+            </template>
+          </vue-cal>
 
           <!-- Booking Form -->
           <form @submit.prevent="handleSubmit" class="space-y-4">
@@ -190,7 +209,9 @@
             </div>
           </form>
         </div>
-        <button @click="testz">CLICK ME FOR CONSOLE LOG</button>
+        <button class="bg-green-400" @click="addE">ADD EVENT</button>
+        <button class="bg-red-400" @click="removeE">REMOVE EVENT</button>
+        <button class="bg-blue-400" @click="showcl">console log EVENT</button>
       </main>
     </SideBar>
     <HelpButton />
@@ -208,7 +229,56 @@ import 'vue-cal/dist/vuecal.css'
 
 const route = useRoute()
 
+const activeView = ref('month')
+
 const tutorDetails = ref({})
+
+function onEventDelete(event) {
+  // Assuming the event has an 'id' property
+  events.value = events.value.filter(e => e.id !== event.id)
+  alert(`Event "${event.title}" has been deleted.`)
+}
+
+const events = ref([
+  {
+    id: 1,
+    start: new Date('2024-11-01T13:00:00'),
+    end: new Date('2024-11-1 14:30'),
+    title: 'Doctor appointment',
+    class: 'health',
+    deletable: false,
+  },
+  {
+    id: 2,
+    start: '2024-11-2 10:00',
+    end: '2024-11-2 11:00',
+    title: 'Meeting with team',
+    class: 'work',
+    deletable: false,
+  },
+  // Add more events as needed, using a similar format.
+])
+// event
+function onEventCreate(newEvent) {
+  const newEventStart = new Date(newEvent.start)
+  let newEventEnd = new Date(newEvent.end)
+
+  const isOverlapping =
+    newEventStart < events.value[0].end && newEventEnd > events.value[0].start
+
+  if (isOverlapping) {
+    alert(
+      'Event time overlaps with an existing event. Please choose another time.',
+    )
+    newEventEnd = new Date('2024-11-01T12:00:00')
+    // insert logic here
+    return
+  }
+
+  alert(`Event "${newEvent.start}" has been created.`)
+
+  return newEvent
+}
 
 // const events = computed(() => [
 //   {
@@ -226,29 +296,23 @@ const tutorDetails = ref({})
 //   // Add more events as needed, using a similar format.
 // ])
 
-const events = ref([
-  {
-    start: '2024-11-1 13:00',
-    end: '2024-11-1 14:30',
-    title: 'Doctor appointment',
-    class: 'health',
-  },
-  {
-    start: '2024-11-2 10:00',
-    end: '2024-11-2 11:00',
-    title: 'Meeting with team',
-    class: 'work',
-  },
-  // Add more events as needed, using a similar format.
-])
-
-const testz = () => {
+const addE = () => {
   events.value.push({
-    start: '2024-11-3 15:00',
-    end: '2024-11-3 18:30',
+    id: 3,
+    start: '2024-11-2 15:00',
+    end: '2024-11-2 18:30',
     title: 'Doctor appointment',
-    class: 'health',
-  });
+    class: 'zz',
+    deletable: true,
+  })
+}
+
+const removeE = () => {
+  events.value = events.value.filter(event => event.id !== 3)
+}
+
+const showcl = () => {
+  console.log(events.value)
 }
 
 const dailyHours = computed(() => {
@@ -264,8 +328,6 @@ const dailyHours = computed(() => {
     { from: 13 * 60, to: endTime * 60, class: 'business-hours' },
   ]
 })
-
-
 
 // Make specialHours reactive
 const specialHours = computed(() => ({
@@ -291,20 +353,19 @@ const hiddenWeekDays = computed(() => {
   }
 
   const dayToNumber = {
-    'monday': 1,
-    'tuesday': 2,
-    'wednesday': 3,
-    'thursday': 4,
-    'friday': 5,
-    'saturday': 6,
-    'sunday': 7
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
+    sunday: 7,
   }
 
   return Object.keys(tutorDetails.value.work_days)
     .filter(day => !tutorDetails.value.work_days[day])
     .map(day => dayToNumber[day])
 })
-
 
 const getUserData = localStorage.getItem('user_data')
 const userData = getUserData ? JSON.parse(getUserData) : null
@@ -379,11 +440,12 @@ onMounted(() => {
   text-decoration: line-through;
   color: #bbb;
 }
+
 .vuecal__cell--before-min {
   color: #b6d6c7;
 }
 .vuecal__cell--after-max {
-  color: #008b8b;
+  color: #00f0f0;
 }
 
 .vuecal__event.health {
@@ -399,6 +461,7 @@ onMounted(() => {
   color: #fff;
   font-size: 0.75em; /* Adjust font size as needed */
 }
+
 
 /* :deep(.vuecal__cell--disabled) {
   background-color: #f5f5f5;
