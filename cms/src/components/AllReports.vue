@@ -1,49 +1,67 @@
 <template>
   <div class="bg-red-300 p-4">
     <h1 class="text-2xl font-bold mb-4">Reports</h1>
+
     <div v-if="loading" class="text-center">Loading reports...</div>
     <div v-else-if="reports.length === 0" class="text-center">No reports available.</div>
     <div v-else>
       <div class="space-y-4">
-        <div v-for="report in reports" :key="report.id" class="bg-white p-4 rounded shadow">
-          <div class="flex flex-row gap-x-4 ">
+        <div
+          v-for="report in reports"
+          :key="report.id"
+          class="bg-white p-4 rounded shadow"
+        >
+          <div class="flex flex-row gap-x-4">
             <div>
-            <img :src="report.complainant_profile_image" alt="Profile" class="w-16 h-16 rounded-full mb-2" />
+              <img :src="report.complainant_profile_image" alt="Profile" class="w-16 h-16 rounded-full mb-2" />
+            </div>
+            <div class="mr-auto">
+              <h2
+                class="font-semibold"
+                :class="{
+                  'text-blue-600': report.complainant_user_type === 'Tutor',
+                  'text-green-600': report.complainant_user_type === 'Student'
+                }"
+              >
+                {{ report.complainant_user_type }}
+              </h2>
+              <h2 class="font-semibold">
+                {{ report.complainant_name }}
+                <span class="font-normal"> has filed a complaint</span>
+              </h2>
+            </div>
+            <div class="flex justify-between items-center">
+              <button @click="viewReport(report)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mb-1">
+                View Report
+              </button>
+              <p class="ml-4">Status: {{ report.report_status }}</p>
+            </div>
           </div>
-          <div class="mr-auto">
-          <h2
-  class="font-semibold"
-  :class="{
-    'text-blue-600': report.complainant_user_type === 'Tutor',
-    'text-green-600': report.complainant_user_type === 'Student'
-  }"
->
-  {{ report.complainant_user_type }}
-</h2>
-          <h2 class="font-semibold">{{ report.complainant_name }} <span class="font-normal"> has filed a complaint</span></h2>
-          </div>
-         
-          <div class="flex justify-between items-center">
-            <button class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mb-1">View Report</button>
-             <p class="ml-4">Status: {{ report.report_status }}</p>
-          </div>
-          </div>
-          
         </div>
       </div>
+
       <div class="mt-4">
         <button @click="fetchReports" class="bg-blue-500 text-white px-4 py-2 rounded">Refresh Reports</button>
       </div>
     </div>
+
+    <!-- Conditionally Render ReportDetails Component -->
+    <ReportDetails
+      v-if="selectedReport"
+      :report="selectedReport"
+      @close="selectedReport = null"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import ReportDetails from './ReportDetails.vue'; // Import ReportDetails component
 
 const reports = ref([]);
 const loading = ref(true);
+const selectedReport = ref(null);
 
 const fetchReports = async () => {
   loading.value = true;
@@ -55,6 +73,11 @@ const fetchReports = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+// Set the selected report for viewing details
+const viewReport = (report) => {
+  selectedReport.value = report;
 };
 
 // Fetch reports on component mount
