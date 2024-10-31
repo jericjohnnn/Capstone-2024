@@ -26,7 +26,7 @@ const studentRoutes = [
     component: StudentNotificationPage
   },
   {
-    path: '/student/book',
+    path: '/student/book/:tutorId',
     name: 'StudentBook',
     component: StudentBookTutorPage
   },

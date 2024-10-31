@@ -130,12 +130,13 @@ const handleSubmit = async () => {
 
   try {
     const response = await axiosInstance.post('api/register', payload);
-    const { message, user_email, user_full_name, user_type, token } = response.data
+    const { message, user_email, user_full_name, user_type, user_data, token } = response.data
     alert(message);
     localStorage.setItem('app_auth_token', token)
     localStorage.setItem('user_type', user_type)
     localStorage.setItem('user_email', user_email)
     localStorage.setItem('user_full_name', user_full_name)
+    localStorage.setItem('user_data', JSON.stringify(user_data));
     router.push('/tutor/profile')
 
   } catch (error) {

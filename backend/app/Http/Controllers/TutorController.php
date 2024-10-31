@@ -12,10 +12,8 @@ class TutorController extends Controller
     //NORMAL USER METHODS INSERT HERE
     public function createTutor($validatedDataWithUserId)
     {
-        Tutor::create($validatedDataWithUserId);
-        return [
-            'message' => 'Tutor successfully created',
-        ];
+        $tutor = Tutor::create($validatedDataWithUserId);
+        return $tutor;
     }
 
     public function showTutors()
