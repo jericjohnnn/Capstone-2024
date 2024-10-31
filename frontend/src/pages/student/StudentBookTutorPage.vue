@@ -56,9 +56,11 @@
             :disable-views="['years', 'year']"
             :time-from="6 * 60"
             :time-to="23 * 60"
-            :time-step="30"
+            active-view="month"
             :min-date="minDate"
             :special-hours="specialHours"
+            :events="events"
+            :hide-weekdays="hiddenWeekDays"
           ></vue-cal>
 
           <!-- Booking Form -->
@@ -208,18 +210,62 @@ const route = useRoute()
 
 const tutorDetails = ref({})
 
-const tutorStartTime = computed(() => {
-  return tutorDetails.value.work_days?.start_time ?? 6
-})
-const tutorEndTime = computed(() => {
-  return tutorDetails.value.work_days?.end_time ?? 18
+// const events = computed(() => [
+//   {
+//     start: '2024-11-1 13:00',
+//     end: '2024-11-1 14:30',
+//     title: 'Doctor appointment',
+//     class: 'health',
+//   },
+//   {
+//     start: '2024-11-2 10:00',
+//     end: '2024-11-2 11:00',
+//     title: 'Meeting with team',
+//     class: 'work',
+//   },
+//   // Add more events as needed, using a similar format.
+// ])
+
+const events = ref([
+  {
+    start: '2024-11-1 13:00',
+    end: '2024-11-1 14:30',
+    title: 'Doctor appointment',
+    class: 'health',
+  },
+  {
+    start: '2024-11-2 10:00',
+    end: '2024-11-2 11:00',
+    title: 'Meeting with team',
+    class: 'work',
+  },
+  // Add more events as needed, using a similar format.
+])
+
+const testz = () => {
+  events.value.push({
+    start: '2024-11-3 15:00',
+    end: '2024-11-3 18:30',
+    title: 'Doctor appointment',
+    class: 'health',
+  });
+}
+
+const dailyHours = computed(() => {
+  const startTime = tutorDetails.value.work_days?.start_time ?? 6
+  const endTime = tutorDetails.value.work_days?.end_time ?? 23
+
+  if ((startTime < 12 && endTime <= 12) || (startTime >= 13 && endTime <= 23)) {
+    return [{ from: startTime * 60, to: endTime * 60, class: 'business-hours' }]
+  }
+
+  return [
+    { from: startTime * 60, to: 12 * 60, class: 'business-hours' },
+    { from: 13 * 60, to: endTime * 60, class: 'business-hours' },
+  ]
 })
 
-// Make dailyHours reactive using a computed property
-const dailyHours = computed(() => [
-  { from: tutorStartTime.value * 60, to: 12 * 60, class: 'business-hours' },
-  { from: 13 * 60, to: tutorEndTime.value * 60, class: 'business-hours' },
-])
+
 
 // Make specialHours reactive
 const specialHours = computed(() => ({
@@ -237,6 +283,28 @@ const minDate = computed(() => {
   date.setDate(date.getDate())
   return date
 })
+
+// // for disabling specific day of a week
+const hiddenWeekDays = computed(() => {
+  if (!tutorDetails.value.work_days) {
+    return []
+  }
+
+  const dayToNumber = {
+    'monday': 1,
+    'tuesday': 2,
+    'wednesday': 3,
+    'thursday': 4,
+    'friday': 5,
+    'saturday': 6,
+    'sunday': 7
+  }
+
+  return Object.keys(tutorDetails.value.work_days)
+    .filter(day => !tutorDetails.value.work_days[day])
+    .map(day => dayToNumber[day])
+})
+
 
 const getUserData = localStorage.getItem('user_data')
 const userData = getUserData ? JSON.parse(getUserData) : null
@@ -309,6 +377,7 @@ onMounted(() => {
 }
 .vuecal__cell--disabled {
   text-decoration: line-through;
+  color: #bbb;
 }
 .vuecal__cell--before-min {
   color: #b6d6c7;
@@ -316,4 +385,25 @@ onMounted(() => {
 .vuecal__cell--after-max {
   color: #008b8b;
 }
+
+.vuecal__event.health {
+  background-color: rgba(253, 156, 66, 0.9);
+  border: 1px solid rgb(233, 136, 46);
+  color: #fff;
+  font-size: 0.75em; /* Adjust font size as needed */
+}
+
+.vuecal__event.work {
+  background-color: rgba(255, 102, 102, 0.9);
+  border: 1px solid rgb(235, 82, 82);
+  color: #fff;
+  font-size: 0.75em; /* Adjust font size as needed */
+}
+
+/* :deep(.vuecal__cell--disabled) {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+} */
+
+/* .vuecal__cell--disabled {text-decoration: line-through;color: #bbb;} */
 </style>
