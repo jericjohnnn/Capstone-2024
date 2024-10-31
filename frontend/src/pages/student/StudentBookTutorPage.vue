@@ -62,7 +62,8 @@
             :events="events"
             :hide-weekdays="hiddenWeekDays"
             @cell-click="addE"
-            click-to-navigate
+            v-model:active-view="activeView"
+            :click-to-navigate="isDay"
             :editable-events="{ title: true, delete: true, create: true }"
             overlaps-per-time-step
             @event-drag-create="onEventCreate"
@@ -81,7 +82,9 @@
               🎉
             </template>
           </vue-cal>
-
+          <div>
+            {{ activeView }}
+          </div>
           <!-- Booking Form -->
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <div>
@@ -230,6 +233,7 @@ import 'vue-cal/dist/vuecal.css'
 const route = useRoute()
 
 const activeView = ref('month')
+// const dayView = ref('day')
 
 const tutorDetails = ref({})
 
@@ -296,15 +300,25 @@ function onEventCreate(newEvent) {
 //   // Add more events as needed, using a similar format.
 // ])
 
+
+const isDay = computed(() => {
+  if(activeView.value == 'day'){
+    return false
+  }
+  return true
+})
+
 const addE = () => {
-  events.value.push({
-    id: 3,
-    start: '2024-11-2 15:00',
-    end: '2024-11-2 18:30',
-    title: 'Doctor appointment',
-    class: 'zz',
-    deletable: true,
-  })
+  if (activeView.value === 'day') {
+    events.value.push({
+      id: 3,
+      start: '2024-11-2 15:00',
+      end: '2024-11-2 18:30',
+      title: 'Doctor appointment',
+      class: 'zz',
+      deletable: true,
+    })
+  }
 }
 
 const removeE = () => {
@@ -461,7 +475,6 @@ onMounted(() => {
   color: #fff;
   font-size: 0.75em; /* Adjust font size as needed */
 }
-
 
 /* :deep(.vuecal__cell--disabled) {
   background-color: #f5f5f5;
