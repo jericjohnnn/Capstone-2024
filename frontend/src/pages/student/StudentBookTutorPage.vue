@@ -185,7 +185,6 @@
             </div>
           </form>
         </div>
-        <JamalModal></JamalModal>
       </main>
     </SideBar>
 
@@ -194,7 +193,6 @@
 </template>
 
 <script setup>
-import JamalModal from '@/components/JamalModal.vue'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import { ref, onMounted, watch } from 'vue'

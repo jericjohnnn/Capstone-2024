@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="isModalOpen" class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div class="bg-white p-4 rounded-lg w-80" @click.stop>
+      <div class="bg-white p-4 rounded-lg w-96" @click.stop>
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-lg font-semibold">Select Time</h2>
           <button @click="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
@@ -10,17 +10,17 @@
         <!-- Start Time -->
         <div class="mb-4 flex items-center gap-2">
           <label class="w-20">Start Time:</label>
-          <select v-model="startHour" class="border p-1 rounded">
+          <select v-model="startHour" class="border  px-8 rounded">
             <option v-for="hour in 12" :key="hour" :value="hour">
               {{ String(hour).padStart(2, '0') }}
             </option>
           </select>
           <span>:</span>
-          <select v-model="startMinute" class="border p-1 rounded">
+          <select v-model="startMinute" class="border  px-8 rounded">
             <option value="00">00</option>
             <option value="30">30</option>
           </select>
-          <select v-model="startPeriod" class="border p-1 rounded">
+          <select v-model="startPeriod" class="border  px-8 rounded">
             <option value="AM">AM</option>
             <option value="PM">PM</option>
           </select>
@@ -29,17 +29,17 @@
         <!-- End Time -->
         <div class="mb-6 flex items-center gap-2">
           <label class="w-20">End Time:</label>
-          <select v-model="endHour" class="border p-1 rounded">
+          <select v-model="endHour" class="border  px-8 rounded">
             <option v-for="hour in 12" :key="hour" :value="hour">
               {{ String(hour).padStart(2, '0') }}
             </option>
           </select>
           <span>:</span>
-          <select v-model="endMinute" class="border p-1 rounded">
+          <select v-model="endMinute" class="border  px-8 rounded">
             <option value="00">00</option>
             <option value="30">30</option>
           </select>
-          <select v-model="endPeriod" class="border p-1 rounded">
+          <select v-model="endPeriod" class="border  px-8 rounded">
             <option value="AM">AM</option>
             <option value="PM">PM</option>
           </select>

@@ -31,8 +31,8 @@
       v-model:active-view="activeView"
       :hide-weekdays="hiddenWeekDays"
       hide-view-selector
-      :time-from="6 * 60"
-      :time-to="23 * 60"
+      :time-from="0 * 60"
+      :time-to="25 * 60"
       :min-date="availableStartingDate"
       :special-hours="specialHours"
       :events="events"
@@ -57,7 +57,6 @@
       </template>
     </vue-cal>
 
-    <!-- TESTING PURPOSES -->
     <div>
       <TimePickerModal
         :isModalOpen="isModalOpen"
@@ -65,16 +64,12 @@
         @update:end-time="updateEndTime"
         @close="closeModal"
       />
-
-      <p>Start Time: {{ startTime }}</p>
-      <p>End Time: {{ endTime }}</p>
     </div>
 
-    <div>{{ clickedCellDate }}</div>
-    <button class="bg-violet-400" @click="testt">Open testt</button>
-    <div>
-      {{ jamal }}
-    </div>
+    <!-- TESTING PURPOSES -->
+
+<!-- <JamalModal></JamalModal> -->
+
     <!-- TESTING PURPOSES -->
   </div>
 </template>
@@ -86,22 +81,8 @@ import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
 
 // TESTING PURPOSES!!
-const startTime = ref('')
-const endTime = ref('')
 
-const updateStartTime = time => {
-  startTime.value = time
-}
-
-const updateEndTime = time => {
-  endTime.value = time
-}
-
-const jamal = ref('jamal')
-
-const testt = () => {
-  jamal.value = `${clickedCellDate.value.format('YYYY-MM-DD')} ${startTime.value}`
-}
+// import JamalModal from './JamalModal.vue'
 
 // TESTING PURPOSES!!
 
@@ -114,6 +95,24 @@ const props = defineProps({
 
 const isTutorDetailsLoaded = computed(() => !!props.tutorDetails)
 
+
+const isModalOpen = ref(false)
+
+const selectedStartTime = ref('')
+const selectedEndTime = ref('')
+
+const updateStartTime = time => {
+  selectedStartTime.value = time
+}
+
+const updateEndTime = time => {
+  selectedEndTime.value = time
+}
+
+const closeModal = () => {
+  isModalOpen.value = false
+}
+
 const storeCellDate = event => {
   console.log(event)
   clickedCellDate.value = event
@@ -121,55 +120,76 @@ const storeCellDate = event => {
 
 const clickedCellDate = ref()
 
-const isModalOpen = ref(false)
 
 // this will be sent for post
 const addedPendingSchedules = ref([])
-
 const events = ref([
   {
     id: 1,
     start: '2024-11-01 13:00:00',
-    end: '2024-11-01 14:30:00',
+    end: '2024-11-01 16:30:00',
     title: 'Math',
     class: 'tutorSchedule',
   },
   {
     id: 2,
-    start: '2024-11-02 10:00:00',
+    start: '2024-11-02 7:00:00',
     end: '2024-11-02 11:00:00',
     title: 'Science',
     class: 'tutorSchedule',
   },
+  {
+    id: 3,
+    start: '2024-11-02 15:00:00',
+    end: '2024-11-02 17:00:00',
+    title: 'English',
+    class: 'tutorSchedule',
+  },
 ])
 
-const closeModal = () => {
-  isModalOpen.value = false
+
+
+const isEventOverlap = (newStart, newEnd, event) => {
+  const existingStart = new Date(event.start).getTime()
+  const existingEnd = new Date(event.end).getTime()
+
+  return newStart < existingEnd && existingStart < newEnd
 }
 
 const addScheduleRequest = () => {
-  // for view
-  events.value.push({
+  const newStart = new Date(
+    `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedStartTime.value}`,
+  ).getTime()
+  const newEnd = new Date(
+    `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedEndTime.value}`,
+  ).getTime()
+
+  const hasOverlap = events.value.some(event =>
+    isEventOverlap(newStart, newEnd, event),
+  )
+
+  if (hasOverlap) {
+    alert(
+      'Event time overlaps with an existing event. Please choose another time.',
+    )
+    return false 
+  }
+
+  const newEvent = {
     id: Date.now(),
-    start: `${clickedCellDate.value.format('YYYY-MM-DD')} ${startTime.value}`,
-    end: `${clickedCellDate.value.format('YYYY-MM-DD')} ${endTime.value}`,
-    title: 'You Added', // a
-    class: 'addedSchedule',
-    deletable: true,
-  })
-  // for post
-  addedPendingSchedules.value.push({
-    id: Date.now(),
-    start: `${clickedCellDate.value.format('YYYY-MM-DD')} ${startTime.value}`,
-    end: `${clickedCellDate.value.format('YYYY-MM-DD')} ${endTime.value}`,
+    start: `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedStartTime.value}`,
+    end: `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedEndTime.value}`,
     title: 'You Added',
     class: 'addedSchedule',
     deletable: true,
-  })
+  }
+
+  events.value.push(newEvent)
+  addedPendingSchedules.value.push(newEvent)
 }
 
-watch([startTime, endTime], () => {
-  if (startTime.value && endTime.value) {
+watch([selectedStartTime, selectedEndTime], () => {
+  if (selectedStartTime.value && selectedEndTime.value) {
     addScheduleRequest()
   }
 })
@@ -206,16 +226,25 @@ const dailyHours = computed(() => {
     ]
   }
 
-  const startTime = props.tutorDetails.work_days?.start_time ?? 6
-  const endTime = props.tutorDetails.work_days?.end_time ?? 23
+  const tutorStartTime = props.tutorDetails.work_days?.start_time ?? 6
+  const tutorEndTime = props.tutorDetails.work_days?.end_time ?? 23
 
-  if ((startTime < 12 && endTime <= 12) || (startTime >= 13 && endTime <= 23)) {
-    return [{ from: startTime * 60, to: endTime * 60, class: 'business-hours' }]
+  if (
+    (tutorStartTime < 12 && tutorEndTime <= 12) ||
+    (tutorStartTime >= 13 && tutorEndTime <= 23)
+  ) {
+    return [
+      {
+        from: tutorStartTime * 60,
+        to: tutorEndTime * 60,
+        class: 'business-hours',
+      },
+    ]
   }
 
   return [
-    { from: startTime * 60, to: 12 * 60, class: 'business-hours' },
-    { from: 13 * 60, to: endTime * 60, class: 'business-hours' },
+    { from: tutorStartTime * 60, to: 12 * 60, class: 'business-hours' },
+    { from: 13 * 60, to: tutorEndTime * 60, class: 'business-hours' },
   ]
 })
 </script>
