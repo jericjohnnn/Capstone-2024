@@ -29,14 +29,17 @@ class AuthController extends Controller
         $student = 1;
         $tutor = 2;
         $userType = null;
+        $userData = null;
 
         if ($validatedData['user_type_id'] ==  $student) {
-            (new StudentController)->createStudent($validatedDataWithUserId);
+            $studentData = (new StudentController)->createStudent($validatedDataWithUserId);
             $userType = "Student";
+            $userData = $studentData;
         }
         if ($validatedData['user_type_id'] == $tutor) {
-            (new TutorController)->createTutor($validatedDataWithUserId);
+            $tutorData = (new TutorController)->createTutor($validatedDataWithUserId);
             $userType = "Tutor";
+            $userData = $tutorData;
         }
 
         $token = $user->createToken('authToken')->plainTextToken;
@@ -46,6 +49,7 @@ class AuthController extends Controller
             'user_email' => $user->email,
             'user_full_name' => "{$validatedData['first_name']} {$validatedData['last_name']}",
             'user_type' => $userType,
+            'user_data' => $userData,
             'token' => $token,
         ], 201);
     }
@@ -67,16 +71,19 @@ class AuthController extends Controller
 
         $userType = null;
         $userFullName = null;
+        $userData = null;
 
         if ($user->user_type_id === 1) {
             $student = Student::where('user_id', $user->id)->first();
             $userFullName = "{$student->first_name} {$student->last_name}";
             $userType = "Student";
+            $userData = $student;
         }
         if ($user->user_type_id === 2) {
             $tutor = Tutor::where('user_id', $user->id)->first();
             $userFullName = "{$tutor->first_name} {$tutor->last_name}";
             $userType = "Tutor";
+            $userData = $tutor;
         }
 
         return response()->json([
@@ -84,6 +91,7 @@ class AuthController extends Controller
             'user_email' => $user->email,
             'user_full_name' => $userFullName,
             'user_type' => $userType,
+            'user_data' => $userData,
             'token' => $token,
         ], 200);
     }

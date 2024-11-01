@@ -1,0 +1,283 @@
+<template>
+  <div>
+    <div class="">
+      <button
+        class="bg-green-400"
+        :disabled="isDay"
+        @click="isModalOpen = true"
+      >
+        Add Schedule
+      </button>
+      <div
+        v-for="schedule in addedPendingSchedules"
+        :key="schedule.id"
+        class="mb-2"
+      >
+        <div class="bg-red-500 outline p-2 flex flex-col text-white">
+          <div class="font-semibold">
+            {{ new Date(schedule.start).format('MMMM-DD-YYYY') }}
+          </div>
+          <div>
+            {{ new Date(schedule.start).formatTime('hh:mm{am}') }} to
+            {{ new Date(schedule.end).formatTime('hh:mm{am}') }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <vue-cal
+      :click-to-navigate="isDay"
+      :disable-views="['years', 'year', 'week']"
+      v-model:active-view="activeView"
+      :hide-weekdays="hiddenWeekDays"
+      hide-view-selector
+      :time-from="0 * 60"
+      :time-to="25 * 60"
+      :min-date="availableStartingDate"
+      :special-hours="specialHours"
+      :events="events"
+      @cell-click="storeCellDate"
+      class="vuecal--full-height-delete"
+      style="height: 500px"
+    >
+      <template #title="{ view }">
+        🎉
+        <span class="" v-if="view.id === 'month'">{{
+          view.startDate.format('MMMM YYYY')
+        }}</span>
+        <span class="" v-if="view.id === 'day'">{{
+          view.endDate.format('dddd | MMMM D')
+        }}</span>
+        🎉
+      </template>
+      <template #event="{ event }">
+        <div class="vuecal__event-title" v-html="event.title" />
+        <span>{{ event.start.formatTime('hh:mm{am}') }}</span>
+        <span>{{ event.end.formatTime('hh:mm{am}') }}</span>
+      </template>
+    </vue-cal>
+
+    <div>
+      <TimePickerModal
+        :isModalOpen="isModalOpen"
+        @update:start-time="updateStartTime"
+        @update:end-time="updateEndTime"
+        @close="closeModal"
+      />
+    </div>
+
+    <!-- TESTING PURPOSES -->
+
+<!-- <JamalModal></JamalModal> -->
+
+    <!-- TESTING PURPOSES -->
+  </div>
+</template>
+
+<script setup>
+import TimePickerModal from './TimePickerModal.vue'
+import { ref, computed, watch } from 'vue'
+import VueCal from 'vue-cal'
+import 'vue-cal/dist/vuecal.css'
+
+// TESTING PURPOSES!!
+
+// import JamalModal from './JamalModal.vue'
+
+// TESTING PURPOSES!!
+
+const props = defineProps({
+  tutorDetails: {
+    type: Object,
+    required: true,
+  },
+})
+
+const isTutorDetailsLoaded = computed(() => !!props.tutorDetails)
+
+
+const isModalOpen = ref(false)
+
+const selectedStartTime = ref('')
+const selectedEndTime = ref('')
+
+const updateStartTime = time => {
+  selectedStartTime.value = time
+}
+
+const updateEndTime = time => {
+  selectedEndTime.value = time
+}
+
+const closeModal = () => {
+  isModalOpen.value = false
+}
+
+const storeCellDate = event => {
+  console.log(event)
+  clickedCellDate.value = event
+}
+
+const clickedCellDate = ref()
+
+
+// this will be sent for post
+const addedPendingSchedules = ref([])
+const events = ref([
+  {
+    id: 1,
+    start: '2024-11-01 13:00:00',
+    end: '2024-11-01 16:30:00',
+    title: 'Math',
+    class: 'tutorSchedule',
+  },
+  {
+    id: 2,
+    start: '2024-11-02 7:00:00',
+    end: '2024-11-02 11:00:00',
+    title: 'Science',
+    class: 'tutorSchedule',
+  },
+  {
+    id: 3,
+    start: '2024-11-02 15:00:00',
+    end: '2024-11-02 17:00:00',
+    title: 'English',
+    class: 'tutorSchedule',
+  },
+])
+
+
+
+const isEventOverlap = (newStart, newEnd, event) => {
+  const existingStart = new Date(event.start).getTime()
+  const existingEnd = new Date(event.end).getTime()
+
+  return newStart < existingEnd && existingStart < newEnd
+}
+
+const addScheduleRequest = () => {
+  const newStart = new Date(
+    `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedStartTime.value}`,
+  ).getTime()
+  const newEnd = new Date(
+    `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedEndTime.value}`,
+  ).getTime()
+
+  const hasOverlap = events.value.some(event =>
+    isEventOverlap(newStart, newEnd, event),
+  )
+
+  if (hasOverlap) {
+    alert(
+      'Event time overlaps with an existing event. Please choose another time.',
+    )
+    return false 
+  }
+
+  const newEvent = {
+    id: Date.now(),
+    start: `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedStartTime.value}`,
+    end: `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedEndTime.value}`,
+    title: 'You Added',
+    class: 'addedSchedule',
+    deletable: true,
+  }
+
+  events.value.push(newEvent)
+  addedPendingSchedules.value.push(newEvent)
+}
+
+watch([selectedStartTime, selectedEndTime], () => {
+  if (selectedStartTime.value && selectedEndTime.value) {
+    addScheduleRequest()
+  }
+})
+
+// calendar views
+const activeView = ref('month')
+const isDay = computed(() => activeView.value !== 'day')
+
+// calendar min-date
+const availableStartingDate = computed(() => {
+  const date = new Date()
+  date.setDate(date.getDate())
+  return date
+})
+
+// calendar special hours
+const specialHours = computed(() => {
+  return {
+    1: dailyHours.value,
+    2: dailyHours.value,
+    3: dailyHours.value,
+    4: dailyHours.value,
+    5: dailyHours.value,
+    6: dailyHours.value,
+    7: dailyHours.value,
+  }
+})
+
+const dailyHours = computed(() => {
+  if (!isTutorDetailsLoaded.value) {
+    return [
+      { from: 6 * 60, to: 12 * 60, class: 'business-hours' },
+      { from: 13 * 60, to: 23 * 60, class: 'business-hours' },
+    ]
+  }
+
+  const tutorStartTime = props.tutorDetails.work_days?.start_time ?? 6
+  const tutorEndTime = props.tutorDetails.work_days?.end_time ?? 23
+
+  if (
+    (tutorStartTime < 12 && tutorEndTime <= 12) ||
+    (tutorStartTime >= 13 && tutorEndTime <= 23)
+  ) {
+    return [
+      {
+        from: tutorStartTime * 60,
+        to: tutorEndTime * 60,
+        class: 'business-hours',
+      },
+    ]
+  }
+
+  return [
+    { from: tutorStartTime * 60, to: 12 * 60, class: 'business-hours' },
+    { from: 13 * 60, to: tutorEndTime * 60, class: 'business-hours' },
+  ]
+})
+</script>
+
+<style>
+.business-hours {
+  background-color: rgba(255, 255, 0, 0.15);
+  border: solid rgba(255, 210, 0, 0.3);
+  border-width: 2px 0;
+}
+.vuecal__cell--disabled {
+  text-decoration: line-through;
+  color: #bbb;
+}
+
+.vuecal__cell--before-min {
+  color: #b6d6c7;
+}
+.vuecal__cell--after-max {
+  color: #00f0f0;
+}
+
+.vuecal__event.tutorSchedule {
+  background-color: rgba(235, 235, 235, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  color: #8d8d8d;
+  font-size: 0.75em; /* Adjust font size as needed */
+}
+
+.vuecal__event.addedSchedule {
+  background-color: rgba(36, 77, 255, 0.9);
+  border: 1px solid rgba(231, 236, 255, 0.9);
+  color: #fff;
+  font-size: 0.75em; /* Adjust font size as needed */
+}
+</style>

@@ -21,8 +21,8 @@ return new class extends Migration
             $table->boolean('friday')->default(false);
             $table->boolean('saturday')->default(false);
             $table->boolean('sunday')->default(false);
-            $table->integer('start_time'); // prone to change to date instead of int
-            $table->integer('end_time'); // prone to change to date instead of int
+            $table->time('start_time');
+            $table->time('end_time');
             $table->timestamps();
         });
     }

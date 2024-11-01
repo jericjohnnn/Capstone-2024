@@ -15,11 +15,16 @@
           <p class="text-blue-100">{{ tutor.address }}</p>
         </div>
       </div>
-      <button
-        class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-400"
-      >
-        BOOK
-      </button>
+      <div class="flex flex-col">
+        <button
+          @click="goToBook"
+          class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-400"
+        >
+          BOOK
+        </button>
+        <p>{{ tutor.id }}</p>
+        <a href="#">report</a>
+      </div>
     </div>
 
     <!-- Scrollable Content -->
@@ -147,7 +152,10 @@
         </div>
 
         <div v-else class="space-y-6">
-          <RatingsCarousel class="w-full" :ratingComments="ratingComments"></RatingsCarousel>
+          <RatingsCarousel
+            class="w-full"
+            :ratingComments="ratingComments"
+          ></RatingsCarousel>
         </div>
       </div>
     </div>
@@ -155,9 +163,12 @@
 </template>
 
 <script setup>
-import StarRating from '@/components/StarRating.vue'
+import StarRating from './StarRating.vue'
 import RatingsCarousel from './RatingsCarousel.vue'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const props = defineProps({
   tutor: {
@@ -165,6 +176,13 @@ const props = defineProps({
     required: true,
   },
 })
+
+function goToBook() {
+  router.push({
+    name: 'StudentBook',
+    params: { tutorId: props.tutor.id },
+  });
+}
 
 const availableDays = computed(() => {
   if (
