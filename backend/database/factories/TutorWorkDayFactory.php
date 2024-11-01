@@ -17,7 +17,6 @@ class TutorWorkDayFactory extends Factory
      */
     public function definition(): array
     {
-        // Define morning, afternoon, and full-day shifts with start and end ranges
         $shiftType = $this->faker->randomElement(['morning', 'afternoon', 'full-day']);
 
         switch ($shiftType) {
@@ -45,8 +44,8 @@ class TutorWorkDayFactory extends Factory
             'friday' => $this->faker->boolean(80),      // 80% chance of 'True'
             'saturday' => $this->faker->boolean(40),    // 40% chance of 'True'
             'sunday' => $this->faker->boolean(20),      // 20% chance of 'True'
-            'start_time' => $startTime,
-            'end_time' => $endTime,
+            'start_time' => sprintf('%02d:00:00', $startTime),
+            'end_time' => sprintf('%02d:00:00', $endTime),
         ];
     }
 }

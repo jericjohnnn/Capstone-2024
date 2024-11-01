@@ -163,7 +163,7 @@
 </template>
 
 <script setup>
-import StarRating from '@/components/StarRating.vue'
+import StarRating from './StarRating.vue'
 import RatingsCarousel from './RatingsCarousel.vue'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router';

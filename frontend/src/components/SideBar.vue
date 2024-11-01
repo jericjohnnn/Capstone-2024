@@ -73,7 +73,7 @@
     <!-- Sidebar -->
     <div
       id="hs-application-sidebar"
-      class="hs-overlay [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform w-[260px] h-full hidden fixed inset-y-0 start-0 z-[60] bg-blue-600 lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 dark:bg-neutral-800 dark:border-neutral-700"
+      class="hs-overlay [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform w-[260px] h-full hidden fixed inset-y-0 start-0 z-[20] bg-blue-600 lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 dark:bg-neutral-800 dark:border-neutral-700"
       role="dialog"
       tabindex="-1"
       aria-label="Sidebar"
@@ -304,7 +304,7 @@
     <!-- End Sidebar -->
 
     <!-- Content -->
-    <div class="w-full min-h-screen flex-wrap px-4 sm:px-6 md:px-8 lg:ps-72">
+    <div class="w-full min-h-screen z-50 flex-wrap px-4 sm:px-6 md:px-8 lg:ps-72">
       <slot></slot>
     </div>
   </div>
@@ -321,6 +321,7 @@ const userFullName = localStorage.getItem('user_full_name');
 
 async function logout() {
   try {
+    console.log("logout is pressed")
     await axiosInstance.post('/api/logout')
 
     localStorage.removeItem('app_auth_token')
