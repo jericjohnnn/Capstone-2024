@@ -50,12 +50,15 @@
               >
             </p>
           </div>
-
+          <div>{{ selectedDateTimes }}</div>
           <div v-if="!tutorDetail">
             <p class="text-center text-gray-500">Select a Tutor</p>
           </div>
           <div v-else>
-            <BookCalendar :tutorDetails="tutorDetails"></BookCalendar>
+            <BookCalendar
+              :tutorDetails="tutorDetails"
+              @update:added-schedules="addSchedules"
+            ></BookCalendar>
           </div>
 
           <!-- Booking Form -->
@@ -211,7 +214,12 @@ const modifiedContactNumber = ref('')
 
 const isReadonly = ref(true)
 
+const addSchedules = schedules => {
+  selectedDateTimes.value = schedules
+}
+
 const selectedSubject = ref('')
+const selectedDateTimes = ref([])
 const tutorTopic = ref('')
 const tutorMessage = ref('')
 const contactNumber = ref(studentContactNumber)
