@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ApprovalStatusRequest;
+use App\Models\Subject;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,13 @@ class TutorController extends Controller
     public function createTutor($validatedDataWithUserId)
     {
         $tutor = Tutor::create($validatedDataWithUserId);
-        return $tutor;
+
+        if (isset($validatedDataWithUserId['subjects'])) {
+            // Use syncWithoutDetaching to add the subjects
+            $tutor->subjects()->syncWithoutDetaching($validatedDataWithUserId['subjects']);
+        }
+
+        return $tutor->load('subjects');
     }
 
     public function showTutors()

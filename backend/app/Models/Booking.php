@@ -14,7 +14,7 @@ class Booking extends Model
         'learning_mode',
         'location',
         'subject',
-        'online_meeting_platform_id',
+        'online_meeting_platform',
         'contact_number',
         'status'
     ];
@@ -34,10 +34,6 @@ class Booking extends Model
         return $this->belongsTo(Student::class);
     }
 
-    public function onlineMeetingPlatform()
-    {
-        return $this->belongsTo(OnlineMeetingPlatform::class);
-    }
 
     public function messages()
     {
