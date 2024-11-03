@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('tutor_id')->constrained()->onDelete('cascade');;
             $table->foreignId('student_id')->constrained()->onDelete('cascade');;
             $table->enum('learning_mode', ['Online', 'Face to Face', 'In School']);
+            $table->string('subject');
             $table->string('location')->nullable();
             $table->foreignId('online_meeting_platform_id')->nullable()->constrained();
             $table->string('contact_number');

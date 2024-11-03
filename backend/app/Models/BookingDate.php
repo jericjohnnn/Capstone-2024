@@ -10,13 +10,11 @@ class BookingDate extends Model
     use HasFactory;
     protected $fillable = [
         'booking_message_id',
-        'date',
         'start_time',
         'end_time'
     ];
 
     protected $casts = [
-        'date' => 'date',
         'start_time' => 'datetime',
         'end_time' => 'datetime'
     ];

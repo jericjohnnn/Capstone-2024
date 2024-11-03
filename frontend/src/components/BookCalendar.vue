@@ -14,6 +14,7 @@
         class="mb-2"
       >
         <div class="bg-red-500 outline p-2 flex flex-col text-white">
+          <button @click="deleteSchedule(schedule.id)">X</button>
           <div class="font-semibold">
             {{ new Date(schedule.start).format('MMMM-DD-YYYY') }}
           </div>
@@ -67,8 +68,7 @@
     </div>
 
     <!-- TESTING PURPOSES -->
-
-<!-- <JamalModal></JamalModal> -->
+    <!-- <JamalModal></JamalModal> -->
 
     <!-- TESTING PURPOSES -->
   </div>
@@ -85,16 +85,21 @@ import 'vue-cal/dist/vuecal.css'
 // import JamalModal from './JamalModal.vue'
 
 // TESTING PURPOSES!!
+const emit = defineEmits(['update:added-schedules']);
 
 const props = defineProps({
   tutorDetails: {
     type: Object,
     required: true,
   },
+
+  isBookSubmitted:{
+    type: Boolean,
+    required: true,
+  }
 })
 
 const isTutorDetailsLoaded = computed(() => !!props.tutorDetails)
-
 
 const isModalOpen = ref(false)
 
@@ -119,7 +124,6 @@ const storeCellDate = event => {
 }
 
 const clickedCellDate = ref()
-
 
 // this will be sent for post
 const addedPendingSchedules = ref([])
@@ -147,13 +151,11 @@ const events = ref([
   },
 ])
 
-
-
 const isEventOverlap = (newStart, newEnd, event) => {
   const existingStart = new Date(event.start).getTime()
   const existingEnd = new Date(event.end).getTime()
 
-  return newStart < existingEnd && existingStart < newEnd
+  return (newStart < existingEnd && existingStart < newEnd)  || (newStart && newEnd == existingStart && existingEnd)
 }
 
 const addScheduleRequest = () => {
@@ -172,7 +174,7 @@ const addScheduleRequest = () => {
     alert(
       'Event time overlaps with an existing event. Please choose another time.',
     )
-    return false 
+    return
   }
 
   const newEvent = {
@@ -186,13 +188,18 @@ const addScheduleRequest = () => {
 
   events.value.push(newEvent)
   addedPendingSchedules.value.push(newEvent)
+  emit('update:added-schedules', addedPendingSchedules.value);
 }
 
-watch([selectedStartTime, selectedEndTime], () => {
-  if (selectedStartTime.value && selectedEndTime.value) {
-    addScheduleRequest()
-  }
-})
+function deleteSchedule(id) {
+  addedPendingSchedules.value = addedPendingSchedules.value.filter(
+    schedule => schedule.id !== id,
+  )
+  events.value = events.value.filter(schedule => schedule.id !== id)
+  emit('update:added-schedules', addedPendingSchedules.value);
+}
+
+
 
 // calendar views
 const activeView = ref('month')
@@ -247,6 +254,37 @@ const dailyHours = computed(() => {
     { from: 13 * 60, to: tutorEndTime * 60, class: 'business-hours' },
   ]
 })
+
+const hiddenWeekDays = computed(() => {
+  if (!props.tutorDetails || !props.tutorDetails.work_days) {
+    return [];
+  }
+
+  const dayToNumber = {
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
+    sunday: 7,
+  };
+
+  return Object.keys(props.tutorDetails.work_days)
+    .filter(day => !props.tutorDetails.work_days[day])
+    .map(day => dayToNumber[day]);
+});
+
+watch([selectedStartTime, selectedEndTime], () => {
+  if (selectedStartTime.value && selectedEndTime.value) {
+    addScheduleRequest();
+  }
+});
+
+watch(() => props.isBookSubmitted, () => {
+  addedPendingSchedules.value = []
+  events.value = events.value.filter(schedule => schedule.deletable !== true)
+});
 </script>
 
 <style>
