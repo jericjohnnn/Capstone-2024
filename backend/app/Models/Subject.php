@@ -17,8 +17,4 @@ class Subject extends Model
         return $this->belongsToMany(Tutor::class, 'tutor_subjects');
     }
 
-    public function bookings()
-    {
-        return $this->belongsToMany(Booking::class, 'booking_subjects');
-    }
 }

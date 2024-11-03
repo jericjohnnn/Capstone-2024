@@ -3,7 +3,7 @@
     <SideBar>
       <main class="container mx-auto">
         <div class="bg-white shadow-md rounded-lg p-6">
-          <!-- Tutor Info -->
+          <!-- Tutor Info section remains unchanged -->
           <div class="flex items-center mb-4">
             <img
               :src="tutorDetails.profile_image"
@@ -50,23 +50,23 @@
               >
             </p>
           </div>
-          <div>{{ selectedDateTimes }}</div>
           <div v-if="!tutorDetail">
-            <p class="text-center text-gray-500">Select a Tutor</p>
+            <p class="text-center text-gray-500">LOADING</p>
           </div>
           <div v-else>
             <BookCalendar
               :tutorDetails="tutorDetails"
+              :isBookSubmitted="isBookSubmitted"
               @update:added-schedules="addSchedules"
             ></BookCalendar>
           </div>
 
-          <!-- Booking Form -->
-          <form @submit.prevent="handleSubmit" class="space-y-4">
+          <!-- Updated Booking Form with bookingState -->
+          <form @submit.prevent="submitBookingRequest" class="space-y-4">
             <div>
               <label class="block text-gray-700">Select subject:</label>
               <select
-                v-model="selectedSubject"
+                v-model="bookingState.selectedSubject"
                 class="border rounded w-full p-2"
               >
                 <option value="">Select Subject</option>
@@ -81,11 +81,9 @@
             </div>
 
             <div>
-              <label class="block text-gray-700"
-                >Choose mode of tutoring:</label
-              >
+              <label class="block text-gray-700">Choose mode of tutoring:</label>
               <select
-                v-model="modeOfTutoring"
+                v-model="bookingState.modeOfTutoring"
                 class="border rounded w-full p-2"
               >
                 <option value="In School">In School</option>
@@ -97,15 +95,15 @@
             <div>
               <label class="block text-gray-700">
                 {{
-                  modeOfTutoring === 'Online'
+                  bookingState.modeOfTutoring === 'Online'
                     ? 'Select Video Conferencing Platform:'
                     : 'Location:'
                 }}
               </label>
 
               <select
-                v-if="modeOfTutoring === 'Online'"
-                v-model="videoPlatform"
+                v-if="bookingState.modeOfTutoring === 'Online'"
+                v-model="bookingState.videoPlatform"
                 class="border rounded w-full p-2"
               >
                 <option value="Zoom">Zoom</option>
@@ -114,8 +112,8 @@
               </select>
 
               <input
-                v-else-if="modeOfTutoring === 'Face to Face'"
-                v-model="location"
+                v-else-if="bookingState.modeOfTutoring === 'Face to Face'"
+                v-model="bookingState.location"
                 type="text"
                 class="border rounded w-full p-2"
                 placeholder="Enter location"
@@ -125,19 +123,19 @@
                 v-else
                 class="border rounded w-full p-2 bg-gray-100 text-gray-700"
               >
-                {{ location }}
+                {{ bookingState.location }}
               </div>
             </div>
 
             <div class="border rounded p-2">
               <label class="block text-gray-700">Message:</label>
               <input
-                v-model="tutorTopic"
+                v-model="bookingState.tutorTopic"
                 class="w-full border-none outline-none mb-1"
                 placeholder="Enter the topic that needs tutoring"
               />
               <textarea
-                v-model="tutorMessage"
+                v-model="bookingState.tutorMessage"
                 class="w-full border-none outline-none mt-1 h-24 resize-none"
                 placeholder="Enter objectives, concerns, and further details of your inquiry"
               ></textarea>
@@ -146,7 +144,7 @@
             <div>
               <label class="block text-gray-700">Contact number:</label>
               <input
-                v-model="contactNumber"
+                v-model="bookingState.contactNumber"
                 type="text"
                 class="border rounded w-full p-2"
                 :readonly="isReadonly"
@@ -196,12 +194,12 @@
 </template>
 
 <script setup>
-import SideBar from '@/components/SideBar.vue'
-import HelpButton from '@/components/HelpButton.vue'
-import { ref, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
 import BookCalendar from '@/components/BookCalendar.vue'
+import SideBar from '@/components/SideBar.vue'
+import HelpButton from '@/components/HelpButton.vue'
 
 const route = useRoute()
 const tutorDetails = ref({})
@@ -214,32 +212,75 @@ const modifiedContactNumber = ref('')
 
 const isReadonly = ref(true)
 
-const addSchedules = schedules => {
-  selectedDateTimes.value = schedules
-}
+// Convert multiple refs to a reactive state object
+const initialBookingState = {
+  selectedSubject: '',
+  modeOfTutoring: 'In School',
+  location: 'CCTC',
+  videoPlatform: '',
+  contactNumber: studentContactNumber,
+  tutorTopic: '',
+  tutorMessage: '',
+  selectedDateTimes: []
+};
 
-const selectedSubject = ref('')
-const selectedDateTimes = ref([])
-const tutorTopic = ref('')
-const tutorMessage = ref('')
-const contactNumber = ref(studentContactNumber)
-const modeOfTutoring = ref('In School')
-const location = ref('CCTC')
-const videoPlatform = ref('')
+const bookingState = reactive({ ...initialBookingState });
+
+const addSchedules = schedules => {
+  const startAndEndArray = schedules.map(item => ({
+    start: item.start,
+    end: item.end,
+  }))
+
+  bookingState.selectedDateTimes = startAndEndArray
+}
 
 const toggleEditing = () => {
   isReadonly.value = !isReadonly.value
-  modifiedContactNumber.value = contactNumber.value
+  modifiedContactNumber.value = bookingState.contactNumber
 }
 
 const cancelChanges = () => {
-  contactNumber.value = modifiedContactNumber.value
+  bookingState.contactNumber = modifiedContactNumber.value
   isReadonly.value = true
 }
+const isBookSubmitted = ref(true)
 
-const handleSubmit = async () => {
-  console.log()
-}
+const submitBookingRequest = async () => {
+  const bookRequest = {
+    tutor_id: route.params.tutorId,
+    student_id: userData.id,
+    subject: bookingState.selectedSubject,
+    learning_mode: bookingState.modeOfTutoring,
+    location:
+      bookingState.modeOfTutoring === 'Face to Face' ||
+      bookingState.modeOfTutoring === 'In School'
+        ? bookingState.location
+        : null,
+    online_meeting_platform:
+      bookingState.modeOfTutoring === 'Online' ? bookingState.videoPlatform : null,
+    contact_number: bookingState.contactNumber,
+    message_title: bookingState.tutorTopic,
+    message_content: bookingState.tutorMessage,
+    selected_date_times: bookingState.selectedDateTimes,
+  };
+
+  try {
+    const response = await axiosInstance.post('api/create-booking', bookRequest);
+    console.log(response);
+
+    // Reset bookingState to its initial state
+
+    Object.assign(bookingState, initialBookingState);
+    isBookSubmitted.value = !isBookSubmitted.value
+    console.log(isBookSubmitted.value)
+
+    console.log(bookRequest);
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    alert('There was an error submitting the form.');
+  }
+};
 
 const fetchTutorDetails = async tutorId => {
   try {
@@ -251,11 +292,12 @@ const fetchTutorDetails = async tutorId => {
   }
 }
 
-watch(modeOfTutoring, newMode => {
+// Update watch to use bookingState
+watch(() => bookingState.modeOfTutoring, (newMode) => {
   if (newMode === 'In School') {
-    location.value = 'CCTC'
+    bookingState.location = 'CCTC'
   } else if (newMode === 'Face to Face') {
-    location.value = ''
+    bookingState.location = ''
   }
 })
 

@@ -92,6 +92,11 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+
+  isBookSubmitted:{
+    type: Boolean,
+    required: true,
+  }
 })
 
 const isTutorDetailsLoaded = computed(() => !!props.tutorDetails)
@@ -150,7 +155,7 @@ const isEventOverlap = (newStart, newEnd, event) => {
   const existingStart = new Date(event.start).getTime()
   const existingEnd = new Date(event.end).getTime()
 
-  return newStart < existingEnd && existingStart < newEnd
+  return (newStart < existingEnd && existingStart < newEnd)  || (newStart && newEnd == existingStart && existingEnd)
 }
 
 const addScheduleRequest = () => {
@@ -169,7 +174,7 @@ const addScheduleRequest = () => {
     alert(
       'Event time overlaps with an existing event. Please choose another time.',
     )
-    return false
+    return
   }
 
   const newEvent = {
@@ -183,6 +188,7 @@ const addScheduleRequest = () => {
 
   events.value.push(newEvent)
   addedPendingSchedules.value.push(newEvent)
+  emit('update:added-schedules', addedPendingSchedules.value);
 }
 
 function deleteSchedule(id) {
@@ -190,6 +196,7 @@ function deleteSchedule(id) {
     schedule => schedule.id !== id,
   )
   events.value = events.value.filter(schedule => schedule.id !== id)
+  emit('update:added-schedules', addedPendingSchedules.value);
 }
 
 
@@ -268,11 +275,15 @@ const hiddenWeekDays = computed(() => {
     .map(day => dayToNumber[day]);
 });
 
-watch([selectedStartTime, selectedEndTime, addedPendingSchedules], () => {
-  if (selectedStartTime.value && selectedEndTime.value && addedPendingSchedules.value) {
+watch([selectedStartTime, selectedEndTime], () => {
+  if (selectedStartTime.value && selectedEndTime.value) {
     addScheduleRequest();
-    emit('update:added-schedules', addedPendingSchedules.value);
   }
+});
+
+watch(() => props.isBookSubmitted, () => {
+  addedPendingSchedules.value = []
+  events.value = events.value.filter(schedule => schedule.deletable !== true)
 });
 </script>
 
