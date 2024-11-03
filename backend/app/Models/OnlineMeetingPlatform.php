@@ -12,8 +12,4 @@ class OnlineMeetingPlatform extends Model
         'name'
     ];
 
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
-    }
 }

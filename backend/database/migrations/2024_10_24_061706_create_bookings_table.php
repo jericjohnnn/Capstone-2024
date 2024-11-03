@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('learning_mode', ['Online', 'Face to Face', 'In School']);
             $table->string('subject');
             $table->string('location')->nullable();
-            $table->foreignId('online_meeting_platform_id')->nullable()->constrained();
+            $table->string('online_meeting_platform')->nullable();
             $table->string('contact_number');
             $table->enum('status', ['Pending', 'Ongoing', 'Completed', 'Canceled'])
                 ->default('Pending');
