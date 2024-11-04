@@ -3,12 +3,18 @@ import StudentBookTutorPage from "@/pages/student/StudentBookTutorPage.vue";
 import StudentSchedulePage from "@/pages/student/StudentSchedulePage.vue";
 import StudentSentRequestsPage from "@/pages/student/StudentSentRequestsPage.vue";
 import StudentNotificationPage from "@/pages/student/StudentNotificationPage.vue";
+import StudentProfilePage from "@/pages/student/StudentProfilePage.vue";
 
 const studentRoutes = [
   {
     path: '/student/home',
     name: 'StudentHome',
     component: StudentHomePage
+  },
+  {
+    path: '/student/profile',
+    name: 'StudentProfile',
+    component: StudentProfilePage
   },
   {
     path: '/student/schedule',
