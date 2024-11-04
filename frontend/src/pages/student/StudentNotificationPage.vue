@@ -1,15 +1,41 @@
 <template>
-  <div>
-    <div class="w-full px-4 sm:px-6 md:px-8 ">
-      <h1 class="text-3xl font-bold underline">Student Notification Page</h1>
-    </div>
-  </div>
+  <main class="p-4">
+    <SideBar>
+      <main class="container mx-auto">
+
+      </main>
+    </SideBar>
+
+    <HelpButton />
+  </main>
 </template>
 
 <script setup>
-// Add logic here
-</script>
+import SideBar from '@/components/SideBar.vue'
+import HelpButton from '@/components/HelpButton.vue'
+// import { ref, reactive, onMounted, watch } from 'vue'
+// import axiosInstance from '@/axiosInstance'
 
-<style scoped>
-/* Add styles here */
-</style>
+
+// const route = useRoute()
+
+// const getUserData = localStorage.getItem('user_data')
+// const userData = getUserData ? JSON.parse(getUserData) : null
+// const studentContactNumber = userData ? userData.contact_number : null
+
+// const notificationsPlaceholder = [
+//   {
+//     id: 1,
+//     content: "Your tutoring with Janela bano has completed please rate tutor janela to book her next time."
+//   },
+//   {
+//      id: 2,
+//     content: "Janela bano accepted your tutor request. tutoring is now ongoing. He/She will be contact you with your provided number"
+//   },
+//   {
+//      id: 3,
+//     content: "You booked Janela bano, request is now pending. you can check on pending requests in the tutor requests tab"
+//   },
+// ]
+
+</script>

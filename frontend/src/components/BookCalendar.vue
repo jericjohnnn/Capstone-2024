@@ -26,15 +26,18 @@
       </div>
     </div>
 
+    <!-- USE THIS AFTER TESTING HEHE -->
+    <!-- :disable-views="['years', 'year', 'week']"
+    hide-view-selector -->
+
     <vue-cal
       :click-to-navigate="isDay"
-      :disable-views="['years', 'year', 'week']"
       v-model:active-view="activeView"
+      :disable-views="['week']"
+      :min-date="availableStartingDate"
       :hide-weekdays="hiddenWeekDays"
-      hide-view-selector
       :time-from="0 * 60"
       :time-to="25 * 60"
-      :min-date="availableStartingDate"
       :special-hours="specialHours"
       :events="events"
       @cell-click="storeCellDate"
@@ -92,12 +95,32 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-
-  isBookSubmitted:{
+  isBookSubmitted: {
     type: Boolean,
     required: true,
+  },
+  tutorBookings: {
+    type: Array,
+    default: () => [],
+  },
+});
+
+
+watch(
+  () => props.tutorBookings,
+  (newBookings) => {
+    events.value = newBookings.flatMap((booking) =>
+      booking.booking_dates.map((date) => ({
+        id: date.id,
+        booking_id: booking.booking_id,
+        start: new Date(date.start_time).toISOString().slice(0, 19).replace('T', ' '), // Format to 'YYYY-MM-DD HH:mm:ss'
+        end: new Date(date.end_time).toISOString().slice(0, 19).replace('T', ' '), // Format to 'YYYY-MM-DD HH:mm:ss'
+        title: booking.subject,
+        class: 'tutorSchedule',
+      }))
+    );
   }
-})
+);
 
 const isTutorDetailsLoaded = computed(() => !!props.tutorDetails)
 
@@ -125,31 +148,9 @@ const storeCellDate = event => {
 
 const clickedCellDate = ref()
 
-// this will be sent for post
 const addedPendingSchedules = ref([])
-const events = ref([
-  {
-    id: 1,
-    start: '2024-11-01 13:00:00',
-    end: '2024-11-01 16:30:00',
-    title: 'Math',
-    class: 'tutorSchedule',
-  },
-  {
-    id: 2,
-    start: '2024-11-02 7:00:00',
-    end: '2024-11-02 11:00:00',
-    title: 'Science',
-    class: 'tutorSchedule',
-  },
-  {
-    id: 3,
-    start: '2024-11-02 15:00:00',
-    end: '2024-11-02 17:00:00',
-    title: 'English',
-    class: 'tutorSchedule',
-  },
-])
+
+const events = ref([])
 
 const isEventOverlap = (newStart, newEnd, event) => {
   const existingStart = new Date(event.start).getTime()
@@ -198,8 +199,6 @@ function deleteSchedule(id) {
   events.value = events.value.filter(schedule => schedule.id !== id)
   emit('update:added-schedules', addedPendingSchedules.value);
 }
-
-
 
 // calendar views
 const activeView = ref('month')

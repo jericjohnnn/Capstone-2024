@@ -1,15 +1,27 @@
 <template>
-  <div>
-    <div class="w-full px-4 sm:px-6 md:px-8 ">
-      <h1 class="text-3xl font-bold underline">Student Requests Page</h1>
-    </div>
-  </div>
+  <main class="p-4">
+    <SideBar>
+      <main class="container mx-auto">
+
+      </main>
+    </SideBar>
+
+    <HelpButton />
+  </main>
 </template>
 
 <script setup>
-// Add logic here
-</script>
+import SideBar from '@/components/SideBar.vue'
+import HelpButton from '@/components/HelpButton.vue'
+// import { ref, reactive, onMounted, watch } from 'vue'
+// import axiosInstance from '@/axiosInstance'
 
-<style scoped>
-/* Add styles here */
-</style>
+
+// const route = useRoute()
+
+// const getUserData = localStorage.getItem('user_data')
+// const userData = getUserData ? JSON.parse(getUserData) : null
+// const studentContactNumber = userData ? userData.contact_number : null
+
+
+</script>

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ApprovalStatusRequest;
+use App\Models\Booking;
+use App\Models\BookingDate;
+use App\Models\BookingMessage;
 use App\Models\Subject;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
@@ -58,6 +61,34 @@ class TutorController extends Controller
         ]);
     }
 
+    public function showTutorSchedules($tutor_id)
+    {
+        // Retrieve all bookings for the given tutor with messages and dates
+        $tutorBookings = Booking::with(['messages.dates'])
+            ->where('tutor_id', $tutor_id)
+            ->get();
+
+        if ($tutorBookings->isEmpty()) {
+            return response()->json([
+                'message' => 'Tutor not found or has no bookings.',
+            ]);
+        }
+
+        $bookingData = $tutorBookings->map(function ($booking) {
+            return [
+                'booking_id' => $booking->id,
+                'subject' => $booking->subject,
+                'booking_dates' => $booking->messages->flatMap(function ($message) {
+                    return $message->dates;
+                }),
+            ];
+        });
+
+        return response()->json([
+            'message' => 'Tutor bookings retrieved successfully.',
+            'bookings' => $bookingData,
+        ]);
+    }
 
 
 

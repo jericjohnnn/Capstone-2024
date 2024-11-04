@@ -56,6 +56,7 @@
           <div v-else>
             <BookCalendar
               :tutorDetails="tutorDetails"
+              :tutorBookings="tutorBookings"
               :isBookSubmitted="isBookSubmitted"
               @update:added-schedules="addSchedules"
             ></BookCalendar>
@@ -282,6 +283,23 @@ const submitBookingRequest = async () => {
   }
 };
 
+const tutorBookings = ref([])
+
+const fetchTutorSchedules = async (tutorId) => {
+  try {
+    const response = await axiosInstance.get(`/api/tutor-schedules/${tutorId}`)
+    const { message, bookings } = response.data
+
+    if(message == "Tutor not found or has no bookings."){
+      tutorBookings.value = []
+    }
+    tutorBookings.value = bookings
+    console.log(tutorBookings.value)
+  } catch (err) {
+    console.error('Error fetching tutor details:', err)
+  }
+}
+
 const fetchTutorDetails = async tutorId => {
   try {
     const response = await axiosInstance.get(`/api/tutor-detail/${tutorId}`)
@@ -305,6 +323,7 @@ onMounted(() => {
   const initialTutorId = route.params.tutorId
   if (initialTutorId) {
     fetchTutorDetails(initialTutorId)
+    fetchTutorSchedules(initialTutorId)
   }
 })
 </script>
