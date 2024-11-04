@@ -1,7 +1,13 @@
 <template>
-  <main class="p-4">
+  <main class="">
     <SideBar>
-      <main class="container mx-auto">
+      <main class="container p-5 mx-auto">
+        <BreadCrumb
+          :breadcrumbs="[
+            { label: 'Home', route: '/student/home' },
+            { label: 'Book', route: '/student/book/:tutorId' },
+          ]"
+        />
         <div class="bg-white shadow-md rounded-lg p-6">
           <!-- Tutor Info section remains unchanged -->
           <div class="flex items-center mb-4">
@@ -82,7 +88,9 @@
             </div>
 
             <div>
-              <label class="block text-gray-700">Choose mode of tutoring:</label>
+              <label class="block text-gray-700"
+                >Choose mode of tutoring:</label
+              >
               <select
                 v-model="bookingState.modeOfTutoring"
                 class="border rounded w-full p-2"
@@ -195,6 +203,7 @@
 </template>
 
 <script setup>
+import BreadCrumb from '@/components/BreadCrumb.vue'
 import { ref, reactive, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
@@ -222,10 +231,10 @@ const initialBookingState = {
   contactNumber: studentContactNumber,
   tutorTopic: '',
   tutorMessage: '',
-  selectedDateTimes: []
-};
+  selectedDateTimes: [],
+}
 
-const bookingState = reactive({ ...initialBookingState });
+const bookingState = reactive({ ...initialBookingState })
 
 const addSchedules = schedules => {
   const startAndEndArray = schedules.map(item => ({
@@ -259,38 +268,40 @@ const submitBookingRequest = async () => {
         ? bookingState.location
         : null,
     online_meeting_platform:
-      bookingState.modeOfTutoring === 'Online' ? bookingState.videoPlatform : null,
+      bookingState.modeOfTutoring === 'Online'
+        ? bookingState.videoPlatform
+        : null,
     contact_number: bookingState.contactNumber,
     message_title: bookingState.tutorTopic,
     message_content: bookingState.tutorMessage,
     selected_date_times: bookingState.selectedDateTimes,
-  };
+  }
 
   try {
-    const response = await axiosInstance.post('api/create-booking', bookRequest);
-    console.log(response);
+    const response = await axiosInstance.post('api/create-booking', bookRequest)
+    console.log(response)
 
     // Reset bookingState to its initial state
 
-    Object.assign(bookingState, initialBookingState);
+    Object.assign(bookingState, initialBookingState)
     isBookSubmitted.value = !isBookSubmitted.value
     console.log(isBookSubmitted.value)
 
-    console.log(bookRequest);
+    console.log(bookRequest)
   } catch (error) {
-    console.error('Error submitting form:', error);
-    alert('There was an error submitting the form.');
+    console.error('Error submitting form:', error)
+    alert('There was an error submitting the form.')
   }
-};
+}
 
 const tutorBookings = ref([])
 
-const fetchTutorSchedules = async (tutorId) => {
+const fetchTutorSchedules = async tutorId => {
   try {
     const response = await axiosInstance.get(`/api/tutor-schedules/${tutorId}`)
     const { message, bookings } = response.data
 
-    if(message == "Tutor not found or has no bookings."){
+    if (message == 'Tutor not found or has no bookings.') {
       tutorBookings.value = []
     }
     tutorBookings.value = bookings
@@ -311,13 +322,16 @@ const fetchTutorDetails = async tutorId => {
 }
 
 // Update watch to use bookingState
-watch(() => bookingState.modeOfTutoring, (newMode) => {
-  if (newMode === 'In School') {
-    bookingState.location = 'CCTC'
-  } else if (newMode === 'Face to Face') {
-    bookingState.location = ''
-  }
-})
+watch(
+  () => bookingState.modeOfTutoring,
+  newMode => {
+    if (newMode === 'In School') {
+      bookingState.location = 'CCTC'
+    } else if (newMode === 'Face to Face') {
+      bookingState.location = ''
+    }
+  },
+)
 
 onMounted(() => {
   const initialTutorId = route.params.tutorId

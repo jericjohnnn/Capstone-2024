@@ -1,10 +1,12 @@
 <template>
   <main class="bg-blue-50">
       <SideBar>
-      <main class="container flex flex-col gap-14 min-h-screen p-5 outline">
+      <main class="container flex flex-col gap-14 min-h-screen p-5 ">
         <!-- Search Components -->
-        <div class="pt-6">
-          <TutorSearch></TutorSearch>
+        <div class="">
+          <BreadCrumb  :breadcrumbs="[{ label: 'Home', route: '/student/home' }]" />
+          <!-- PT 6 if removing bread crumb -->
+          <TutorSearch class="pt-3"></TutorSearch>
           <div class="">
             <AllSubjects></AllSubjects>
           </div>
@@ -37,7 +39,7 @@
             </div>
           </div>
           <!-- Right Column - Tutor Details -->
-          <div class="max-w-lg outline">
+          <div class="max-w-lg ">
             <div v-if="tutorDetails">
               <TutorDetailsCard :tutor="tutorDetails"></TutorDetailsCard>
             </div>
@@ -54,6 +56,7 @@
 </template>
 
 <script setup>
+import BreadCrumb from '@/components/BreadCrumb.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'

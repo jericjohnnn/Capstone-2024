@@ -1,5 +1,5 @@
 <template>
-  <div class="outline flex flex-col bg-white rounded-xl shadow-sm">
+  <div class=" flex flex-col bg-white rounded-xl shadow-sm">
     <!-- Header Section with Blue Background -->
     <div class="bg-blue-600 p-4 rounded-t-xl flex justify-between items-center">
       <div class="flex items-center gap-3">
@@ -22,8 +22,7 @@
         >
           BOOK
         </button>
-        <p>{{ tutor.id }}</p>
-        <a href="#">report</a>
+        <a href="#" class="text-white underline">report</a>
       </div>
     </div>
 

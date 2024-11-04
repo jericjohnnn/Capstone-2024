@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full outline ">
+  <div class="w-full  ">
     <div
       class="relative flex flex-wrap items-center justify-center  overflow-hidden"
     >
