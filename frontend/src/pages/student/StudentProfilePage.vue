@@ -2,7 +2,7 @@
   <main class="p-4">
     <SideBar>
       <main class="container mx-auto">
-        <div>TUTOR SCHEDULE</div>
+
       </main>
     </SideBar>
 

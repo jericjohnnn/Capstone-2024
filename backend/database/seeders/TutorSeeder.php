@@ -19,7 +19,7 @@ class TutorSeeder extends Seeder
      */
     public function run(): void
     {
-        Tutor::create([
+        $tutorAccount = Tutor::create([
             'user_id' => User::create([
                 'user_type_id' => 2,
                 'email' => 'tutor@gmail.com',
@@ -43,6 +43,22 @@ class TutorSeeder extends Seeder
             'offense_status' => 'Warned',
             'approval_status' => 'Accepted'
         ]);
+
+        TutorCertificate::factory(2)->create([
+            'tutor_id' => $tutorAccount->id
+        ]);
+
+        TutorSchool::factory(2)->create([
+            'tutor_id' => $tutorAccount->id
+        ]);
+
+        TutorWorkDay::factory()->create([
+            'tutor_id' => $tutorAccount->id
+        ]);
+
+        $subjectIds = Subject::inRandomOrder()->take(rand(1, 3))->pluck('id');
+        $tutorAccount->subjects()->attach($subjectIds);
+
 
         // this is an email verified seeder account. for unverified, you have to remove email_verified_at in factory
         Tutor::factory(20)->create()->each(function ($tutor) {

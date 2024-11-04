@@ -80,7 +80,9 @@ class AuthController extends Controller
             $userData = $student;
         }
         if ($user->user_type_id === 2) {
-            $tutor = Tutor::where('user_id', $user->id)->first();
+            $tutor = Tutor::where('user_id', $user->id)
+            ->with('workDays', 'schools', 'certificates', 'subjects', 'ratings.student:id,first_name,last_name,profile_image')
+            ->first();
             $userFullName = "{$tutor->first_name} {$tutor->last_name}";
             $userType = "Tutor";
             $userData = $tutor;

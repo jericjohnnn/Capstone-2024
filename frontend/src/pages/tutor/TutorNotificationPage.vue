@@ -1,13 +1,28 @@
 <template>
-  <div>
-    <!--  -->
-  </div>
+  <main class="p-4">
+    <SideBar>
+      <main class="container mx-auto">
+        <div>TUTOR NOTIFICATIONS</div>
+      </main>
+    </SideBar>
+
+    <HelpButton />
+  </main>
 </template>
 
 <script setup>
-// Add logic here
-</script>
+import SideBar from '@/components/SideBar.vue'
+import HelpButton from '@/components/HelpButton.vue'
+// import { ref, reactive, onMounted, watch } from 'vue'
+// import axiosInstance from '@/axiosInstance'
 
-<style scoped>
-/* Add styles here */
-</style>
+
+// const route = useRoute()
+
+// const getUserData = localStorage.getItem('user_data')
+// const userData = getUserData ? JSON.parse(getUserData) : null
+// const studentContactNumber = userData ? userData.contact_number : null
+
+
+
+</script>
