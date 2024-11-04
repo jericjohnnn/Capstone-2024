@@ -1,7 +1,7 @@
 <template>
   <main class="bg-blue-50">
-    <SideBar>
-      <main class="container flex flex-col gap-14 min-h-screen">
+      <SideBar>
+      <main class="container flex flex-col gap-14 min-h-screen p-5 outline">
         <!-- Search Components -->
         <div class="pt-6">
           <TutorSearch></TutorSearch>
@@ -37,9 +37,9 @@
             </div>
           </div>
           <!-- Right Column - Tutor Details -->
-          <div class="max-w-lg  outline">
+          <div class="max-w-lg outline">
             <div v-if="tutorDetails">
-              <TutorDetailsCard  :tutor="tutorDetails"></TutorDetailsCard>
+              <TutorDetailsCard :tutor="tutorDetails"></TutorDetailsCard>
             </div>
             <div v-else>
               <p class="text-center text-gray-500">Select a Tutor</p>
@@ -47,7 +47,7 @@
           </div>
         </div>
       </main>
-    </SideBar>
+  </SideBar>
     <!-- Help Button -->
     <HelpButton></HelpButton>
   </main>
@@ -80,7 +80,8 @@ const fetchTutors = async (page = 1) => {
     loading.value = true
     const response = await axiosInstance.get(`/api/tutors?page=${page}`)
     // Handle Laravel pagination response
-    const { data, current_page, last_page, links } = response.data.tutor_previews
+    const { data, current_page, last_page, links } =
+      response.data.tutor_previews
 
     tutors.value = data
     currentPage.value = current_page
@@ -93,7 +94,7 @@ const fetchTutors = async (page = 1) => {
   }
 }
 
-const fetchTutorDetails = async (tutorId) => {
+const fetchTutorDetails = async tutorId => {
   try {
     const response = await axiosInstance.get(`/api/tutor-detail/${tutorId}`)
     tutorDetails.value = response.data.tutor
@@ -102,7 +103,7 @@ const fetchTutorDetails = async (tutorId) => {
   }
 }
 
-const goToPage = (pageNumber) => {
+const goToPage = pageNumber => {
   router.push({
     path: '/student/home',
     query: {
@@ -111,7 +112,7 @@ const goToPage = (pageNumber) => {
   })
 }
 
-const selectTutor = (tutorId) => {
+const selectTutor = tutorId => {
   router.push({
     path: '/student/home',
     query: {
@@ -131,7 +132,7 @@ watch(
     if (newTutorId) {
       fetchTutorDetails(newTutorId) // Fetch tutor details if tutor_id is present
     }
-  }
+  },
 )
 
 onMounted(() => {
