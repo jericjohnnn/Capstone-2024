@@ -1,7 +1,7 @@
 <template>
-  <main class="p-4">
+  <main class="">
     <SideBar>
-      <main class="container mx-auto">
+      <main class="container p-5 mx-auto">
         <div>TUTOR NOTIFICATIONS</div>
       </main>
     </SideBar>
