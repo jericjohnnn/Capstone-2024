@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ApprovalStatusRequest;
+use App\Http\Requests\Tutor\EditSubjectsRequest;
 use App\Models\Booking;
 use App\Models\BookingDate;
 use App\Models\BookingMessage;
 use App\Models\Subject;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TutorController extends Controller
 {
@@ -28,7 +30,9 @@ class TutorController extends Controller
 
     public function showTutors()
     {
-        $tutors = Tutor::with('subjects:id,name', 'ratings:id,tutor_id,rate')
+        $tutors = Tutor::where('approval_status', 'Accepted')
+            ->whereNot('offense_status', 'Banned')
+            ->with('subjects:id,name', 'ratings:id,tutor_id,rate')
             ->paginate(4);
 
         // ignore lang ning red sa "through" kay wa pako kita
@@ -91,6 +95,17 @@ class TutorController extends Controller
     }
 
 
+    public function editSubjects(EditSubjectsRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        $user = Auth::user();
+        $tutor = $user->tutor;
+
+        $tutor->subjects()->sync($validatedData['subjects']);
+
+        return response()->json(['message' => 'Tutor subjects updated successfully.']);
+    }
 
 
 

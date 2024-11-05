@@ -39,8 +39,7 @@
 <script setup>
 import { defineProps } from 'vue'
 
-// Define props for breadcrumbs data
-const props = defineProps({
+defineProps({
   breadcrumbs: {
     type: Array,
     required: true,

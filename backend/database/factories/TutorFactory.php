@@ -38,8 +38,8 @@ class TutorFactory extends Factory
             'course' => $this->faker->randomElement(['BSED', 'BEED', 'BSIT', 'BSHM', 'BSENTREP']),
             'year' => $this->faker->randomElement([1, 2, 3, 4]),
             'contacted_status' => $this->faker->boolean(),
-            'offense_status' => 'Unflagged',
-            'approval_status' => 'Pending'
+            'offense_status' => $this->faker->randomElement(['Unflagged', 'Warned', 'Penalized', 'Banned']),
+            'approval_status' => $this->faker->randomElement(['Pending', 'Accepted', 'Rejected']),
         ];
     }
 }

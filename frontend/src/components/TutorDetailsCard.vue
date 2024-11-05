@@ -1,5 +1,5 @@
 <template>
-  <div class=" flex flex-col bg-white rounded-xl shadow-sm">
+  <div class="flex flex-col bg-white rounded-xl shadow-sm">
     <!-- Header Section with Blue Background -->
     <div class="bg-blue-600 p-4 rounded-t-xl flex justify-between items-center">
       <div class="flex items-center gap-3">
@@ -98,14 +98,25 @@
           <div
             v-for="school in tutor.schools"
             :key="school.id"
-            class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg border border-gray-200 transition-shadow"
+            class="flex items-start bg-white p-6 rounded-lg shadow-md hover:shadow-lg border border-gray-200 transition-shadow"
           >
-            <p class="text-lg font-semibold text-gray-900">{{ school.name }}</p>
-            <p class="text-sm text-gray-500 italic">{{ school.course }}</p>
-            <p class="text-sm text-gray-600 mt-2">
-              {{ formatDate(school.start_date) }} -
-              {{ school.end_date ? formatDate(school.end_date) : 'Present' }}
-            </p>
+            <img
+              :src="school.image"
+              alt="School Logo"
+              class="w-16 h-16 mr-4 rounded-full object-cover"
+            />
+            <div>
+              <p class="text-lg font-semibold text-gray-900">
+                {{ school.name }}
+              </p>
+              <p class="text-sm text-gray-500 italic">
+                {{ school.course }}
+              </p>
+              <p class="text-sm text-gray-600 mt-2">
+                {{ formatDate(school.start_date) }} -
+                {{ school.end_date ? formatDate(school.end_date) : 'Present' }}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -125,15 +136,24 @@
           <div
             v-for="certificate in tutor.certificates"
             :key="certificate.id"
-            class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg border border-gray-200 transition-shadow"
+            class="flex items-start bg-white p-6 rounded-lg shadow-md hover:shadow-lg border border-gray-200 transition-shadow"
           >
-            <p class="text-lg font-semibold text-gray-900">
-              {{ certificate.title }}
-            </p>
-            <p class="text-sm text-gray-500 italic">{{ certificate.issuer }}</p>
-            <p class="text-sm text-gray-600 mt-2">
-              {{ formatDate(certificate.date_issued) }}
-            </p>
+            <img
+              :src="certificate.image"
+              alt="Certificate Image"
+              class="w-16 h-16 mr-4 rounded-lg object-cover"
+            />
+            <div>
+              <p class="text-lg font-semibold text-gray-900">
+                {{ certificate.title }}
+              </p>
+              <p class="text-sm text-gray-500 italic">
+                {{ certificate.issuer }}
+              </p>
+              <p class="text-sm text-gray-600 mt-2">
+                {{ formatDate(certificate.date_issued) }}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -165,9 +185,9 @@
 import StarRating from './StarRating.vue'
 import RatingsCarousel from './RatingsCarousel.vue'
 import { computed } from 'vue'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
 const props = defineProps({
   tutor: {
@@ -180,7 +200,7 @@ function goToBook() {
   router.push({
     name: 'StudentBook',
     params: { tutorId: props.tutor.id },
-  });
+  })
 }
 
 const availableDays = computed(() => {
@@ -226,11 +246,4 @@ const formatDate = date => {
     day: 'numeric',
   }).format(new Date(date))
 }
-
-// const schools = computed(() => {
-//   if (!props.tutor.schools || props.tutor.schools.length === 0) {
-//     return null;
-//   }
-//   return props.tutor.schools;
-// });
 </script>

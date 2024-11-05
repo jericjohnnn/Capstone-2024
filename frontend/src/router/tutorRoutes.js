@@ -2,6 +2,7 @@ import TutorNotificationPage from "@/pages/tutor/TutorNotificationPage.vue";
 import TutorProfilePage from "@/pages/tutor/TutorProfilePage.vue";
 import TutorReceivedRequestsPage from "@/pages/tutor/TutorReceivedRequestsPage.vue";
 import TutorSchedulePage from "@/pages/tutor/TutorSchedulePage.vue";
+import TutorSettingsPage from "@/pages/tutor/TutorSettingsPage.vue";
 
 
 const tutorRoutes = [
@@ -24,6 +25,11 @@ const tutorRoutes = [
     path: '/tutor/notifications',
     name: 'TutorNotifications',
     component: TutorNotificationPage
+  },
+  {
+    path: '/tutor/settings',
+    name: 'TutorSettings',
+    component: TutorSettingsPage
   },
 ];
 
