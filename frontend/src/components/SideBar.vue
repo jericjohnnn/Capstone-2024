@@ -145,6 +145,16 @@
                     Notifications
                   </router-link>
                 </li>
+                <li>
+                  <router-link
+                  active-class="active-nav"
+                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300"
+                    :to="{ name: 'TutorSettings' }"
+                  >
+                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
+                    Settings
+                  </router-link>
+                </li>
               </ul>
             </div>
 
