@@ -2,115 +2,113 @@
   <div class="mb-6">
     <h3 class="font-medium mb-2">
       Hours available:
-      <button @click="toggleEditMode" class="ml-2 text-blue-600">{{ isEditing ? 'Cancel' : 'Edit' }}</button>
+      <button @click="isEditing = !isEditing" class="ml-2 text-blue-600">
+        {{ isEditing ? 'Cancel' : 'Edit' }}
+      </button>
     </h3>
+
     <div v-if="!isEditing">
-      <p class="text-blue-600 font-medium">{{ formattedStartTime }} - {{ formattedEndTime }}</p>
+      <p class="text-blue-600 font-medium">{{ displayStartTime }} - {{ displayEndTime }}</p>
     </div>
-    <div v-else>
-      <div class="flex items-center">
-        <select v-model="startHour" class="border p-1 rounded">
-          <option v-for="hour in hours" :key="hour" :value="hour">{{ hour }}</option>
+
+    <div v-else class="space-y-2">
+      <!-- Start Time -->
+      <div class="flex gap-2">
+        <select v-model="startTime.hour" class="border p-1 rounded">
+          <option v-for="h in 12" :key="h" :value="h">{{ h }}</option>
         </select>
-        <select v-model="startMinute" class="border p-1 rounded mx-2">
-          <option value="0">00</option>
+        <select v-model="startTime.minute" class="border p-1 rounded">
+          <option value="00">00</option>
           <option value="30">30</option>
         </select>
-        <select v-model="startAmPm" class="border p-1 rounded">
+        <select v-model="startTime.period" class="border p-1 rounded">
           <option value="AM">AM</option>
           <option value="PM">PM</option>
         </select>
       </div>
-      <div class="mt-2">
-        <select v-model="endHour" class="border p-1 rounded">
-          <option v-for="hour in hours" :key="hour" :value="hour">{{ hour }}</option>
+
+      <!-- End Time -->
+      <div class="flex gap-2">
+        <select v-model="endTime.hour" class="border p-1 rounded">
+          <option v-for="h in 12" :key="h" :value="h">{{ h }}</option>
         </select>
-        <select v-model="endMinute" class="border p-1 rounded mx-2">
-          <option value="0">00</option>
+        <select v-model="endTime.minute" class="border p-1 rounded">
+          <option value="00">00</option>
           <option value="30">30</option>
         </select>
-        <select v-model="endAmPm" class="border p-1 rounded">
+        <select v-model="endTime.period" class="border p-1 rounded">
           <option value="AM">AM</option>
           <option value="PM">PM</option>
         </select>
       </div>
-      <button @click="saveHours" class="mt-2 text-blue-600">Save</button>
+
+      <button @click="saveHours" class="text-blue-600">Save</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
-import axios from 'axios'; // Import Axios
+import { ref, computed } from 'vue'
+import axiosInstance from '@/axiosInstance'
 
-// Retrieve user data from local storage
-const getUserData = localStorage.getItem('user_data');
-const parsedUserData = getUserData ? JSON.parse(getUserData) : {};
-const userData = ref(parsedUserData);
+const isEditing = ref(false)
 
-// Ref for editing state
-const isEditing = ref(false);
+// Get initial values from localStorage
+const userData = JSON.parse(localStorage.getItem('user_data') || '{}')
+const initialStartTime = userData?.work_days?.start_time || '09:00:00'
+const initialEndTime = userData?.work_days?.end_time || '17:00:00'
 
-// Predefined hours for dropdown
-const hours = Array.from({ length: 12 }, (_, i) => i + 1);
-
-// Initialize start and end time values
-const startHour = ref(userData.value.work_days.start_time ? parseInt(userData.value.work_days.start_time % 12) : 0);
-const startMinute = ref(userData.value.work_days.start_time ? (userData.value.work_days.start_time % 1) * 60 : 0);
-const startAmPm = ref(userData.value.work_days.start_time >= 12 ? 'PM' : 'AM');
-
-const endHour = ref(userData.value.work_days.end_time ? parseInt(userData.value.work_days.end_time % 12) : 0);
-const endMinute = ref(userData.value.work_days.end_time ? (userData.value.work_days.end_time % 1) * 60 : 0);
-const endAmPm = ref(userData.value.work_days.end_time >= 12 ? 'PM' : 'AM');
-
-// Format hours from 12-hour integer format to string
-const formatTime = (hour, minute, ampm) => {
-  if (hour === undefined || minute === undefined) return '';
-  const formattedHour = hour % 12 || 12; // Convert to 12-hour format
-  return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
-};
-
-// Computed properties for formatted start and end times
-const formattedStartTime = computed(() => formatTime(startHour.value, startMinute.value, startAmPm.value));
-const formattedEndTime = computed(() => formatTime(endHour.value, endMinute.value, endAmPm.value));
-
-// Toggle edit mode
-const toggleEditMode = () => {
-  if (isEditing.value) {
-    // Reset to original values
-    startHour.value = userData.value.work_days.start_time ? parseInt(userData.value.work_days.start_time % 12) : 0;
-    startMinute.value = userData.value.work_days.start_time ? (userData.value.work_days.start_time % 1) * 60 : 0;
-    startAmPm.value = userData.value.work_days.start_time >= 12 ? 'PM' : 'AM';
-
-    endHour.value = userData.value.work_days.end_time ? parseInt(userData.value.work_days.end_time % 12) : 0;
-    endMinute.value = userData.value.work_days.end_time ? (userData.value.work_days.end_time % 1) * 60 : 0;
-    endAmPm.value = userData.value.work_days.end_time >= 12 ? 'PM' : 'AM';
+// Convert 24h to 12h format for initial values
+function parse24hTo12h(time24h) {
+  const [hours, minutes] = time24h.split(':')
+  const hour = parseInt(hours)
+  return {
+    hour: hour % 12 || 12,
+    minute: minutes,
+    period: hour >= 12 ? 'PM' : 'AM'
   }
-  isEditing.value = !isEditing.value;
-};
+}
 
-// Save hours to user data and send PUT request
-const saveHours = async () => {
-  const startIn24Hour = (startHour.value % 12) + (startAmPm.value === 'PM' ? 12 : 0) + (startMinute.value / 60);
-  const endIn24Hour = (endHour.value % 12) + (endAmPm.value === 'PM' ? 12 : 0) + (endMinute.value / 60);
-  
-  userData.value.work_days.start_time = startIn24Hour;
-  userData.value.work_days.end_time = endIn24Hour;
-  
-  // Store updated user data
-  localStorage.setItem('user_data', JSON.stringify(userData.value));
-  
-  // Send PUT request to update the hours in the backend
+const startTime = ref(parse24hTo12h(initialStartTime))
+const endTime = ref(parse24hTo12h(initialEndTime))
+
+// Display computed properties
+const displayStartTime = computed(() =>
+  `${startTime.value.hour}:${startTime.value.minute} ${startTime.value.period}`
+)
+const displayEndTime = computed(() =>
+  `${endTime.value.hour}:${endTime.value.minute} ${endTime.value.period}`
+)
+
+// Convert 12h to 24h format for saving
+function convertTo24Hour(time12h) {
+  let hour = time12h.hour
+  if (time12h.period === 'PM' && hour !== 12) hour += 12
+  if (time12h.period === 'AM' && hour === 12) hour = 0
+  return `${hour.toString().padStart(2, '0')}:${time12h.minute}:00`
+}
+
+async function saveHours() {
+  const start24 = convertTo24Hour(startTime.value)
+  const end24 = convertTo24Hour(endTime.value)
+
+  // Update localStorage
+  userData.work_days = {
+    ...userData.work_days,
+    start_time: start24,
+    end_time: end24
+  }
+  localStorage.setItem('user_data', JSON.stringify(userData))
+
+  // Send to API
   try {
-    const response = await axios.put('/api/update-hours', {
-      start_time: startIn24Hour,
-      end_time: endIn24Hour
-    });
-    console.log('Hours updated successfully:', response.data);
+    await axiosInstance.put('/api/edit-work-days', {
+      start_time: start24,
+      end_time: end24
+    })
+    isEditing.value = false
   } catch (error) {
-    console.error('Error updating hours:', error);
+    console.error('Error saving hours:', error)
   }
-  
-  isEditing.value = false; // Exit edit mode
-};
+}
 </script>

@@ -4,14 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ApprovalStatusRequest;
+use App\Http\Requests\Tutor\CertificateRequest;
+use App\Http\Requests\Tutor\EditPersonalDetailsRequest;
+use App\Http\Requests\Tutor\SchoolsRequest;
 use App\Http\Requests\Tutor\EditSubjectsRequest;
+use App\Http\Requests\Tutor\EditWorkDaysRequest;
 use App\Models\Booking;
 use App\Models\BookingDate;
 use App\Models\BookingMessage;
 use App\Models\Subject;
 use App\Models\Tutor;
+use App\Models\TutorCertificate;
+use App\Models\TutorSchool;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TutorController extends Controller
 {
@@ -106,6 +113,170 @@ class TutorController extends Controller
 
         return response()->json(['message' => 'Tutor subjects updated successfully.']);
     }
+
+
+    public function editPersonalDetails(EditPersonalDetailsRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        $user = Auth::user();
+        $tutor = $user->tutor;
+
+        if ($request->hasFile('profile_image')) {
+            $imagePath = $request->file('profile_image')->store('profile_images', 'public');
+            $validatedData['profile_image'] = $imagePath;
+        }
+
+        $tutor->update($validatedData);
+
+        return response()->json([
+            'message' => 'Tutor updated successfully.',
+            'tutor' => $tutor,
+            'profile_image' => $tutor->profile_image ? asset('storage/' . $tutor->profile_image) : null
+        ]);
+    }
+
+
+
+    public function editWorkDays(EditWorkDaysRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        $user = Auth::user();
+        $tutor = $user->tutor;
+        $workDays = $tutor->workDays;
+
+        $workDays->update($validatedData);
+
+        return response()->json([
+            'message' => 'Tutor work days updated successfully.',
+            'work_days' => $workDays,
+        ]);
+    }
+
+    public function editSchool(SchoolsRequest $request, $school_id)
+    {
+        $validatedData = $request->validated();
+
+        $user = Auth::user();
+        $tutor = $user->tutor;
+
+        $school = $tutor->schools()->where('id', $school_id)->first();
+
+        if (!$school) {
+            return response()->json([
+                'message' => 'School not found for this tutor.'
+            ], 404);
+        }
+
+        $school->update($validatedData);
+
+        return response()->json([
+            'message' => 'School updated successfully.',
+            'school' => $school,
+        ]);
+    }
+
+
+    public function createSchool(SchoolsRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        $user = Auth::user();
+        $tutor = $user->tutor;
+
+        $school = $tutor->schools()->create($validatedData);
+
+        return response()->json([
+            'message' => 'School created successfully.',
+            'school' => $school,
+        ]);
+    }
+
+
+    public function deleteSchool($school_id)
+    {
+        $user = Auth::user();
+        $tutor = $user->tutor;
+
+        $school = TutorSchool::where('id', $school_id)->where('tutor_id', $tutor->id)->first();
+
+        if (!$school) {
+            return response()->json([
+                'message' => 'School not found for this tutor.'
+            ], 404);
+        }
+
+        $school->delete();
+
+        return response()->json(['message' => 'School deleted successfully.']);
+    }
+
+
+    public function createCertificate(CertificateRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        $user = Auth::user();
+        $tutor = $user->tutor;
+
+        $certificate = $tutor->certificates()->create($validatedData);
+
+        return response()->json([
+            'message' => 'Certificate created successfully.',
+            'certificate' => $certificate,
+        ]);
+    }
+
+
+    public function editCertificate(CertificateRequest $request, $certificate_id)
+    {
+        $validatedData = $request->validated();
+
+        $user = Auth::user();
+        $tutor = $user->tutor;
+
+        $certificate = $tutor->certificates()->where('id', $certificate_id)->first();
+
+        if (!$certificate) {
+            return response()->json([
+                'message' => 'Certificate not found for this tutor.'
+            ], 404);
+        }
+
+        $certificate->update($validatedData);
+
+        return response()->json([
+            'message' => 'Certificate updated successfully.',
+            'certificate' => $certificate,
+        ]);
+    }
+
+
+    public function deleteCertificate($certificate_id)
+    {
+        $user = Auth::user();
+        $tutor = $user->tutor;
+
+        $certificate = TutorCertificate::where('id', $certificate_id)->where('tutor_id', $tutor->id)->first();
+
+        if (!$certificate) {
+            return response()->json([
+                'message' => 'Certificate not found for this tutor.'
+            ], 404);
+        }
+
+        $certificate->delete();
+
+        return response()->json(['message' => 'Certificate deleted successfully.']);
+    }
+
+
+
+
+
+
+
 
 
 

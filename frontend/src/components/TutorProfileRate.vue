@@ -1,18 +1,18 @@
 <template>
   <div class="mb-6">
     <h3 class="font-medium mb-2">
-      Tutor Rate: 
+      Tutor Rate:
       <button @click="toggleEditMode" class="ml-2 text-blue-600">{{ isEditing ? 'Cancel' : 'Edit' }}</button>
     </h3>
     <div v-if="!isEditing">
       <p class="text-blue-500">P{{ userData.tutor_rate }}/Session</p>
     </div>
     <div v-else>
-      <input 
-        type="number" 
-        v-model.number="tutorRate"  
-        class="border rounded px-2 py-1 text-black" 
-        min="0" 
+      <input
+        type="number"
+        v-model.number="tutorRate"
+        class="border rounded px-2 py-1 text-black"
+        min="0"
       />
       <button @click="saveTutorRate" class="mt-2 text-blue-600">Save</button>
     </div>
@@ -21,7 +21,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios'; // Ensure axios is imported
+import axiosInstance from '@/axiosInstance'
 
 // Retrieve user data from local storage
 const getUserData = localStorage.getItem('user_data');
@@ -51,7 +51,7 @@ const saveTutorRate = async () => {
     };
 
     // Make the PUT request to your API endpoint
-    await axios.put('/your-api-endpoint', data); // Replace with your actual API endpoint
+    await axiosInstance.post('/api/edit-details', data); // Replace with your actual API endpoint
 
     // Update the user data in local storage after a successful request
     userData.value.tutor_rate = data.tutor_rate; // Update with the new rate

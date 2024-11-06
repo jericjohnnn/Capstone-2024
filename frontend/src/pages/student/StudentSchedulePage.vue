@@ -2,7 +2,7 @@
   <main class="">
     <SideBar>
       <main class="container p-5 mx-auto">
-
+        <div>STUDENT SCHEDULES</div>
       </main>
     </SideBar>
 
@@ -23,19 +23,5 @@ import HelpButton from '@/components/HelpButton.vue'
 // const userData = getUserData ? JSON.parse(getUserData) : null
 // const studentContactNumber = userData ? userData.contact_number : null
 
-// const notificationsPlaceholder = [
-//   {
-//     id: 1,
-//     content: "Your tutoring with Janela bano has completed please rate tutor janela to book her next time."
-//   },
-//   {
-//      id: 2,
-//     content: "Janela bano accepted your tutor request. tutoring is now ongoing. He/She will be contact you with your provided number"
-//   },
-//   {
-//      id: 3,
-//     content: "You booked Janela bano, request is now pending. you can check on pending requests in the tutor requests tab"
-//   },
-// ]
 
 </script>

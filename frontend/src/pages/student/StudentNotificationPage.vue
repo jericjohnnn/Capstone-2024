@@ -2,7 +2,7 @@
   <main class="">
     <SideBar>
       <main class="container p-5 mx-auto">
-
+        <div>STUDENT NOTIFICATION</div>
       </main>
     </SideBar>
 

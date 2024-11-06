@@ -38,7 +38,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios'; // Ensure axios is imported
+import axiosInstance from '@/axiosInstance'
 
 // Retrieve user data from local storage
 const getUserData = localStorage.getItem('user_data');
@@ -82,7 +82,7 @@ const saveDetails = async () => {
     };
 
     // Make the PUT request to your API endpoint
-    await axios.put('/your-api-endpoint', data); // Replace with your actual API endpoint
+    await axiosInstance.post('api/edit-details', data); // Replace with your actual API endpoint
 
     // Update user data in local storage after a successful request
     userData.value.birthdate = data.birthdate; // Update with the new birthdate

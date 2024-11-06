@@ -20,7 +20,7 @@ class TutorCertificateFactory extends Factory
     public function definition(): array
     {
         return [
-            'image' => 'https://picsum.photos/200/200?random=' . $this->faker->randomNumber(),
+            // 'image' => 'https://picsum.photos/200/200?random=' . $this->faker->randomNumber(),
             'title' => $this->faker->randomElement([
                 'TESDA National Certificate II',
                 'Digital Marketing Certificate',

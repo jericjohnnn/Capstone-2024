@@ -25,7 +25,7 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import axios from 'axios'; // Import axios for making HTTP requests
+import axiosInstance from '@/axiosInstance'
 
 // Retrieve user data from local storage
 const getUserData = localStorage.getItem('user_data');
@@ -70,7 +70,7 @@ const saveDays = async () => {
 
   try {
     // Make a PUT request to update the days
-    await axios.put('/your-api-endpoint', daysData); // Replace with your API endpoint
+    await axiosInstance.put('/api/edit-work-days', daysData); // Replace with your API endpoint
     userData.value.work_days = daysData; // Update local state with the new values
     localStorage.setItem('user_data', JSON.stringify(userData.value)); // Save updated data to local storage
     isEditing.value = false; // Exit edit mode
