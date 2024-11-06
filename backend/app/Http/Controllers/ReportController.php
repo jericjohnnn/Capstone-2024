@@ -23,31 +23,29 @@ class ReportController extends Controller
 
     //ADMIN METHODS INSERT HERE
     public function showAllReports()
-    {
-        $reports = Report::with('complainant.tutor', 'complainant.student', 'complainant.userType')
-            ->paginate(10);
+{
+    $reports = Report::with('complainant.tutor', 'complainant.student', 'complainant.userType')->get();  // Use get() instead of paginate()
 
-        // ignore lang ning red sa "through" kay wa pako kita
-        // sa extension nga modetect na siya, kay bag o na nga feature sa laravel
-        $reports->through(function ($report) {
-            $complainant = $report->complainant;
-            $first_name = $complainant->tutor?->first_name ?? $complainant->student?->first_name;
-            $last_name = $complainant->tutor?->last_name ?? $complainant->student?->last_name;
+    $reports->transform(function ($report) {
+        $complainant = $report->complainant;
+        $first_name = $complainant->tutor?->first_name ?? $complainant->student?->first_name;
+        $last_name = $complainant->tutor?->last_name ?? $complainant->student?->last_name;
 
-            return [
-                'id' => $report->id,
-                'complainant_name' => $first_name && $last_name ? "$first_name $last_name" : null,
-                'complainant_profile_image' => $complainant->tutor?->profile_image ?? $complainant->student?->profile_image,
-                'complainant_user_type' => $complainant->userType->type,
-                'report_status' => $report->status,
-            ];
-        });
+        return [
+            'id' => $report->id,
+            'complainant_name' => $first_name && $last_name ? "$first_name $last_name" : null,
+            'complainant_profile_image' => $complainant->tutor?->profile_image ?? $complainant->student?->profile_image,
+            'complainant_user_type' => $complainant->userType->type,
+            'report_status' => $report->status,
+        ];
+    });
 
-        return response()->json([
-            'message' => 'All reports retrieved successfully.',
-            'complainant_report' => $reports,
-        ]);
-    }
+    return response()->json([
+        'message' => 'All reports retrieved successfully.',
+        'complainant_report' => $reports,
+    ]);
+}
+
 
 
     public function showReport($report_id)

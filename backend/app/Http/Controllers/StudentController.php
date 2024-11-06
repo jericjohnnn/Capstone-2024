@@ -24,7 +24,7 @@ class StudentController extends Controller
     //ADMIN METHODS INSERT HERE
     public function showAllStudents()
     {
-        $students = Student::paginate(10);
+        $students = Student::all();
 
         return response()->json([
             'message' => 'Students retrieved successfully.',
