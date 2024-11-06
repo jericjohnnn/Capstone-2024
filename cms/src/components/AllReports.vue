@@ -82,35 +82,31 @@
     <div v-else-if="currentView === 'details'">
       <!-- Report Details View -->
       <div v-if="selectedReport" class="p-4 bg-white shadow rounded">
-        <div class="flex flex-row ">
+        <div class="flex flex-row">
           <div class="bg-blue-300 w-[400px] p-4 space-y-[100px]">
-            
-              <div class="mb-4">
-               <div class="flex flex-row">
-                 <div class="mr-2">
+            <div class="mb-4">
+              <div class="flex flex-row">
+                <div class="mr-2">
                   <img
-                  :src="selectedReport.complainant_profile_image"
-                  alt="Complainant Profile"
-                  class="w-16 h-16 rounded-md mb-2"
-                />
-                 </div>
-               <div>
-                 <p>
-                  <strong>Complainant:</strong>
-                  {{ selectedReport.complainant_name }}
-                </p>
-                <p>
-                  <strong>User Type:</strong>
-                  {{ selectedReport.complainant_user_type }}
-                </p>
-               </div>
-               </div>
-
-                <p>
-                  <strong>Status:</strong> {{ selectedReport.report_status }}
-                </p>
+                    :src="selectedReport.complainant_profile_image"
+                    alt="Complainant Profile"
+                    class="w-16 h-16 rounded-md mb-2"
+                  />
+                </div>
+                <div>
+                  <p>
+                    <strong>Complainant:</strong>
+                    {{ selectedReport.complainant_name }}
+                  </p>
+                  <p>
+                    <strong>User Type:</strong>
+                    {{ selectedReport.complainant_user_type }}
+                  </p>
+                </div>
               </div>
-           
+              <p><strong>Status:</strong> {{ selectedReport.report_status }}</p>
+            </div>
+
             <div class="mb-4">
               <div class="flex flex-row mt-4">
                 <div class="mr-2">
@@ -144,10 +140,25 @@
                 <strong>Address:</strong> {{ selectedReport.offender_address }}
               </p>
             </div>
-            <div>
-              <button class="bg-red-800 text-white px-2 py-1 rounded hover:bg-red-800 mb-1">Warn</button>
-            <button class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">Penalize</button>
-            <button class="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500">Ban</button>
+            <div v-if="selectedReport.report_status === 'Pending'">
+              <button
+                @click="updateReportStatus(selectedReport.report_id, 'Resolved')"
+                class="bg-red-800 text-white px-2 py-1 rounded hover:bg-red-900 mb-1"
+              >
+                Warn
+              </button>
+              <button
+                @click="updateReportStatus(selectedReport.report_id, 'Resolved')"
+                class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+              >
+                Penalize
+              </button>
+              <button
+                @click="updateReportStatus(selectedReport.report_id, 'Resolved')"
+                class="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500"
+              >
+                Ban
+              </button>
             </div>
           </div>
 
@@ -171,8 +182,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
 import axiosInstance from '@/axiosInstance'
+import { ref, onMounted } from 'vue'
 
 const reports = ref([])
 const loading = ref(true)
@@ -195,16 +206,44 @@ const fetchReports = async () => {
 
 const goToReportDetails = async report => {
   loading.value = true
+  console.log('Navigating to report details for report ID:', report.id)
   try {
     const response = await axiosInstance.get(
       `http://127.0.0.1:8000/api/admin/${report.id}`,
     )
+    console.log('Fetched report details:', response.data)
     selectedReport.value = response.data.report_data
     currentView.value = 'details'
   } catch (error) {
     console.error('Error fetching report details:', error)
+    alert('Failed to fetch report details. Please try again later.')
   } finally {
     loading.value = false
+  }
+}
+
+const updateReportStatus = async (reportId, status) => {
+  console.log('Updating report ID:', reportId)
+  try {
+    await axiosInstance.patch(`http://127.0.0.1:8000/api/admin/report-status/${reportId}`, {
+      status: status,
+    })
+
+    // Update the local reports array to reflect the change
+    const report = reports.value.find(r => r.id === reportId)
+    if (report) {
+      report.report_status = status // Update the status in the local state
+    }
+
+    // Update the selected report as well
+    if (selectedReport.value && selectedReport.value.report_id === reportId) {
+      selectedReport.value.report_status = status
+    }
+
+    alert(`Report status updated to ${status}`)
+  } catch (error) {
+    console.error('Error updating report status:', error)
+    alert('Failed to update report status. Please try again later.')
   }
 }
 
