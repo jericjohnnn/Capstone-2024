@@ -37,7 +37,7 @@ class TutorController extends Controller
 
         // ignore lang ning red sa "through" kay wa pako kita
         // sa extension nga modetect na siya, kay bag o na nga feature sa laravel
-        $tutors->through(function ($tutor) {
+        $tutors->transform(function ($tutor) {
             return [
                 'id' => $tutor->id,
                 'tutor_name' => "{$tutor->first_name} {$tutor->last_name}",
@@ -114,15 +114,23 @@ class TutorController extends Controller
 
 
     //ADMIN METHODS INSERT HERE
-    public function showAllTutors()
-    {
-        $tutors = Tutor::paginate(8);
+   public function showAllTutors(Request $request)
+{
+    // Get the search query from the request
+    $search = $request->input('search', '');
 
-        return response()->json([
-            'message' => 'Tutors retrieved successfully.',
-            'all_tutors' => $tutors,
-        ]);
-    }
+    // If search query exists, filter tutors
+    $tutors = Tutor::when($search, function($query) use ($search) {
+        return $query->where('name', 'like', '%' . $search . '%');
+    })->get(); // Instead of paginate(8), we use get() to fetch all matching tutors
+
+    return response()->json([
+        'message' => 'Tutors retrieved successfully.',
+        'all_tutors' => $tutors,
+    ]);
+}
+
+
 
     public function showAcceptedTutors()
     {
