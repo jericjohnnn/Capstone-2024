@@ -2,7 +2,7 @@
   <div class="flex flex-row">
     <SideBar />
     <div class="flex flex-col flex-grow">
-      <Header/>
+      <Header />
       <!-- Breadcrumb Tabs -->
       <div class="flex space-x-4 mb-3 ml-6 text-lg font-bold">
         <button

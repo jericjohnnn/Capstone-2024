@@ -2,7 +2,7 @@
   <div class="flex flex-row">
     <SideBar />
     <div class="flex flex-col flex-grow">
-      <Header/>
+      <Header @update:search="updateSearchQuery"/>
       <div class="flex space-x-4 mb-3 ml-6 text-lg font-bold">
         <button
           @click="currentTab = 'all'"
@@ -37,7 +37,11 @@
       </div>
 
       <!-- Conditional Rendering of Tab Components -->
-      <component :is="currentComponent" :current-tab="currentTab" />
+       <component 
+        :is="currentComponent" 
+        :current-tab="currentTab" 
+        :search-query="searchQuery" 
+      />
     </div>
   </div>
 </template>
@@ -53,6 +57,13 @@ import BannedTutors from '@/components/BannedTutors.vue';
 import Header from '@/components/Header.vue';
 
 const currentTab = ref('all')
+const searchQuery = ref('');
+
+// Update search query
+const updateSearchQuery = (newQuery) => {
+  searchQuery.value = newQuery;
+}
+
 
 // Dynamically set the component to load based on the selected tab
 const currentComponent = computed(() => {

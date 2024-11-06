@@ -1,9 +1,11 @@
 <template>
-  <div class="flex justify-center m-2">
-    <div class="flex flex-col w-[68rem] space-y-2 justify-center items-center">
-      <!-- Header Row with Columns -->
-      <div class="flex font-bold text-gray-700 bg-red-200 justify-center rounded-md border-b py-2 space-x-3 w-full">
-        <div class="w-10 text-center">User ID</div>
+  <div class="flex flex-col">
+    <div class="mb-4 ml-6">
+      <div class="flex flex-col flex-grow">
+        <div class="flex flex-col w-[68rem] space-y-2">
+          <!-- Header Row with Columns -->
+          <div class="flex font-bold text-gray-700 bg-green-200 justify-between rounded-md border-b py-2">
+        <div class="w-10 text-center">ID</div>
         <div class="w-28 text-center">Full Name</div>
         <div class="w-16 text-center">Profile Image</div>
         <div class="w-32 text-center">Address</div>
@@ -15,12 +17,12 @@
         <div class="w-20 text-center">Tutor Rate</div>
         <div class="w-28 text-center">Offense Status</div>
         <div class="w-32 text-center">Account Actions</div>
-      </div>
+          </div>
 
-      <!-- Scrollable Tutor Data Rows Container -->
-      <div class="overflow-y-auto max-h-[400px] w-full">
-        <div v-for="tutor in tutors" :key="tutor.id" class="flex text-gray-600 py-2 space-x-3 w-full border-2 rounded-md bg-blue-200">
-          <div class="w-10 text-center">{{ tutor.user_id }}</div>
+          <!-- Scrollable Accepted Tutors Data Rows Container -->
+          <div class="overflow-y-auto max-h-[400px] w-[69rem]">
+            <div v-for="tutor in filteredTutors" :key="tutor.id" class="flex text-gray-600 justify-between py-2 w-full border-2 rounded-md bg-green-100">
+              <div class="w-10 text-center">{{ tutor.user_id }}</div>
           <div class="w-28 text-center">{{ tutor.first_name }} {{ tutor.last_name }}</div>
           <div class="w-16 text-center">
             <img :src="tutor.profile_image" alt="Profile" class="w-8 h-8 rounded-full mx-auto" />
@@ -37,24 +39,9 @@
             <button class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 mb-1">Edit</button>
             <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Delete</button>
           </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <!-- Pagination Controls -->
-      <div class="flex justify-center space-x-2 w-full mt-4">
-        <button 
-          @click="prevPage" 
-          :disabled="currentPage === 1" 
-          class="bg-blue-500 text-white px-3 flex justify-center items-center rounded-md hover:bg-blue-600 disabled:opacity-50">
-          <span class="text-lg">&lt;</span>
-        </button>
-        <span class="flex items-center">Page {{ currentPage }} of {{ totalPages }}</span>
-        <button 
-          @click="nextPage" 
-          :disabled="currentPage === totalPages" 
-          class="bg-blue-500 text-white px-3 flex justify-center items-center rounded-md hover:bg-blue-600 disabled:opacity-50">
-          <span class="text-lg">&gt;</span>
-        </button>
       </div>
     </div>
   </div>
@@ -64,46 +51,50 @@
 import { ref, computed, onMounted } from 'vue';
 import axiosInstance from '@/axiosInstance';
 
-const tutors = ref([]);
-const currentPage = ref(1);
-const totalPages = ref(0);
-const itemsPerPage = 8;
+const tutors = ref([]); // Array to hold all tutors
 
-// Fetch tutors and filter to include only "Accepted" ones
+const { searchQuery } = defineProps({ searchQuery: String });
+
+const filteredTutors = computed(() => {
+  return tutors.value.filter(tutor => 
+    tutor.approval_status === 'Accepted' &&
+    (tutor.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tutor.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tutor.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tutor.contact_number.includes(searchQuery))
+  );
+});
+// Fetch tutors function that gets all tutors and filters for accepted status
 async function fetchTutors() {
   try {
     const response = await axiosInstance.get('/api/admin/all-tutors');
-    const acceptedTutors = response.data.all_tutors.data.filter(tutor => tutor.approval_status === 'Accepted');
-    tutors.value = acceptedTutors;
-    totalPages.value = Math.ceil(acceptedTutors.length / itemsPerPage);
+    tutors.value = response.data.all_tutors; // Set the fetched tutors data
   } catch (error) {
     console.error('Error fetching tutors:', error);
   }
 }
 
-// Computed property to handle paginated "Accepted" tutors only
-const paginatedTutors = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  return tutors.value.slice(start, start + itemsPerPage);
-});
-
-function prevPage() {
-  if (currentPage.value > 1) {
-    currentPage.value -= 1;
+// Deactivate a tutor's acceptance
+async function deactivateTutor(tutorId) {
+  try {
+    await axiosInstance.patch(`/api/admin/approval-status/${tutorId}`, {
+      approval_status: 'Pending', // Change status back to "Pending"
+    });
+    updateTutorStatus(tutorId, 'Pending');
+  } catch (error) {
+    console.error('Error deactivating tutor:', error);
   }
 }
 
-function nextPage() {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value += 1;
+// Update tutor status locally
+function updateTutorStatus(tutorId, status) {
+  const tutor = tutors.value.find(t => t.id === tutorId);
+  if (tutor) {
+    tutor.approval_status = status;
   }
 }
 
-function formatDate(dateString) {
-  return new Date(dateString).toLocaleDateString();
-}
-
-// Toggle Contacted Status
+// Toggle contacted status
 async function toggleContactedStatus(tutor) {
   try {
     const newStatus = !tutor.contacted_status;
@@ -116,5 +107,11 @@ async function toggleContactedStatus(tutor) {
   }
 }
 
+// Format date for display
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleDateString();
+}
+
+// Fetch tutors when the component is mounted
 onMounted(fetchTutors);
 </script>
