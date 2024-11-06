@@ -21,7 +21,7 @@ class TutorSchoolFactory extends Factory
     {
         $startDate = $this->faker->dateTimeBetween('-6 years', '-2 years');
         return [
-            'image' => 'https://picsum.photos/200/200?random=' . $this->faker->randomNumber(),
+            // 'image' => 'https://picsum.photos/200/200?random=' . $this->faker->randomNumber(),
             'name' => $this->faker->randomElement([
                 'University of the Philippines',
                 'De La Salle University',
