@@ -14,3 +14,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/test/{test}', [BookingController::class, '']);
 });
+Route::get('/bookings/{bookingId}/details', [BookingController::class, 'showBookingDetails']);
+Route::get('/bookings/all-bookings', [BookingController::class, 'showAllBookings']);
+
