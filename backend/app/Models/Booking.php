@@ -34,7 +34,6 @@ class Booking extends Model
         return $this->belongsTo(Student::class);
     }
 
-
     public function messages()
     {
         return $this->hasMany(BookingMessage::class);

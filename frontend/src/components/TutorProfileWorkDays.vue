@@ -70,8 +70,8 @@ const saveDays = async () => {
 
   try {
     // Make a PUT request to update the days
-    await axiosInstance.put('/api/edit-work-days', daysData); // Replace with your API endpoint
-    userData.value.work_days = daysData; // Update local state with the new values
+    const response = await axiosInstance.put('/api/edit-work-days', daysData); // Replace with your API endpoint
+    userData.value.work_days = response.data.work_days; // Update local state with the new values
     localStorage.setItem('user_data', JSON.stringify(userData.value)); // Save updated data to local storage
     isEditing.value = false; // Exit edit mode
   } catch (error) {

@@ -3,6 +3,7 @@
     <SideBar>
       <main class="container p-5 mx-auto">
         <div>TUTOR NOTIFICATIONS</div>
+        <PaginationLinks></PaginationLinks>
       </main>
     </SideBar>
 
@@ -11,6 +12,7 @@
 </template>
 
 <script setup>
+import PaginationLinks from '@/components/PaginationLinks.vue';
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 // import { ref, reactive, onMounted, watch } from 'vue'

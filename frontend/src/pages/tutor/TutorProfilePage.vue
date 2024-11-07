@@ -10,13 +10,13 @@
           <!-- Subjects, Rating, and Availability -->
           <section class="w-1/3 p-4 bg-white rounded-lg shadow-md">
             <h3 class="font-semibold">Ratings:</h3>
-            <StarRating :rating="averageRatings"></StarRating>
+            <StarRating :rating="averageRatings ? averageRatings : 0"></StarRating>
 
             <TutorProfileSubjects></TutorProfileSubjects>
 
             <h3 class="mt-4 font-semibold">Availability:</h3>
             <TutorProfileWorkDays />
-            <!-- <TutorProfileWorkHours /> -->
+            <TutorProfileWorkHours />
             <!-- FIX TUTOR WORK HOURSS!!!! -->
 
             <TutorProfileRate></TutorProfileRate>
@@ -65,15 +65,15 @@ import TutorProfileBiography from '@/components/TutorProfileBiography.vue'
 import TutorProfileDetails from '@/components/TutorProfileDetails.vue'
 import TutorProfileRate from '@/components/TutorProfileRate.vue'
 import TutorProfileWorkDays from '@/components/TutorProfileWorkDays.vue'
-// import TutorProfileWorkHours from '@/components/TutorProfileWorkHours.vue'
+import TutorProfileWorkHours from '@/components/TutorProfileWorkHours.vue'
 import TutorProfileSubjects from '@/components/TutorProfileSubjects.vue'
 import TutorProfileHeader from '@/components/TutorProfileHeader.vue'
 import RatingsCarousel from '@/components/RatingsCarousel.vue'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import StarRating from '@/components/StarRating.vue'
-import { computed, ref } from 'vue'
-// import axiosInstance from '@/axiosInstance'
+import { computed, ref, onMounted } from 'vue'
+import axiosInstance from '@/axiosInstance'
 
 // TESTINGGG
 
@@ -81,8 +81,7 @@ import { computed, ref } from 'vue'
 
 // const route = useRoute()
 
-const getUserData = localStorage.getItem('user_data')
-const parsedUserData = getUserData ? JSON.parse(getUserData) : {}
+const parsedUserData = JSON.parse(localStorage.getItem('user_data') || '{}')
 const userData = ref(parsedUserData)
 
 const averageRatings = computed(() => {
@@ -97,4 +96,18 @@ const ratingComments = computed(() => {
   )
   return ratingsWithComments
 })
+
+const fetchTutorProfileInfo = async () => {
+  try {
+    const response = await axiosInstance.get(`/api/tutor-info`)
+    userData.value = response.data.tutor
+    localStorage.setItem('user_data', JSON.stringify(userData.value));
+  } catch (err) {
+    console.error('Error fetching tutor details:', err)
+  }
+}
+
+
+
+onMounted(fetchTutorProfileInfo)
 </script>

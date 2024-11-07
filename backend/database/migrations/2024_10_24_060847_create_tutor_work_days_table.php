@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('tutor_work_days', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tutor_id')->constrained()->onDelete('cascade');;
-            $table->boolean('monday')->default(false);
-            $table->boolean('tuesday')->default(false);
-            $table->boolean('wednesday')->default(false);
-            $table->boolean('thursday')->default(false);
-            $table->boolean('friday')->default(false);
-            $table->boolean('saturday')->default(false);
-            $table->boolean('sunday')->default(false);
-            $table->time('start_time');
-            $table->time('end_time');
+            $table->boolean('monday')->default(true);
+            $table->boolean('tuesday')->default(true);
+            $table->boolean('wednesday')->default(true);
+            $table->boolean('thursday')->default(true);
+            $table->boolean('friday')->default(true);
+            $table->boolean('saturday')->default(true);
+            $table->boolean('sunday')->default(true);
+            $table->time('start_time')->default('06:00:00');
+            $table->time('end_time')->default('20:00:00');
             $table->timestamps();
         });
     }

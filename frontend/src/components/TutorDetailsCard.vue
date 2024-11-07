@@ -76,8 +76,8 @@
           <div class="mb-6">
             <h3 class="font-medium mb-2">Hours available:</h3>
             <p class="text-blue-600 font-medium">
-              {{ tutor.work_days.start_time }}
-              {{ tutor.work_days.end_time }}
+              {{ formatTo12HourTime(tutor.work_days.start_time) }}-
+              {{ formatTo12HourTime(tutor.work_days.end_time) }}
             </p>
           </div>
         </div>
@@ -238,6 +238,18 @@ const ratingComments = computed(() => {
   )
   return ratingsWithComments
 })
+
+function formatTo12HourTime(timeString) {
+  if (!timeString) return null;
+
+  const [hours, minutes] = timeString.split(':');
+  let hour = parseInt(hours, 10);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+
+  hour = hour % 12 || 12;
+
+  return `${hour}:${minutes} ${ampm}`;
+}
 
 const formatDate = date => {
   return new Intl.DateTimeFormat('en-US', {

@@ -49,8 +49,8 @@
             </p>
             <p v-else>
               {{ tutorDetails.first_name }} {{ tutorDetails.last_name }} is
-              available {{ tutorDetails.work_days.start_time }} -
-              {{ tutorDetails.work_days.end_time }}
+              available {{ formatTo12HourTime(tutorDetails.work_days.start_time) }} -
+              {{ formatTo12HourTime(tutorDetails.work_days.end_time) }}
               <span class="float-right"
                 >Rate: P{{ tutorDetails.tutor_rate }}/Hour</span
               >
@@ -221,6 +221,18 @@ const studentContactNumber = userData ? userData.contact_number : null
 const modifiedContactNumber = ref('')
 
 const isReadonly = ref(true)
+
+function formatTo12HourTime(timeString) {
+  if (!timeString) return null;
+
+  const [hours, minutes] = timeString.split(':');
+  let hour = parseInt(hours, 10);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+
+  hour = hour % 12 || 12;
+
+  return `${hour}:${minutes} ${ampm}`;
+}
 
 // Convert multiple refs to a reactive state object
 const initialBookingState = {

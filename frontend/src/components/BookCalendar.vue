@@ -88,7 +88,7 @@ import 'vue-cal/dist/vuecal.css'
 // import JamalModal from './JamalModal.vue'
 
 // TESTING PURPOSES!!
-const emit = defineEmits(['update:added-schedules']);
+const emit = defineEmits(['update:added-schedules'])
 
 const props = defineProps({
   tutorDetails: {
@@ -103,24 +103,29 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-});
-
+})
 
 watch(
   () => props.tutorBookings,
-  (newBookings) => {
-    events.value = newBookings.flatMap((booking) =>
-      booking.booking_dates.map((date) => ({
+  newBookings => {
+    events.value = newBookings.flatMap(booking =>
+      booking.booking_dates.map(date => ({
         id: date.id,
         booking_id: booking.booking_id,
-        start: new Date(date.start_time).toISOString().slice(0, 19).replace('T', ' '), // Format to 'YYYY-MM-DD HH:mm:ss'
-        end: new Date(date.end_time).toISOString().slice(0, 19).replace('T', ' '), // Format to 'YYYY-MM-DD HH:mm:ss'
+        start: new Date(date.start_time)
+          .toISOString()
+          .slice(0, 19)
+          .replace('T', ' '), // Format to 'YYYY-MM-DD HH:mm:ss'
+        end: new Date(date.end_time)
+          .toISOString()
+          .slice(0, 19)
+          .replace('T', ' '), // Format to 'YYYY-MM-DD HH:mm:ss'
         title: booking.subject,
         class: 'tutorSchedule',
-      }))
-    );
-  }
-);
+      })),
+    )
+  },
+)
 
 const isTutorDetailsLoaded = computed(() => !!props.tutorDetails)
 
@@ -156,7 +161,10 @@ const isEventOverlap = (newStart, newEnd, event) => {
   const existingStart = new Date(event.start).getTime()
   const existingEnd = new Date(event.end).getTime()
 
-  return (newStart < existingEnd && existingStart < newEnd)  || (newStart && newEnd == existingStart && existingEnd)
+  return (
+    (newStart < existingEnd && existingStart < newEnd) ||
+    (newStart && newEnd == existingStart && existingEnd)
+  )
 }
 
 const addScheduleRequest = () => {
@@ -189,7 +197,7 @@ const addScheduleRequest = () => {
 
   events.value.push(newEvent)
   addedPendingSchedules.value.push(newEvent)
-  emit('update:added-schedules', addedPendingSchedules.value);
+  emit('update:added-schedules', addedPendingSchedules.value)
 }
 
 function deleteSchedule(id) {
@@ -197,7 +205,7 @@ function deleteSchedule(id) {
     schedule => schedule.id !== id,
   )
   events.value = events.value.filter(schedule => schedule.id !== id)
-  emit('update:added-schedules', addedPendingSchedules.value);
+  emit('update:added-schedules', addedPendingSchedules.value)
 }
 
 // calendar views
@@ -224,6 +232,13 @@ const specialHours = computed(() => {
   }
 })
 
+function formatTimeToInteger(timeString) {
+  if (!timeString) return null // Return null if the input is empty or undefined
+
+  const [hours] = timeString.split(':') // Split by ':' and take the hour part
+  return parseInt(hours, 10) // Convert the hour to an integer
+}
+
 const dailyHours = computed(() => {
   if (!isTutorDetailsLoaded.value) {
     return [
@@ -232,8 +247,10 @@ const dailyHours = computed(() => {
     ]
   }
 
-  const tutorStartTime = props.tutorDetails.work_days?.start_time ?? 6
-  const tutorEndTime = props.tutorDetails.work_days?.end_time ?? 23
+  const tutorStartTime =
+    formatTimeToInteger(props.tutorDetails.work_days?.start_time) ?? 6
+  const tutorEndTime =
+    formatTimeToInteger(props.tutorDetails.work_days?.end_time) ?? 23
 
   if (
     (tutorStartTime < 12 && tutorEndTime <= 12) ||
@@ -256,7 +273,7 @@ const dailyHours = computed(() => {
 
 const hiddenWeekDays = computed(() => {
   if (!props.tutorDetails || !props.tutorDetails.work_days) {
-    return [];
+    return []
   }
 
   const dayToNumber = {
@@ -267,23 +284,26 @@ const hiddenWeekDays = computed(() => {
     friday: 5,
     saturday: 6,
     sunday: 7,
-  };
+  }
 
   return Object.keys(props.tutorDetails.work_days)
     .filter(day => !props.tutorDetails.work_days[day])
-    .map(day => dayToNumber[day]);
-});
+    .map(day => dayToNumber[day])
+})
 
 watch([selectedStartTime, selectedEndTime], () => {
   if (selectedStartTime.value && selectedEndTime.value) {
-    addScheduleRequest();
+    addScheduleRequest()
   }
-});
+})
 
-watch(() => props.isBookSubmitted, () => {
-  addedPendingSchedules.value = []
-  events.value = events.value.filter(schedule => schedule.deletable !== true)
-});
+watch(
+  () => props.isBookSubmitted,
+  () => {
+    addedPendingSchedules.value = []
+    events.value = events.value.filter(schedule => schedule.deletable !== true)
+  },
+)
 </script>
 
 <style>

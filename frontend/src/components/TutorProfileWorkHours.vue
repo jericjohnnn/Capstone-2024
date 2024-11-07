@@ -8,18 +8,14 @@
     </h3>
 
     <div v-if="!isEditing">
-      <p class="text-blue-600 font-medium">{{ displayStartTime }} - {{ displayEndTime }}</p>
+      <p class="text-blue-600 font-medium">{{ formatTo12HourTime(userData.work_days.start_time) }} - {{ formatTo12HourTime(userData.work_days.end_time) }}</p>
     </div>
 
     <div v-else class="space-y-2">
-      <!-- Start Time -->
       <div class="flex gap-2">
+        <!-- Start Time Select -->
         <select v-model="startTime.hour" class="border p-1 rounded">
           <option v-for="h in 12" :key="h" :value="h">{{ h }}</option>
-        </select>
-        <select v-model="startTime.minute" class="border p-1 rounded">
-          <option value="00">00</option>
-          <option value="30">30</option>
         </select>
         <select v-model="startTime.period" class="border p-1 rounded">
           <option value="AM">AM</option>
@@ -27,14 +23,10 @@
         </select>
       </div>
 
-      <!-- End Time -->
       <div class="flex gap-2">
+        <!-- End Time Select -->
         <select v-model="endTime.hour" class="border p-1 rounded">
           <option v-for="h in 12" :key="h" :value="h">{{ h }}</option>
-        </select>
-        <select v-model="endTime.minute" class="border p-1 rounded">
-          <option value="00">00</option>
-          <option value="30">30</option>
         </select>
         <select v-model="endTime.period" class="border p-1 rounded">
           <option value="AM">AM</option>
@@ -48,59 +40,63 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import axiosInstance from '@/axiosInstance'
 
+// Basic editing state
 const isEditing = ref(false)
 
-// Get initial values from localStorage
+// Load user data
 const userData = JSON.parse(localStorage.getItem('user_data') || '{}')
 const initialStartTime = userData?.work_days?.start_time || '09:00:00'
 const initialEndTime = userData?.work_days?.end_time || '17:00:00'
 
-// Convert 24h to 12h format for initial values
+// Helper function: Parse 24h time format to 12h format
 function parse24hTo12h(time24h) {
-  const [hours, minutes] = time24h.split(':')
+  const [hours] = time24h.split(':')
   const hour = parseInt(hours)
   return {
     hour: hour % 12 || 12,
-    minute: minutes,
     period: hour >= 12 ? 'PM' : 'AM'
   }
 }
 
+function formatTo12HourTime(timeString) {
+  if (!timeString) return null;
+
+  const [hours, minutes] = timeString.split(':');
+  let hour = parseInt(hours, 10);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+
+  hour = hour % 12 || 12;
+
+  return `${hour}:${minutes} ${ampm}`;
+}
+
+// Setup start and end time references
 const startTime = ref(parse24hTo12h(initialStartTime))
 const endTime = ref(parse24hTo12h(initialEndTime))
 
-// Display computed properties
-const displayStartTime = computed(() =>
-  `${startTime.value.hour}:${startTime.value.minute} ${startTime.value.period}`
-)
-const displayEndTime = computed(() =>
-  `${endTime.value.hour}:${endTime.value.minute} ${endTime.value.period}`
-)
 
-// Convert 12h to 24h format for saving
+// Convert time to 24-hour format for saving
 function convertTo24Hour(time12h) {
   let hour = time12h.hour
   if (time12h.period === 'PM' && hour !== 12) hour += 12
   if (time12h.period === 'AM' && hour === 12) hour = 0
-  return `${hour.toString().padStart(2, '0')}:${time12h.minute}:00`
+  return `${hour.toString().padStart(2, '0')}:00:00`
 }
 
+// Save hours function
 async function saveHours() {
   const start24 = convertTo24Hour(startTime.value)
   const end24 = convertTo24Hour(endTime.value)
 
   // Update localStorage
-  userData.work_days = {
-    ...userData.work_days,
-    start_time: start24,
-    end_time: end24
-  }
+  userData.work_days.start_time = start24
+  userData.work_days.end_time = end24
   localStorage.setItem('user_data', JSON.stringify(userData))
 
-  // Send to API
+  // Send data to API
   try {
     await axiosInstance.put('/api/edit-work-days', {
       start_time: start24,

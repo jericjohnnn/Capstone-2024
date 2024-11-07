@@ -33,7 +33,6 @@ class TutorSeeder extends Seeder
             'birthdate' => '2000-01-01',
             'gender' => 'Female',
             'contact_number' => '09123456789',
-            'profile_image' => 'https://picsum.photos/200/200?random=78',
             'tutor_rate' => 300,
             'biography' => "I'm a dedicated software engineer with a passion for teaching. I've been tutoring students of all ages in programming and computer science for 3 years. I believe in creating a supportive and engaging learning environment where students can thrive. Whether you're a beginner or looking to advance your skills, I'm here to help you achieve your goals. Let's connect and explore the exciting world of software development together!",
             'school_id_number' => '20212345',

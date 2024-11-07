@@ -29,8 +29,8 @@ class TutorWorkDay extends Model
         'friday' => 'boolean',
         'saturday' => 'boolean',
         'sunday' => 'boolean',
-        'start_time' => 'integer',
-        'end_time' => 'integer'
+        'start_time' => 'datetime:H:i:s',
+        'end_time' => 'datetime:H:i:s'
     ];
 
     public function tutor()

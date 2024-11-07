@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav v-if="links && links.length > 3" class="flex justify-between items-center gap-x-1" aria-label="Pagination">
+    <nav v-if="links && links.length > 0" class="flex justify-between items-center gap-x-1" aria-label="Pagination">
       <!-- Previous Button -->
       <button
         v-if="links[0]"
@@ -45,27 +45,40 @@
 </template>
 
 <script setup>
-defineProps({
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const props = defineProps({
   links: {
     type: Array,
+    default: () => [],
     required: true
   },
   currentPage: {
     type: Number,
+    default: 1,
     required: true
   },
   lastPage: {
     type: Number,
+    default: 1,
     required: true
-  }
-})
-
-const emit = defineEmits(['page-click'])
+  },
+  basePathName: {
+    type: String,
+  },
+});
 
 const handleClick = (link) => {
   if (link.url) {
-    const page = new URL(link.url).searchParams.get('page')
-    emit('page-click', parseInt(page))
+    const page = new URL(link.url).searchParams.get('page');
+    router.push({
+      name: props.basePathName,
+      query: {
+        page: parseInt(page),
+      },
+    });
   }
-}
+};
 </script>

@@ -27,12 +27,15 @@ class TutorController extends Controller
     {
         $tutor = Tutor::create($validatedDataWithUserId);
 
+
+        $tutor->workDays()->create([]);
+
         if (isset($validatedDataWithUserId['subjects'])) {
             // Use syncWithoutDetaching to add the subjects
             $tutor->subjects()->syncWithoutDetaching($validatedDataWithUserId['subjects']);
         }
 
-        return $tutor->load('subjects');
+        return $tutor->load(['subjects', 'certificates', 'schools', 'ratings.student:id,first_name,last_name,profile_image', 'workDays']);
     }
 
     public function showTutors()
@@ -72,11 +75,27 @@ class TutorController extends Controller
         ]);
     }
 
+    public function getTutorDetails()
+    {
+        $user = Auth::user();
+        $tutorId = $user->tutor->id;
+
+        $tutor = Tutor::where('id', $tutorId)
+            ->with('workDays', 'schools', 'certificates', 'subjects', 'ratings.student:id,first_name,last_name,profile_image')
+            ->first();
+
+        return response()->json([
+            'message' => 'Tutor retrieved successfully.',
+            'tutor' => $tutor,
+        ]);
+    }
+
     public function showTutorSchedules($tutor_id)
     {
         // Retrieve all bookings for the given tutor with messages and dates
         $tutorBookings = Booking::with(['messages.dates'])
             ->where('tutor_id', $tutor_id)
+            ->where('status', 'Ongoing')
             ->get();
 
         if ($tutorBookings->isEmpty()) {
@@ -110,8 +129,12 @@ class TutorController extends Controller
         $tutor = $user->tutor;
 
         $tutor->subjects()->sync($validatedData['subjects']);
+        $tutor->load(['subjects', 'certificates', 'schools', 'ratings.student:id,first_name,last_name,profile_image', 'workDays']);
 
-        return response()->json(['message' => 'Tutor subjects updated successfully.']);
+        return response()->json([
+            'message' => 'Tutor subjects updated successfully.',
+            'tutor' => $tutor,
+        ]);
     }
 
 
@@ -124,15 +147,15 @@ class TutorController extends Controller
 
         if ($request->hasFile('profile_image')) {
             $imagePath = $request->file('profile_image')->store('profile_images', 'public');
-            $validatedData['profile_image'] = $imagePath;
+            $validatedData['profile_image'] = asset('storage/' . $imagePath);
         }
 
         $tutor->update($validatedData);
+        $tutor->load(['subjects', 'certificates', 'schools', 'ratings.student:id,first_name,last_name,profile_image', 'workDays']);
 
         return response()->json([
             'message' => 'Tutor updated successfully.',
             'tutor' => $tutor,
-            'profile_image' => $tutor->profile_image ? asset('storage/' . $tutor->profile_image) : null
         ]);
     }
 
@@ -209,7 +232,10 @@ class TutorController extends Controller
 
         $school->delete();
 
-        return response()->json(['message' => 'School deleted successfully.']);
+        return response()->json([
+            'message' => 'School deleted successfully.',
+            'school' => $school,
+        ]);
     }
 
 
@@ -268,8 +294,54 @@ class TutorController extends Controller
 
         $certificate->delete();
 
-        return response()->json(['message' => 'Certificate deleted successfully.']);
+        return response()->json([
+            'message' => 'Certificate deleted successfully.',
+            'certificate' => $certificate,
+        ]);
     }
+
+    public function showStudentRequests(Request $request)
+    {
+        $tab = $request->query('tab', 'pending');
+
+        $user = Auth::user();
+        $tutor = $user->tutor;
+
+        if ($tab === 'pending') {
+            $StudentRequests = Booking::with('student')
+                ->where('tutor_id', $tutor->id)
+                ->where('status', 'Pending')
+                ->paginate(6);
+        }
+        if ($tab === 'completed') {
+            $StudentRequests = Booking::with('student')
+                ->where('tutor_id', $tutor->id)
+                ->where('status', 'Completed')
+                ->paginate(6);
+        }
+
+        return response()->json([
+            'message' => 'Accepted tutors retrieved successfully.',
+            'student_requests' => $StudentRequests,
+        ]);
+    }
+
+
+    public function showBookRequestDetails($book_id)
+    {
+        $bookDetails = Booking::where('id', $book_id)
+            ->with('student', 'messages.dates')
+            ->first();
+
+        return response()->json([
+            'message' => 'Tutor retrieved successfully.',
+            'book_details' => $bookDetails,
+        ]);
+    }
+
+    
+
+
 
 
 
@@ -285,21 +357,21 @@ class TutorController extends Controller
 
 
     //ADMIN METHODS INSERT HERE
-   public function showAllTutors(Request $request)
-{
-    // Get the search query from the request
-    $search = $request->input('search', '');
+    public function showAllTutors(Request $request)
+    {
+        // Get the search query from the request
+        $search = $request->input('search', '');
 
-    // If search query exists, filter tutors
-    $tutors = Tutor::when($search, function($query) use ($search) {
-        return $query->where('name', 'like', '%' . $search . '%');
-    })->get(); // Instead of paginate(8), we use get() to fetch all matching tutors
+        // If search query exists, filter tutors
+        $tutors = Tutor::when($search, function ($query) use ($search) {
+            return $query->where('name', 'like', '%' . $search . '%');
+        })->get(); // Instead of paginate(8), we use get() to fetch all matching tutors
 
-    return response()->json([
-        'message' => 'Tutors retrieved successfully.',
-        'all_tutors' => $tutors,
-    ]);
-}
+        return response()->json([
+            'message' => 'Tutors retrieved successfully.',
+            'all_tutors' => $tutors,
+        ]);
+    }
 
 
 
