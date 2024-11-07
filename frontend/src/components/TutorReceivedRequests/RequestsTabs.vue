@@ -60,7 +60,12 @@ const switchTab = tabName => {
 
   router.push({
     path: '/tutor/requests',
-    query: { tab: tabName },
+    query: {
+      tab: tabName,
+      // page: route.query.page,
+    },
   })
 }
+
+
 </script>

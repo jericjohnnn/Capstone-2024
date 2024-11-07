@@ -45,9 +45,11 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
 const props = defineProps({
   links: {
@@ -73,9 +75,11 @@ const props = defineProps({
 const handleClick = (link) => {
   if (link.url) {
     const page = new URL(link.url).searchParams.get('page');
+    const currentTab = ref(route.query.tab)
     router.push({
       name: props.basePathName,
       query: {
+        tab: currentTab.value,
         page: parseInt(page),
       },
     });
