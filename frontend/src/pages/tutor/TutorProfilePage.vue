@@ -17,7 +17,6 @@
             <h3 class="mt-4 font-semibold">Availability:</h3>
             <TutorProfileWorkDays />
             <TutorProfileWorkHours />
-            <!-- FIX TUTOR WORK HOURSS!!!! -->
 
             <TutorProfileRate></TutorProfileRate>
 

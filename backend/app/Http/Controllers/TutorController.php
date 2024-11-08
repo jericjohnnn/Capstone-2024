@@ -12,10 +12,12 @@ use App\Http\Requests\Tutor\EditWorkDaysRequest;
 use App\Models\Booking;
 use App\Models\BookingDate;
 use App\Models\BookingMessage;
+use App\Models\Notification;
 use App\Models\Subject;
 use App\Models\Tutor;
 use App\Models\TutorCertificate;
 use App\Models\TutorSchool;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -326,7 +328,6 @@ class TutorController extends Controller
         ]);
     }
 
-
     public function showBookRequestDetails($book_id)
     {
         $bookDetails = Booking::where('id', $book_id)
@@ -339,8 +340,14 @@ class TutorController extends Controller
         ]);
     }
 
-    
 
+    public function deleteTutorAccount()
+    {
+        $user = Auth::user();
+
+        User::destroy($user->id);
+        return response()->json(['message' => 'Tutor deleted successfully.']);
+    }
 
 
 
