@@ -38,4 +38,5 @@ class Booking extends Model
     {
         return $this->hasMany(BookingMessage::class);
     }
+     
 }

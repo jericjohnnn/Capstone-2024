@@ -1,9 +1,23 @@
 <template>
-  <main class="">
+  <main class="bg-blue-200">
     <SideBar>
-      <main class="container p-5 mx-auto">
-        <div>STUDENT SCHEDULES</div>
-      </main>
+      <div class="container mx-auto ">
+        <div class="">
+          <div class="flex justify-center font-bold text-2xl py-5">
+            Schedules
+          </div>
+          <div class="flex justify-center bg-white rounded-xl h-[500px]">
+           <div class=" flex flex-col pt-7 space-y-4">
+            <div class="border-2 border-indigo-500 bg-indigo-200 w-[1000px] h-[100px]  rounded-lg">
+              hi
+            </div>
+            <div class="border-2 border-indigo-500 bg-indigo-200 w-[1000px] h-[100px]  rounded-lg">
+              hi
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
     </SideBar>
 
     <HelpButton />

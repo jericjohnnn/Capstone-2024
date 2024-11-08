@@ -1,9 +1,23 @@
 <template>
-  <main class="">
+  <main class="bg-blue-200">
     <SideBar>
-      <main class="container p-5 mx-auto">
-        <div>STUDENT NOTIFICATION</div>
-      </main>
+      <div class="container mx-auto ">
+        <div class="">
+          <div class="flex justify-center font-bold text-2xl py-5">
+            Notifications
+          </div>
+         <div class="flex justify-center bg-white rounded-xl h-[500px]">
+           <div class=" flex flex-col pt-7 space-y-4">
+            <div class="border-2 border-indigo-500 bg-indigo-200 w-[1000px] h-[100px]  rounded-lg">
+              hi
+            </div>
+            <div class="border-2 border-indigo-500 bg-indigo-200 w-[1000px] h-[100px]  rounded-lg">
+              hi
+            </div>
+          </div>
+         </div>
+        </div>
+      </div>
     </SideBar>
 
     <HelpButton />
@@ -23,19 +37,5 @@ import HelpButton from '@/components/HelpButton.vue'
 // const userData = getUserData ? JSON.parse(getUserData) : null
 // const studentContactNumber = userData ? userData.contact_number : null
 
-// const notificationsPlaceholder = [
-//   {
-//     id: 1,
-//     content: "Your tutoring with Janela bano has completed please rate tutor janela to book her next time."
-//   },
-//   {
-//      id: 2,
-//     content: "Janela bano accepted your tutor request. tutoring is now ongoing. He/She will be contact you with your provided number"
-//   },
-//   {
-//      id: 3,
-//     content: "You booked Janela bano, request is now pending. you can check on pending requests in the tutor requests tab"
-//   },
-// ]
 
 </script>
