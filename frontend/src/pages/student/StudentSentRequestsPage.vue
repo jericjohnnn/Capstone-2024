@@ -29,7 +29,7 @@
         </div>
 
         <!-- Tab Content -->
-        <div class="flex justify-center bg-white rounded-xl h-[460px]">
+        <div class="flex justify-center bg-white rounded-xl h-[460px] overscroll-y-auto">
           <div class="flex flex-col pt-2 space-y-4">
              <component :is="currentTabComponent" />
           </div>
