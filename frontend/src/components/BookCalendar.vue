@@ -312,6 +312,7 @@ watch(
   border: solid rgba(255, 210, 0, 0.3);
   border-width: 2px 0;
 }
+
 .vuecal__cell--disabled {
   text-decoration: line-through;
   color: #bbb;
@@ -320,6 +321,7 @@ watch(
 .vuecal__cell--before-min {
   color: #b6d6c7;
 }
+
 .vuecal__cell--after-max {
   color: #00f0f0;
 }
@@ -328,13 +330,15 @@ watch(
   background-color: rgba(235, 235, 235, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.9);
   color: #8d8d8d;
-  font-size: 0.75em; /* Adjust font size as needed */
+  font-size: 0.75em;
+  /* Adjust font size as needed */
 }
 
 .vuecal__event.addedSchedule {
   background-color: rgba(36, 77, 255, 0.9);
   border: 1px solid rgba(231, 236, 255, 0.9);
   color: #fff;
-  font-size: 0.75em; /* Adjust font size as needed */
+  font-size: 0.75em;
+  /* Adjust font size as needed */
 }
 </style>

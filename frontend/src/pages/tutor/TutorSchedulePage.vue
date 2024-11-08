@@ -2,7 +2,7 @@
 <main class="">
     <SideBar>
       <main class="container p-5 mx-auto">
-        <div>TUTOR SCHEDULE</div>
+        <SchedulesCalendar></SchedulesCalendar>
       </main>
     </SideBar>
 
@@ -11,6 +11,7 @@
 </template>
 
 <script setup>
+import SchedulesCalendar from '@/components/TutorSchedule/SchedulesCalendar.vue';
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 // import { ref, reactive, onMounted, watch } from 'vue'

@@ -1,7 +1,7 @@
 <template>
-  <main class="">
+  <main class="bg-blue-50">
     <SideBar>
-      <main class="container flex flex-col gap-14 min-h-screen bg-blue-50">
+      <main class="container flex flex-col gap-14 min-h-screen ">
         <RequestsTabs>
           <template #pending>
             <PendingRequestsCard />

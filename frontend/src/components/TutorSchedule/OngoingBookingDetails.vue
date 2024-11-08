@@ -31,11 +31,6 @@
                       report
                     </button>
                   </div>
-                  <button
-                    class="bg-blue-600 text-white px-4 py-1 rounded text-sm w-full"
-                  >
-                    view profile
-                  </button>
                 </div>
               </div>
 
@@ -112,25 +107,6 @@
                   </div>
                 </div>
               </div>
-              <div class="flex justify-between w-full">
-                <button @click="negotiateBooking" class="outline">
-                  negotiate
-                </button>
-                <div class="flex gap-4">
-                  <button
-                    @click="updateBookingStatus('Canceled')"
-                    class="bg-red-300"
-                  >
-                    decline
-                  </button>
-                  <button
-                    @click="updateBookingStatus('Ongoing')"
-                    class="bg-green-300"
-                  >
-                    accept
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -142,13 +118,12 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
 
 const route = useRoute()
-const router = useRouter()
 
 const formatDate = date => {
   return new Intl.DateTimeFormat('en-US', {
@@ -158,43 +133,18 @@ const formatDate = date => {
   }).format(new Date(date))
 }
 
-const updateBookingStatus = async status => {
-  try {
-    await axiosInstance.patch(
-      `/api/update-student-booking/${route.params.bookId}`,
-      { status: status },
-    )
-    if (status === 'Ongoing') {
-      router.push({ path: '/tutor/schedule'})
-    } else {
-      router.push({ path:'/tutor/requests'})
-    }
-
-    // bookDetails.value = response.data.book_details
-  } catch (err) {
-    console.error('Error fetching booking details:', err)
-  }
-}
-
 const bookDetails = ref(null)
 
-
-const fetchBookingDetails = async (bookId) => {
+const fetchBookingDetails = async bookId => {
   try {
-    const response = await axiosInstance.get(`/api/book-request-details/${bookId}`)
-    const bookData = response.data.book_details
-
-    if (bookData.status === 'Ongoing') {
-      router.push({ path: `/tutor/schedule/${bookId}` })
-    } else {
-      bookDetails.value = bookData
-    }
+    const response = await axiosInstance.get(
+      `/api/book-request-details/${bookId}`,
+    )
+    bookDetails.value = response.data.book_details
   } catch (err) {
     console.error('Error fetching booking details:', err)
-    router.push({ name: 'NotFound' }) // Redirect to 404 in case of error
   }
 }
-
 
 onMounted(() => {
   const initialBookId = route.params.bookId
