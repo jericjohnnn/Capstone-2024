@@ -221,15 +221,15 @@
             <div class="mt-auto">
               <hr class="my-4 border-white/20" />
               <!-- Profile Section with Placeholder -->
-              <div class="flex items-center gap-x-4 px-2.5 py-3">
+              <div class="flex  items-center gap-x-4 px-2.5 py-3">
                 <!-- Placeholder Profile Image -->
                 <div
                   class="rounded-full w-10 h-10 bg-white/10 flex items-center justify-center"
                 >
                 <!-- class="shrink-0 size-16 rounded-full" -->
                   <img
-                  class="shrink-0 rounded-full"
-                    :src="userProfileImage"
+                  class="shrink-0 w-auto h-full rounded-full"
+                    :src="userProfileImage || defaultProfileImage"
                     alt="profile image"
                   />
                 </div>
@@ -271,6 +271,15 @@
 import { useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
 
+const defaultProfileImage =
+  'data:image/svg+xml;base64,' +
+  btoa(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="11" fill="white" stroke="#E5E7EB" stroke-width="2"/>
+    <circle cx="12" cy="8" r="3.5" fill="#9CA3AF"/>
+    <path d="M12 12.5c-3 0-5.5 1.5-7 3.5 1.5 3 4 5 7 5s5.5-2 7-5c-1.5-2-4-3.5-7-3.5z" fill="#9CA3AF"/>
+  </svg>`)
+
 const router = useRouter()
 
 const userType = localStorage.getItem('user_type')
@@ -290,6 +299,7 @@ async function logout() {
     localStorage.removeItem('app_auth_token')
     localStorage.removeItem('user_type')
     localStorage.removeItem('user_email')
+    localStorage.removeItem('user_data')
     localStorage.removeItem('user_full_name')
 
     delete axiosInstance.defaults.headers['Authorization']

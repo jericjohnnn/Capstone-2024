@@ -34,7 +34,7 @@
                 :links="paginationLinks"
                 :current-page="currentPage"
                 :last-page="lastPage"
-                @page-click="goToPage"
+                :basePathName="StudentHome"
               />
             </div>
           </div>
@@ -106,34 +106,24 @@ const fetchTutorDetails = async tutorId => {
   }
 }
 
-const goToPage = pageNumber => {
-  router.push({
-    path: '/student/home',
-    query: {
-      page: pageNumber,
-    },
-  })
-}
-
 const selectTutor = tutorId => {
   router.push({
     path: '/student/home',
     query: {
       page: currentPage.value,
-      tutor_id: tutorId, // Add tutor_id to the query params
+      tutor_id: tutorId,
     },
   })
 }
 
-// Watch for changes in route query
 watch(
-  () => [route.query.page, route.query.tutor_id], // Watch for both page and tutor_id changes
+  () => [route.query.page, route.query.tutor_id],
   ([newPage, newTutorId]) => {
     const page = parseInt(newPage) || 1
     fetchTutors(page)
 
     if (newTutorId) {
-      fetchTutorDetails(newTutorId) // Fetch tutor details if tutor_id is present
+      fetchTutorDetails(newTutorId)
     }
   },
 )

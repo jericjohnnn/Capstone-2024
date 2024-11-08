@@ -27,7 +27,6 @@ class StudentSeeder extends Seeder
             'last_name' => 'account',
             'address' => '123 Main St, City, Country',
             'birthdate' => '2000-01-01',
-            'profile_image' => 'https://picsum.photos/200/200',
             'contact_number' => '09123456789',
             'school_id_number' => '20212345',
             'grade_year' => '10',

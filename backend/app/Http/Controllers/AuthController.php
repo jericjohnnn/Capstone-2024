@@ -89,13 +89,8 @@ class AuthController extends Controller
             ->first();
             $userFullName = "{$tutor->first_name} {$tutor->last_name}";
             $userType = "Tutor";
-            if ($tutor->profile_image) {
-                $tutor->profile_image = asset('storage/' .$tutor->profile_image); // or use Storage::url($tutor->profile_image)
-            }
             $userData = $tutor;
         }
-
-
 
         return response()->json([
             'message' => 'Login successful!',

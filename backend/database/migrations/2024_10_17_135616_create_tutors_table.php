@@ -21,7 +21,7 @@ return new class extends Migration
             $table->enum('gender', ['Male', 'Female', 'Other'])->nullable();
             $table->string('contact_number')->nullable();
             $table->string('profile_image')->nullable();
-            $table->integer('tutor_rate')->nullable();
+            $table->integer('tutor_rate')->nullable()->default(0);
             $table->text('biography')->nullable();
             $table->string('school_id_number')->nullable();
             $table->enum('course', ['BSED', 'BEED', 'BSIT', 'BSHM', 'BSENTREP'])->nullable();

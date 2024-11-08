@@ -106,9 +106,10 @@ const userData = ref(JSON.parse(localStorage.getItem('user_data') || '{}'))
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +
   btoa(`
-  <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="11" fill="white" stroke="#E5E7EB" stroke-width="2"/>
-    <text x="12" y="12" text-anchor="middle" dy=".3em" font-size="16" fill="#9CA3AF">+</text>
+    <circle cx="12" cy="8" r="3.5" fill="#9CA3AF"/>
+    <path d="M12 12.5c-3 0-5.5 1.5-7 3.5 1.5 3 4 5 7 5s5.5-2 7-5c-1.5-2-4-3.5-7-3.5z" fill="#9CA3AF"/>
   </svg>`)
 
 const userInfoData = reactive({
@@ -142,10 +143,9 @@ const submitNewDetails = async () => {
   if (selectedImage.value) formData.append('profile_image', selectedImage.value)
 
   try {
-    await axiosInstance.post('/api/edit-details', formData)
-    // localStorage.setItem('user_email', userEmail.value)
-    // localStorage.setItem('user_data', JSON.stringify(userData.value))
-    console.log([...formData])
+    const response = await axiosInstance.post('/api/edit-details', formData)
+    userData.value = response.data.tutor
+    localStorage.setItem('user_data', JSON.stringify(userData.value))
     isProfileEdit.value = false
   } catch (error) {
     console.error('Update failed:', error)
@@ -155,9 +155,7 @@ const submitNewDetails = async () => {
 
 const cancelEdit = () => {
   // userData.value = JSON.parse(localStorage.getItem('user_data') || '{}')
-  // userEmail.value = localStorage.getItem('user_email')
-  currentProfileImage.value =
-    userData.value.profile_image || defaultProfileImage
+  currentProfileImage.value = userData.value.profile_image || defaultProfileImage
   selectedImage.value = null
   isProfileEdit.value = false
 }
