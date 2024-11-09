@@ -1,26 +1,39 @@
 <template>
   <div>
-    <div v-if="isModalOpen" class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div
+      v-if="isModalOpen"
+      class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    >
       <div class="bg-white p-4 rounded-lg w-96" @click.stop>
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-semibold">Select Time</h2>
-          <button @click="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+          <div class="flex flex-col">
+            <h2 class="text-lg font-semibold">Select Time</h2>
+            <div v-if="selectedDate">
+              <p>{{ formatDate(selectedDate) }}</p>
+            </div>
+          </div>
+          <button
+            @click="closeModal"
+            class="text-gray-500 hover:text-gray-700 text-2xl"
+          >
+            &times;
+          </button>
         </div>
 
         <!-- Start Time -->
         <div class="mb-4 flex items-center gap-2">
           <label class="w-20">Start Time:</label>
-          <select v-model="startHour" class="border  px-8 rounded">
+          <select v-model="startHour" class="border px-8 rounded">
             <option v-for="hour in 12" :key="hour" :value="hour">
               {{ String(hour).padStart(2, '0') }}
             </option>
           </select>
           <span>:</span>
-          <select v-model="startMinute" class="border  px-8 rounded">
+          <select v-model="startMinute" class="border px-8 rounded">
             <option value="00">00</option>
             <option value="30">30</option>
           </select>
-          <select v-model="startPeriod" class="border  px-8 rounded">
+          <select v-model="startPeriod" class="border px-8 rounded">
             <option value="AM">AM</option>
             <option value="PM">PM</option>
           </select>
@@ -29,17 +42,17 @@
         <!-- End Time -->
         <div class="mb-6 flex items-center gap-2">
           <label class="w-20">End Time:</label>
-          <select v-model="endHour" class="border  px-8 rounded">
+          <select v-model="endHour" class="border px-8 rounded">
             <option v-for="hour in 12" :key="hour" :value="hour">
               {{ String(hour).padStart(2, '0') }}
             </option>
           </select>
           <span>:</span>
-          <select v-model="endMinute" class="border  px-8 rounded">
+          <select v-model="endMinute" class="border px-8 rounded">
             <option value="00">00</option>
             <option value="30">30</option>
           </select>
-          <select v-model="endPeriod" class="border  px-8 rounded">
+          <select v-model="endPeriod" class="border px-8 rounded">
             <option value="AM">AM</option>
             <option value="PM">PM</option>
           </select>
@@ -57,53 +70,71 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 defineProps({
   isModalOpen: {
     type: Boolean,
-    required: true
-  }
-});
+    required: true,
+  },
+  selectedDate: {
+    type: String,
+    required: false,
+    default: '',
+  },
+})
 
-const emit = defineEmits(['update:start-time', 'update:end-time', 'close']);
+const emit = defineEmits(['update:start-time', 'update:end-time', 'close'])
 
+const formatDate = date => {
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(date))
+}
 // Initialize time picker values
-const startHour = ref(9);
-const startMinute = ref('00');
-const startPeriod = ref('AM');
+const startHour = ref(9)
+const startMinute = ref('00')
+const startPeriod = ref('AM')
 
-const endHour = ref(10);
-const endMinute = ref('00');
-const endPeriod = ref('AM');
+const endHour = ref(10)
+const endMinute = ref('00')
+const endPeriod = ref('AM')
 
 // Convert to 24-hour format
 const convertTo24HourFormat = (hour, minute, period) => {
-  let hours = hour;
-  if (period === 'PM' && hours < 12) hours += 12;
-  if (period === 'AM' && hours === 12) hours = 0;
-  return `${String(hours).padStart(2, '0')}:${minute}:00`;
-};
+  let hours = hour
+  if (period === 'PM' && hours < 12) hours += 12
+  if (period === 'AM' && hours === 12) hours = 0
+  return `${String(hours).padStart(2, '0')}:${minute}:00`
+}
 
 const confirmTimes = () => {
-  const startTime = convertTo24HourFormat(startHour.value, startMinute.value, startPeriod.value);
-  const endTime = convertTo24HourFormat(endHour.value, endMinute.value, endPeriod.value);
+  const startTime = convertTo24HourFormat(
+    startHour.value,
+    startMinute.value,
+    startPeriod.value,
+  )
+  const endTime = convertTo24HourFormat(
+    endHour.value,
+    endMinute.value,
+    endPeriod.value,
+  )
 
-  emit('update:start-time', startTime);
-  emit('update:end-time', endTime);
-  closeModal();
-};
+  emit('update:start-time', startTime)
+  emit('update:end-time', endTime)
+  closeModal()
+}
 
 const closeModal = () => {
-  startHour.value = 9;
-  startMinute.value = '00';
-  startPeriod.value = 'AM';
-  endHour.value = 10;
-  endMinute.value = '00';
-  endPeriod.value = 'AM';
+  startHour.value = 9
+  startMinute.value = '00'
+  startPeriod.value = 'AM'
+  endHour.value = 10
+  endMinute.value = '00'
+  endPeriod.value = 'AM'
 
-  emit('close');
-};
-
-
+  emit('close')
+}
 </script>
