@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Booking\BookingRequest;
+use App\Http\Requests\Booking\NegotiateBookingRequest;
 use App\Models\Booking;
 use App\Models\BookingDate;
 use App\Models\BookingMessage;
@@ -111,11 +112,6 @@ class BookingController extends Controller
     }
 
 
-
-
-
-
-
     public function getAllBookingSchedules()
     {
         $user = Auth::user();
@@ -154,6 +150,36 @@ class BookingController extends Controller
             'bookings' => $bookingsData,
         ]);
     }
+
+
+    public function negotiateBooking(NegotiateBookingRequest $request, $booking_id)
+    {
+        $validatedData = $request->validated();
+
+        $booking = Booking::findOrFail($booking_id);
+
+        $bookingMessage = BookingMessage::create([
+            'booking_id' => $booking->id,
+            'title' => $validatedData['message_title'],
+            'message' => $validatedData['message_content'],
+        ]);
+
+        foreach ($validatedData['selected_date_times'] as $dateTime) {
+            BookingDate::create([
+                'booking_message_id' => $bookingMessage->id,
+                'start_time' => $dateTime['start'],
+                'end_time' => $dateTime['end'],
+            ]);
+        }
+
+        $booking->load(['student', 'messages.dates']);
+
+        return response()->json([
+            'message' => 'Booking requested successfully.',
+            'book_details' => $booking,
+        ]);
+    }
+
     // JJA GODS
 
 

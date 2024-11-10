@@ -3,8 +3,6 @@
     <SideBar>
       <main class="container flex flex-col justify-center gap-14 min-h-screen">
         <!-- Breadcrumb -->
-        <p class="text-sm text-gray-600 pt-4">Requests > book details</p>
-
         <div v-if="!bookDetails">LOADING</div>
         <div v-else>
           <div class="h-[calc(100vh-150px)] flex gap-10">
@@ -17,15 +15,15 @@
                 <div class="shrink-0">
                   <img
                     class="h-14 w-14 rounded-full"
-                    :src="bookDetails.student.profile_image"
+                    :src="bookDetails.tutor.profile_image"
                     alt="profile image"
                   />
                 </div>
                 <div class="w-full">
                   <div class="flex justify-between bg-gray-50 p-2 rounded mb-2">
                     <p class="font-medium">
-                      {{ bookDetails.student.first_name }}
-                      {{ bookDetails.student.last_name }}, 25
+                      {{ bookDetails.tutor.first_name }}
+                      {{ bookDetails.tutor.last_name }}
                     </p>
                     <button class="text-blue-600 underline text-sm">
                       report
@@ -81,40 +79,17 @@
                     {{ formatDate(dateTime.end_time) }}
                   </div>
                 </div>
-
-              </div>
-              <div>
-                <button
-                  :disabled="isExpired"
-                  @click="goToSchedules"
-                  class="bg-blue-400"
-                >
-                  mark as complete
-                </button>
               </div>
             </div>
 
             <!-- Messages Section -->
-            <div class="w-3/5 bg-white rounded-lg p-6 shadow-sm">
-              <h3>your message</h3>
-              <div class="space-y-4 outline">
-                <div v-for="message in bookDetails.messages" :key="message.id">
-                  <div class="mb-2">
-                    <label class="block text-sm font-medium mb-1"
-                      >SUBJECT</label
-                    >
-                    <div class="p-2 bg-gray-50 rounded">
-                      {{ message.title }}
-                    </div>
-                  </div>
-                  <div>
-                    <div class="p-2 bg-gray-50 rounded">
-                      {{ message.message }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <StudentBookMessages
+              :bookDetailsProps="bookDetails"
+              :tutorBookings="fetchedTutorBookings"
+              :tutorWorkDays="tutorWorkDays"
+              :studentBookings="fetchedStudentBookings"
+            ></StudentBookMessages>
+            <!-- BUTTONS -->
           </div>
         </div>
       </main>
@@ -124,14 +99,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
+import StudentBookMessages from '@/components/StudentBookDetails/StudentBookMessages.vue';
 
-const route = useRoute()
-
+//HELPER FUNCTIONS
 const formatDate = date => {
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -140,38 +116,86 @@ const formatDate = date => {
   }).format(new Date(date))
 }
 
-// check booking if its expired
-const isExpired = ref(true)
+//HELPER FUNCTIONS
+// const parsedUserData = JSON.parse(localStorage.getItem('user_data') || '{}')
+// const userData = ref(parsedUserData)
 
-const checkIfExpired = () => {
-  const dates = bookDetails.value.messages[bookDetails.value.messages.length - 1].dates
-  
-  const latestEndTime = dates.reduce((latest, date) => {
-    const currentEndTime = new Date(date.end_time)
-    return currentEndTime > latest ? currentEndTime : latest
-  }, new Date(dates[0].end_time))
-  
-  const currentDate = new Date()
-  
-  if(latestEndTime < currentDate){
-    isExpired.value = !isExpired.value
-  }
-}
-//
+const route = useRoute()
+const router = useRouter()
 
 const bookDetails = ref(null)
+const fetchedTutorBookings = ref([])
+const fetchedStudentBookings = ref([])
+
+const fetchOngoingTutorBookings = async tutorId => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/ongoing-tutor-booking-dates/${tutorId}`,
+    )
+    fetchedTutorBookings.value = response.data.tutor_bookings
+  } catch (err) {
+    console.error('Error fetching tutor details:', err)
+  }
+}
+
+const fetchOngoingStudentBookings = async studentId => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/ongoing-student-booking-dates/${studentId}`,
+    )
+    fetchedStudentBookings.value = response.data.student_bookings
+  } catch (err) {
+    console.error('Error fetching tutor details:', err)
+  }
+}
 
 const fetchBookingDetails = async bookId => {
   try {
     const response = await axiosInstance.get(
-      `/api/book-request-details/${bookId}`,
+      `/api/student-book-details/${bookId}`,
     )
-    bookDetails.value = response.data.book_details
-    checkIfExpired()
+    const bookData = response.data.book_details
+
+    if (bookData.status === 'Ongoing') {
+      router.push({ path: `/student/schedule/${bookId}` })
+    } else {
+      bookDetails.value = bookData
+    }
+    fetchTutorWorkDays(bookData.tutor_id)
   } catch (err) {
     console.error('Error fetching booking details:', err)
+    router.push({ name: 'NotFound' }) // Redirect to 404 in case of error
   }
 }
+
+
+const tutorWorkDays = ref({})
+const fetchTutorWorkDays = async tutorId => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/tutor-detail/${tutorId}`,
+    )
+    const tutorData = response.data.tutor
+
+    tutorWorkDays.value = tutorData.work_days
+  } catch (err) {
+    console.error('Error fetching booking details:', err)
+    router.push({ name: 'NotFound' }) // Redirect to 404 in case of error
+  }
+}
+
+
+
+
+watch(
+  () => bookDetails.value,
+  newVal => {
+    if (newVal) {
+      fetchOngoingTutorBookings(bookDetails.value.tutor_id)
+      fetchOngoingStudentBookings(bookDetails.value.student_id)
+    }
+  },
+)
 
 onMounted(() => {
   const initialBookId = route.params.bookId
@@ -180,17 +204,3 @@ onMounted(() => {
   }
 })
 </script>
-<style>
-button:disabled {
-  background-color: #d3d3d3;
-  color: #888888;
-  cursor: not-allowed;
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-button:disabled:hover {
-  background-color: #d3d3d3;
-  color: #888888;
-}
-</style>

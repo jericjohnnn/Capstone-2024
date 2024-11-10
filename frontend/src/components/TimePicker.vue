@@ -1,53 +1,46 @@
 <template>
   <div class="p-4">
-    <div class="flex justify-between items-center mb-4">
-      <div class="flex flex-col">
-        <h2 class="text-lg font-semibold">Select Time</h2>
-        <div v-if="selectedDate">
-          <p>{{ formatDate(selectedDate) }}</p>
-        </div>
+    <div class="flex">
+      <div class="mb-4 flex items-center gap-2">
+        <label class="">Start:</label>
+        <select v-model="startHour" class="border px-8 rounded">
+          <option v-for="hour in 12" :key="hour" :value="hour">
+            {{ String(hour).padStart(2, '0') }}
+          </option>
+        </select>
+        <span>:</span>
+        <select v-model="startMinute" class="border px-8 rounded">
+          <option value="00">00</option>
+          <option value="30">30</option>
+        </select>
+        <select v-model="startPeriod" class="border px-8 rounded">
+          <option value="AM">AM</option>
+          <option value="PM">PM</option>
+        </select>
+      </div>
+
+      <div class="mb-6 flex items-center gap-2">
+        <label class="">End:</label>
+        <select v-model="endHour" class="border px-8 rounded">
+          <option v-for="hour in 12" :key="hour" :value="hour">
+            {{ String(hour).padStart(2, '0') }}
+          </option>
+        </select>
+        <span>:</span>
+        <select v-model="endMinute" class="border px-8 rounded">
+          <option value="00">00</option>
+          <option value="30">30</option>
+        </select>
+        <select v-model="endPeriod" class="border px-8 rounded">
+          <option value="AM">AM</option>
+          <option value="PM">PM</option>
+        </select>
       </div>
     </div>
-
-    <div class="mb-4 flex items-center gap-2">
-      <label class="w-20">Start Time:</label>
-      <select v-model="startHour" class="border px-8 rounded">
-        <option v-for="hour in 12" :key="hour" :value="hour">
-          {{ String(hour).padStart(2, '0') }}
-        </option>
-      </select>
-      <span>:</span>
-      <select v-model="startMinute" class="border px-8 rounded">
-        <option value="00">00</option>
-        <option value="30">30</option>
-      </select>
-      <select v-model="startPeriod" class="border px-8 rounded">
-        <option value="AM">AM</option>
-        <option value="PM">PM</option>
-      </select>
-    </div>
-
-    <div class="mb-6 flex items-center gap-2">
-      <label class="w-20">End Time:</label>
-      <select v-model="endHour" class="border px-8 rounded">
-        <option v-for="hour in 12" :key="hour" :value="hour">
-          {{ String(hour).padStart(2, '0') }}
-        </option>
-      </select>
-      <span>:</span>
-      <select v-model="endMinute" class="border px-8 rounded">
-        <option value="00">00</option>
-        <option value="30">30</option>
-      </select>
-      <select v-model="endPeriod" class="border px-8 rounded">
-        <option value="AM">AM</option>
-        <option value="PM">PM</option>
-      </select>
-    </div>
-
     <button
       @click="addTime"
       class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
+      :disabled="isDay"
     >
       Add
     </button>
@@ -57,23 +50,15 @@
 <script setup>
 import { ref } from 'vue'
 
-defineProps({
-  selectedDate: {
-    type: String,
-    required: false,
-    default: '',
-  },
-})
-
 const emit = defineEmits(['update:start-time', 'update:end-time'])
 
-const formatDate = date => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date))
-}
+defineProps({
+  isDay: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+})
 
 // Initialize time picker values
 const startHour = ref(9)
@@ -134,5 +119,18 @@ select {
 select:focus {
   outline: none;
   border-color: #3182ce;
+}
+
+button:disabled {
+  background-color: #d3d3d3;
+  color: #888888;
+  cursor: not-allowed;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+button:disabled:hover {
+  background-color: #d3d3d3;
+  color: #888888;
 }
 </style>
