@@ -10,6 +10,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/booking-schedules', [BookingController::class, 'getAllBookingSchedules']);
 
     Route::post('/create-booking', [BookingController::class, 'createBooking']);
+    Route::post('/negotiate-booking/{booking_id}', [BookingController::class, 'negotiateBooking']);
 
     Route::patch('/update-student-booking/{book_id}', [BookingController::class, 'updateStudentBookRequestStatus']);
     Route::patch('/test/{test_id}', [BookingController::class, '']);

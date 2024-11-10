@@ -32,7 +32,11 @@
       </template>
     </vue-cal>
     <div class="">
-      <TimePicker></TimePicker>
+      <TimePicker
+        :isDay="isDay"
+        @update:start-time="updateStartTime"
+        @update:end-time="updateEndTime"
+      ></TimePicker>
       <div
         v-for="schedule in addedPendingSchedules"
         :key="schedule.id"
@@ -74,9 +78,9 @@ const formatRawDateTime = dateString => {
   return new Date(dateString).toISOString().slice(0, 19).replace('T', ' ')
 }
 //HELPER FUNCTIONS!
-const emit = defineEmits(['isDayValue', 'selectedCellValue'])
 
-// TESTING GROUNDS
+const emit = defineEmits(['selectedCellValue', 'pendingBookings', 'update:added-schedules'])
+
 const props = defineProps({
   tutorBookings: {
     type: Array,
@@ -92,16 +96,7 @@ const props = defineProps({
   },
 })
 
-const activeView = ref('month')
-const isDay = computed(() => {
-  return activeView.value !== 'day'
-})
-
-const availableStartingDate = computed(() => {
-  const date = new Date()
-  date.setDate(date.getDate())
-  return date
-})
+const events = ref([])
 
 const clickedCellDate = ref()
 const storeCellDate = event => {
@@ -110,6 +105,80 @@ const storeCellDate = event => {
   emit('selectedCellValue', event)
 }
 
+
+//ADD NEW DATES
+const selectedStartTime = ref('')
+const selectedEndTime = ref('')
+
+const updateStartTime = time => {
+  selectedStartTime.value = time
+}
+
+const updateEndTime = time => {
+  selectedEndTime.value = time
+}
+
+const addedPendingSchedules = ref([])
+
+//
+const isEventOverlap = (newStart, newEnd, event) => {
+  const existingStartTime = new Date(event.start).getTime();
+  const existingEndTime = new Date(event.end).getTime();
+
+  // Check if the new slot overlaps with the existing slot
+  return newStart < existingEndTime && newEnd > existingStartTime;
+};
+
+const addScheduleRequest = () => {
+  const newStart = new Date(
+    `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedStartTime.value}`
+  ).getTime();
+  const newEnd = new Date(
+    `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedEndTime.value}`
+  ).getTime();
+
+  // Check for overlap in existing events
+  const hasOverlap = events.value.some(event =>
+    isEventOverlap(newStart, newEnd, event)
+  );
+
+  if (hasOverlap) {
+    alert('Event time overlaps with an existing event. Please choose another time.');
+    return;
+  }
+
+  // If no overlap, add the new event
+  const newEvent = {
+    id: Date.now(),
+    start: `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedStartTime.value}`,
+    end: `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedEndTime.value}`,
+    title: 'You Added',
+    class: 'addedSchedule',
+    deletable: true,
+  };
+
+  events.value.push(newEvent);
+  addedPendingSchedules.value.push(newEvent);
+  emit('update:added-schedules', addedPendingSchedules.value);
+};
+
+
+//
+
+function deleteSchedule(id) {
+  addedPendingSchedules.value = addedPendingSchedules.value.filter(
+    schedule => schedule.id !== id,
+  )
+  events.value = events.value.filter(schedule => schedule.id !== id)
+  emit('update:added-schedules', addedPendingSchedules.value)
+}
+
+watch([selectedStartTime, selectedEndTime], () => {
+  if (selectedStartTime.value && selectedEndTime.value) {
+    addScheduleRequest()
+  }
+})
+// VIEWS
 const specialHours = computed(() => {
   return {
     1: dailyHours.value,
@@ -153,10 +222,6 @@ const dailyHours = computed(() => {
   ]
 })
 
-// TESTING GROUNDS
-
-const events = ref([])
-
 const hiddenWeekDays = computed(() => {
   if (!props.tutorWorkDays) {
     return []
@@ -177,21 +242,24 @@ const hiddenWeekDays = computed(() => {
     .map(day => dayToNumber[day])
 })
 
-watch(
-  () => isDay.value,
-  isDayValue => {
-    emit('isDayValue', !isDayValue)
-  },
-)
+const activeView = ref('month')
+const isDay = computed(() => {
+  return activeView.value !== 'day'
+})
 
+const availableStartingDate = computed(() => {
+  const date = new Date()
+  date.setDate(date.getDate())
+  return date
+})
+
+//WATCHES
 watch(
   () => [props.tutorBookings, props.studentBookings],
   ([tutorBookings, studentBookings]) => {
     try {
-      // Create a Map to store unique bookings by booking_id
       const bookingsMap = new Map()
 
-      // Process tutor bookings first
       tutorBookings?.forEach(booking => {
         booking?.booking_dates?.forEach(date => {
           if (date?.start_time && date?.end_time) {
@@ -201,33 +269,30 @@ watch(
               booking_id: booking?.booking_id,
               start: formatRawDateTime(date.start_time),
               end: formatRawDateTime(date.end_time),
-              title: booking?.subject || 'Untitled Booking',
+              title: booking?.subject || '',
               class: 'tutorBookings',
             })
           }
         })
       })
 
-      // Process student bookings - will overwrite tutor bookings with same booking_id
+      //SHARED BOOKING
       studentBookings?.forEach(booking => {
         booking?.booking_dates?.forEach(date => {
           if (date?.start_time && date?.end_time) {
             const eventKey = booking?.booking_id
             if (bookingsMap.has(eventKey)) {
-              // If booking already exists, it's a shared booking
-              // Update the class to indicate it's a shared booking
               bookingsMap.set(eventKey, {
                 ...bookingsMap.get(eventKey),
-                class: 'sharedBooking', // You can style this differently if needed
+                class: 'tutorBookings',
               })
             } else {
-              // If it's a new booking, add it as a student booking
               bookingsMap.set(eventKey, {
                 id: date?.id,
                 booking_id: booking?.booking_id,
                 start: formatRawDateTime(date.start_time),
                 end: formatRawDateTime(date.end_time),
-                title: booking?.subject || 'Untitled Booking',
+                title: booking?.subject || '',
                 class: 'studentBookings',
               })
             }
@@ -235,11 +300,10 @@ watch(
         })
       })
 
-      // Convert Map values to array for events
       events.value = Array.from(bookingsMap.values()).filter(Boolean)
     } catch (error) {
       console.error('Error processing booking events:', error)
-      events.value = [] // Reset to empty array if there's an error
+      events.value = []
     }
   },
   {
@@ -250,7 +314,7 @@ watch(
 </script>
 
 <style>
-.vuecal__event.ongoingBookings {
+.vuecal__event.tutorBookings {
   background-color: rgba(250, 190, 61, 0.902);
   border: 1px solid rgba(255, 253, 248, 0.902);
   color: hsla(0, 0%, 100%, 0.902);

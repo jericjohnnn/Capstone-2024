@@ -50,7 +50,6 @@
               >
                 <button
                   type="button"
-                  :disabled="isDay"
                   @click="emitMainButton"
                   class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                 >
@@ -92,11 +91,7 @@ const props = defineProps({
   toggleModal: {
     type: Boolean,
     required: true,
-  },
-  isDay: {
-    type: Boolean,
-    required: true,
-  },
+  }
 })
 
 const emitMainButton = () => {
