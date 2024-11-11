@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Booking\BookingRequest;
+use App\Http\Requests\Booking\NegotiateBookingRequest;
 use App\Models\Booking;
 use App\Models\BookingDate;
 use App\Models\BookingMessage;
+use App\Models\Student;
+use App\Models\Tutor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -50,6 +53,65 @@ class BookingController extends Controller
         ]);
     }
 
+    public function getOngoingTutorBookingDatesById($tutor_id)
+    {
+        $bookings = Booking::with(['messages.dates'])
+                ->where('tutor_id', $tutor_id)
+                ->where('status', 'Ongoing')
+                ->get();
+
+        if ($bookings->isEmpty()) {
+            return response()->json([
+                'message' => 'Booking not found or has no ongoing bookings.',
+            ]);
+        }
+
+        $bookingsData = $bookings->map(function ($booking) {
+            return [
+                'booking_id' => $booking->id,
+                'subject' => $booking->subject,
+                'booking_dates' => $booking->messages->flatMap(function ($message) {
+                    return $message->dates;
+                }),
+            ];
+        });
+
+        return response()->json([
+            'message' => 'Tutor booking dates retrieved successfully.',
+            'tutor_bookings' => $bookingsData,
+        ]);
+    }
+
+    public function getOngoingStudentBookingDatesById($student_id)
+    {
+        $bookings = Booking::with(['messages.dates'])
+                ->where('student_id', $student_id)
+                ->where('status', 'Ongoing')
+                ->get();
+
+        if ($bookings->isEmpty()) {
+            return response()->json([
+                'message' => 'Booking not found or has no ongoing bookings.',
+            ]);
+        }
+
+        $bookingsData = $bookings->map(function ($booking) {
+            return [
+                'booking_id' => $booking->id,
+                'subject' => $booking->subject,
+                'booking_dates' => $booking->messages->flatMap(function ($message) {
+                    return $message->dates;
+                }),
+            ];
+        });
+
+        return response()->json([
+            'message' => 'Student booking dates retrieved successfully.',
+            'student_bookings' => $bookingsData,
+        ]);
+    }
+
+
     public function getAllBookingSchedules()
     {
         $user = Auth::user();
@@ -88,6 +150,36 @@ class BookingController extends Controller
             'bookings' => $bookingsData,
         ]);
     }
+
+
+    public function negotiateBooking(NegotiateBookingRequest $request, $booking_id)
+    {
+        $validatedData = $request->validated();
+
+        $booking = Booking::findOrFail($booking_id);
+
+        $bookingMessage = BookingMessage::create([
+            'booking_id' => $booking->id,
+            'title' => $validatedData['message_title'],
+            'message' => $validatedData['message_content'],
+        ]);
+
+        foreach ($validatedData['selected_date_times'] as $dateTime) {
+            BookingDate::create([
+                'booking_message_id' => $bookingMessage->id,
+                'start_time' => $dateTime['start'],
+                'end_time' => $dateTime['end'],
+            ]);
+        }
+
+        $booking->load(['student', 'messages.dates']);
+
+        return response()->json([
+            'message' => 'Booking requested successfully.',
+            'book_details' => $booking,
+        ]);
+    }
+
     // JJA GODS
 
 

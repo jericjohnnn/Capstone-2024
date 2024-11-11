@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\EditStudentDetailsRequest;
 use App\Http\Requests\Tutor\EditPersonalDetailsRequest;
+use App\Models\Booking;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -62,6 +63,52 @@ class StudentController extends Controller
     }
 
 
+    public function showSentTutorRequests(Request $request)
+    {
+        $tab = $request->query('tab', 'all');
+
+        $user = Auth::user();
+        $student = $user->student;
+
+        if ($tab === 'all') {
+            $StudentRequests = Booking::with('tutor')
+                ->where('student_id', $student->id)
+                ->whereNot('status', 'Ongoing')
+                ->whereNot('status', 'Canceled')
+                ->paginate(6);
+        }
+        if ($tab === 'pending') {
+            $StudentRequests = Booking::with('tutor')
+                ->where('student_id', $student->id)
+                ->where('status', 'Pending')
+                ->paginate(6);
+        }
+        if ($tab === 'completed') {
+            $StudentRequests = Booking::with('tutor')
+                ->where('student_id', $student->id)
+                ->where('status', 'Completed')
+                ->paginate(6);
+        }
+
+        return response()->json([
+            'message' => 'Accepted tutors retrieved successfully.',
+            'sent_requests' => $StudentRequests,
+        ]);
+    }
+
+    public function showStudentBookRequestDetails($book_id)
+    {
+        $bookDetails = Booking::where('id', $book_id)
+            ->with('tutor', 'messages.dates')
+            ->first();
+
+        return response()->json([
+            'message' => 'Student Bookings retrieved successfully.',
+            'book_details' => $bookDetails,
+        ]);
+    }
+
+
 
 
 
@@ -75,5 +122,4 @@ class StudentController extends Controller
             'all_students' => $students,
         ]);
     }
-
 }

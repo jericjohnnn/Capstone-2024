@@ -4,6 +4,8 @@ import StudentSchedulePage from "@/pages/student/StudentSchedulePage.vue";
 import StudentSentRequestsPage from "@/pages/student/StudentSentRequestsPage.vue";
 import StudentNotificationPage from "@/pages/student/StudentNotificationPage.vue";
 import StudentProfilePage from "@/pages/student/StudentProfilePage.vue";
+import StudentBookDetailsPage from "@/pages/student/StudentBookDetailsPage.vue";
+import StudentOngoingBookingDetails from "@/components/StudentSchedule/StudentOngoingBookingDetails.vue";
 
 const studentRoutes = [
   {
@@ -22,9 +24,19 @@ const studentRoutes = [
     component: StudentSchedulePage
   },
   {
+    path: '/student/schedule/:bookId',
+    name: 'OngoingStudentSchedule',
+    component: StudentOngoingBookingDetails
+  },
+  {
     path: '/student/requests',
     name: 'StudentRequests',
     component: StudentSentRequestsPage
+  },
+  {
+    path: '/student/requests/:bookId',
+    name: 'StudentBookDetails',
+    component: StudentBookDetailsPage
   },
   {
     path: '/student/notifications',

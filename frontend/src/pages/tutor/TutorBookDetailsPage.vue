@@ -3,8 +3,6 @@
     <SideBar>
       <main class="container flex flex-col justify-center gap-14 min-h-screen">
         <!-- Breadcrumb -->
-        <p class="text-sm text-gray-600 pt-4">Requests > book details</p>
-
         <div v-if="!bookDetails">LOADING</div>
         <div v-else>
           <div class="h-[calc(100vh-150px)] flex gap-10">
@@ -25,17 +23,12 @@
                   <div class="flex justify-between bg-gray-50 p-2 rounded mb-2">
                     <p class="font-medium">
                       {{ bookDetails.student.first_name }}
-                      {{ bookDetails.student.last_name }}, 25
+                      {{ bookDetails.student.last_name }}
                     </p>
                     <button class="text-blue-600 underline text-sm">
                       report
                     </button>
                   </div>
-                  <button
-                    class="bg-blue-600 text-white px-4 py-1 rounded text-sm w-full"
-                  >
-                    view profile
-                  </button>
                 </div>
               </div>
 
@@ -76,62 +69,27 @@
                 <div v-if="bookDetails.messages?.length">
                   <p class="font-medium mb-2">Date & Time:</p>
                   <div
-                    v-for="message in bookDetails.messages"
-                    :key="message.id"
+                    v-for="dateTime in bookDetails.messages[
+                      bookDetails.messages.length - 1
+                    ].dates"
+                    :key="dateTime.id"
+                    class="text-blue-600"
                   >
-                    <div
-                      v-for="dateTime in message.dates"
-                      :key="dateTime.id"
-                      class="text-blue-600"
-                    >
-                      {{ formatDate(dateTime.start_time) }} -
-                      {{ formatDate(dateTime.end_time) }}
-                    </div>
+                    {{ formatDate(dateTime.start_time) }} -
+                    {{ formatDate(dateTime.end_time) }}
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Messages Section -->
-            <div class="w-3/5 bg-white rounded-lg p-6 shadow-sm">
-              <h3>your message</h3>
-              <div class="space-y-4 outline">
-                <div v-for="message in bookDetails.messages" :key="message.id">
-                  <div class="mb-2">
-                    <label class="block text-sm font-medium mb-1"
-                      >SUBJECT</label
-                    >
-                    <div class="p-2 bg-gray-50 rounded">
-                      {{ message.title }}
-                    </div>
-                  </div>
-                  <div>
-                    <div class="p-2 bg-gray-50 rounded">
-                      {{ message.message }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex justify-between w-full">
-                <button @click="negotiateBooking" class="outline">
-                  negotiate
-                </button>
-                <div class="flex gap-4">
-                  <button
-                    @click="updateBookingStatus('Canceled')"
-                    class="bg-red-300"
-                  >
-                    decline
-                  </button>
-                  <button
-                    @click="updateBookingStatus('Ongoing')"
-                    class="bg-green-300"
-                  >
-                    accept
-                  </button>
-                </div>
-              </div>
-            </div>
+            <BookMessages
+              :bookDetailsProps="bookDetails"
+              :tutorBookings="fetchedTutorBookings"
+              :tutorWorkDays="userData.work_days"
+              :studentBookings="fetchedStudentBookings"
+            ></BookMessages>
+            <!-- BUTTONS -->
           </div>
         </div>
       </main>
@@ -141,15 +99,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import BookMessages from '@/components/TutorBookDetails/BookMessages.vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
 
-const route = useRoute()
-const router = useRouter()
-
+//HELPER FUNCTIONS
 const formatDate = date => {
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -158,30 +115,44 @@ const formatDate = date => {
   }).format(new Date(date))
 }
 
-const updateBookingStatus = async status => {
-  try {
-    await axiosInstance.patch(
-      `/api/update-student-booking/${route.params.bookId}`,
-      { status: status },
-    )
-    if (status === 'Ongoing') {
-      router.push({ path: '/tutor/schedule'})
-    } else {
-      router.push({ path:'/tutor/requests'})
-    }
+//HELPER FUNCTIONS
+const parsedUserData = JSON.parse(localStorage.getItem('user_data') || '{}')
+const userData = ref(parsedUserData)
 
-    // bookDetails.value = response.data.book_details
+const route = useRoute()
+const router = useRouter()
+
+const bookDetails = ref(null)
+const fetchedTutorBookings = ref([])
+const fetchedStudentBookings = ref([])
+
+const fetchOngoingTutorBookings = async tutorId => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/ongoing-tutor-booking-dates/${tutorId}`,
+    )
+    fetchedTutorBookings.value = response.data.tutor_bookings
   } catch (err) {
-    console.error('Error fetching booking details:', err)
+    console.error('Error fetching tutor details:', err)
   }
 }
 
-const bookDetails = ref(null)
-
-
-const fetchBookingDetails = async (bookId) => {
+const fetchOngoingStudentBookings = async studentId => {
   try {
-    const response = await axiosInstance.get(`/api/book-request-details/${bookId}`)
+    const response = await axiosInstance.get(
+      `/api/ongoing-student-booking-dates/${studentId}`,
+    )
+    fetchedStudentBookings.value = response.data.student_bookings
+  } catch (err) {
+    console.error('Error fetching tutor details:', err)
+  }
+}
+
+const fetchBookingDetails = async bookId => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/book-request-details/${bookId}`,
+    )
     const bookData = response.data.book_details
 
     if (bookData.status === 'Ongoing') {
@@ -195,6 +166,15 @@ const fetchBookingDetails = async (bookId) => {
   }
 }
 
+watch(
+  () => bookDetails.value,
+  newVal => {
+    if (newVal) {
+      fetchOngoingTutorBookings(userData.value.id)
+      fetchOngoingStudentBookings(bookDetails.value.student.id)
+    }
+  },
+)
 
 onMounted(() => {
   const initialBookId = route.params.bookId
