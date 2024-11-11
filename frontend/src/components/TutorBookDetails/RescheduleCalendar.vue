@@ -257,59 +257,34 @@ const availableStartingDate = computed(() => {
 watch(
   () => [props.tutorBookings, props.studentBookings],
   ([tutorBookings, studentBookings]) => {
-    try {
-      const bookingsMap = new Map()
 
-      tutorBookings?.forEach(booking => {
-        booking?.booking_dates?.forEach(date => {
-          if (date?.start_time && date?.end_time) {
-            const eventKey = booking?.booking_id
-            bookingsMap.set(eventKey, {
-              id: date?.id,
-              booking_id: booking?.booking_id,
-              start: formatRawDateTime(date.start_time),
-              end: formatRawDateTime(date.end_time),
-              title: booking?.subject || '',
-              class: 'tutorBookings',
-            })
-          }
-        })
-      })
-
-      //SHARED BOOKING
-      studentBookings?.forEach(booking => {
-        booking?.booking_dates?.forEach(date => {
-          if (date?.start_time && date?.end_time) {
-            const eventKey = booking?.booking_id
-            if (bookingsMap.has(eventKey)) {
-              bookingsMap.set(eventKey, {
-                ...bookingsMap.get(eventKey),
-                class: 'tutorBookings',
-              })
-            } else {
-              bookingsMap.set(eventKey, {
-                id: date?.id,
-                booking_id: booking?.booking_id,
-                start: formatRawDateTime(date.start_time),
-                end: formatRawDateTime(date.end_time),
-                title: booking?.subject || '',
-                class: 'studentBookings',
-              })
-            }
-          }
-        })
-      })
-
-      events.value = Array.from(bookingsMap.values()).filter(Boolean)
-    } catch (error) {
-      console.error('Error processing booking events:', error)
-      events.value = []
-    }
+    events.value = [
+      ...tutorBookings?.flatMap(booking =>
+        booking.booking_dates?.map(date => ({
+          id: date.id,
+          booking_id: booking.booking_id,
+          start: formatRawDateTime(date.start_time),
+          end: formatRawDateTime(date.end_time),
+          title: booking.subject || '',
+          class: 'tutorBookings',
+        })) || []
+      ) || [],
+      ...studentBookings?.flatMap(booking =>
+        booking.booking_dates?.map(date => ({
+          id: date.id,
+          booking_id: booking.booking_id,
+          start: formatRawDateTime(date.start_time),
+          end: formatRawDateTime(date.end_time),
+          title: booking.subject || '',
+          class: 'studentBookings',
+        })) || []
+      ) || []
+    ]
   },
   {
     immediate: true,
-    deep: true,
-  },
+    deep: true
+  }
 )
 </script>
 

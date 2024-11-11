@@ -3,7 +3,12 @@
     <SideBar>
       <main class="container flex flex-col justify-center gap-14 min-h-screen">
         <!-- Breadcrumb -->
-        <p class="text-sm text-gray-600 pt-4">Requests > book details</p>
+        <BreadCrumb
+          :breadcrumbs="[
+            { label: 'Schedule', route: '/student/schedule' },
+            { label: 'Booking Details', route: '' }
+          ]"
+        />
 
         <div v-if="!bookDetails">LOADING</div>
         <div v-else>
@@ -124,6 +129,7 @@
 </template>
 
 <script setup>
+import BreadCrumb from '@/components/BreadCrumb.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
@@ -145,14 +151,14 @@ const isExpired = ref(true)
 
 const checkIfExpired = () => {
   const dates = bookDetails.value.messages[bookDetails.value.messages.length - 1].dates
-  
+
   const latestEndTime = dates.reduce((latest, date) => {
     const currentEndTime = new Date(date.end_time)
     return currentEndTime > latest ? currentEndTime : latest
   }, new Date(dates[0].end_time))
-  
+
   const currentDate = new Date()
-  
+
   if(latestEndTime < currentDate){
     isExpired.value = !isExpired.value
   }

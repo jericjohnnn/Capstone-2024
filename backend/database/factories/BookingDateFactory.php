@@ -16,7 +16,7 @@ class BookingDateFactory extends Factory
     public function definition()
     {
         // Set the start date to now, ensuring it's in the future
-        $startDate = now()->addDays(rand(0, 365)); // Random date within a year from now
+        $startDate = now()->addDays(rand(0, 60)); // Random date within the next 60 days
 
         // Generate unique start times
         $startTime = $this->generateUniqueStartTime($startDate);

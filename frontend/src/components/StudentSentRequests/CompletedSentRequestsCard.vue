@@ -17,7 +17,7 @@
                 <h1 class="text-lg font-medium text-gray-800">
                   {{ book.tutor.first_name }} {{ book.tutor.last_name }}
                 </h1>
-                <button class="bg-blue-300">view profile</button>
+                <button @click="selectTutor(book.tutor_id)" class="bg-blue-300">view profile</button>
               </div>
               <button class="underline">report</button>
             </div>
@@ -84,6 +84,16 @@ const fetchSentRequests = async (page = 1) => {
   } catch (err) {
     console.error('Error fetching student requests:', err)
   }
+}
+
+const selectTutor = tutorId => {
+  router.push({
+    path: '/student/home',
+    query: {
+      page: currentPage.value,
+      tutor_id: tutorId,
+    },
+  })
 }
 
 const goToBookDetails = bookId => {

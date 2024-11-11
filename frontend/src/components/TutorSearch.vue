@@ -1,24 +1,18 @@
 <template>
-  <div>
-    <div class="gap-4 flex">
-      <!-- SEARCH BOX 1 -->
-      <div class="grow">
+  <div class="w-full max-w-4xl mx-auto">
+    <div class="flex flex-col md:flex-row gap-3">
+      <!-- Tutor Search -->
+      <div class="flex-1">
         <div class="relative">
           <input
             type="text"
-            id="hs-leading-icon"
-            name="hs-leading-icon"
-            class="py-3 px-4 ps-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
             placeholder="Search for a tutor"
+            class="w-full px-4 py-2.5 pl-10 text-sm rounded-md border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
           />
-          <div
-            class="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4"
-          >
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <svg
-              class="shrink-0 size-4 text-gray-400 dark:text-white/60"
+              class="size-4 text-gray-400"
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -26,32 +20,25 @@
               stroke-linecap="round"
               stroke-linejoin="round"
             >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.3-4.3"></path>
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
             </svg>
           </div>
         </div>
       </div>
-      <!-- End SearchBox -->
 
-      <!-- SEARCH BOX 2 -->
-      <div class="grow">
+      <!-- Subject Search -->
+      <div class="flex-1">
         <div class="relative">
           <input
             type="text"
-            id="hs-leading-icon"
-            name="hs-leading-icon"
-            class="py-3 px-4 ps-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
             placeholder="Search for a subject"
+            class="w-full px-4 py-2.5 pl-10 text-sm rounded-md border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
           />
-          <div
-            class="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4"
-          >
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <svg
-              class="shrink-0 size-4 text-gray-400 dark:text-white/60"
+              class="size-4 text-gray-400"
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -59,14 +46,17 @@
               stroke-linecap="round"
               stroke-linejoin="round"
             >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.3-4.3"></path>
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
             </svg>
           </div>
         </div>
       </div>
-      <!-- End SearchBox -->
-      <SearchButton>Search</SearchButton>
+
+      <!-- Search Button -->
+      <div class="shrink-0">
+        <SearchButton class="w-full md:w-auto">Search</SearchButton>
+      </div>
     </div>
   </div>
 </template>

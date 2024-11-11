@@ -44,7 +44,7 @@ class TutorController extends Controller
     {
         $tutors = Tutor::where('approval_status', 'Accepted')
             ->whereNot('offense_status', 'Banned')
-            ->with('subjects:id,name', 'ratings:id,tutor_id,rate')
+            ->with('subjects:id,name,abbreviation', 'ratings:id,tutor_id,rate')
             ->paginate(4);
 
         // ignore lang ning red sa "through" kay wa pako kita
@@ -54,7 +54,12 @@ class TutorController extends Controller
                 'id' => $tutor->id,
                 'tutor_name' => "{$tutor->first_name} {$tutor->last_name}",
                 'profile_image' => $tutor->profile_image,
-                'tutor_subjects' => $tutor->subjects->pluck('name'),
+                'tutor_subjects' => $tutor->subjects->map(function ($subject) {
+                    return [
+                        'name' => $subject->name,
+                        'abbreviation' => $subject->abbreviation
+                    ];
+                }),
                 'tutor_rating' => $tutor->ratings->avg('rate'),
             ];
         });

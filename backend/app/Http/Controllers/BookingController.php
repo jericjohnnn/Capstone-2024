@@ -124,7 +124,7 @@ class BookingController extends Controller
         }
         if ($user->student) {
             $bookings = Booking::with(['messages.dates'])
-                ->where('tutor_id', $user->student->id)
+                ->where('student_id', $user->student->id)
                 ->where('status', 'Ongoing')
                 ->get();
         }
