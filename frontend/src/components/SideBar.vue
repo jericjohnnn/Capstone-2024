@@ -82,7 +82,7 @@
         <div class="px-8 pt-4">
           <!-- Logo -->
           <a
-            class="flex-none rounded-xl text-xl inline-block font-semibold focus:outline-none focus:opacity-80"
+            class="flex-none rounded-md text-xl inline-block font-semibold focus:outline-none focus:opacity-80"
             href="#"
             aria-label="Preline"
           >
@@ -93,7 +93,7 @@
 
         <!-- Content -->
         <div
-          class="h-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+          class="h-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-md [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
         >
           <nav
             class="hs-accordion-group p-3 w-full flex flex-col flex-wrap h-full"
@@ -105,10 +105,9 @@
                 <li>
                   <router-link
                     active-class="active-nav"
-                    class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 focus:outline-none focus:bg-white/10 dark:bg-neutral-700 dark:text-white"
+                    class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 focus:outline-none focus:bg-white/10 dark:bg-neutral-700 dark:text-white transition-colors duration-200"
                     :to="{ name: 'TutorProfile' }"
                   >
-                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                     Profile
                   </router-link>
                 </li>
@@ -116,10 +115,9 @@
                 <li>
                   <router-link
                   active-class="active-nav"
-                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300"
+                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'TutorSchedule' }"
                   >
-                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                     Schedule
                   </router-link>
                 </li>
@@ -127,10 +125,9 @@
                 <li>
                   <router-link
                   active-class="active-nav"
-                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300"
+                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'TutorRequests' }"
                   >
-                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                     Student requests
                   </router-link>
                 </li>
@@ -138,20 +135,18 @@
                 <li>
                   <router-link
                   active-class="active-nav"
-                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300"
+                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'TutorNotifications' }"
                   >
-                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                     Notifications
                   </router-link>
                 </li>
                 <li>
                   <router-link
                   active-class="active-nav"
-                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300"
+                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'TutorSettings' }"
                   >
-                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                     Settings
                   </router-link>
                 </li>
@@ -163,10 +158,9 @@
                 <li>
                   <router-link
                   active-class="active-nav"
-                    class="flex items-center gap-x-3.5 py-2 px-2.5  text-sm text-white rounded-lg hover:bg-white/10 focus:outline-none focus:bg-white/10 dark:bg-neutral-700 dark:text-white"
+                    class="flex items-center gap-x-3.5 py-2 px-2.5  text-sm text-white rounded-md hover:bg-white/10 focus:outline-none focus:bg-white/10 dark:bg-neutral-700 dark:text-white transition-colors duration-200"
                     :to="{ name: 'StudentHome' }"
                   >
-                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                     Home
                   </router-link>
                 </li>
@@ -174,10 +168,9 @@
                 <li>
                   <router-link
                   active-class="active-nav"
-                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300"
+                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'StudentProfile' }"
                   >
-                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                     Profile
                   </router-link>
                 </li>
@@ -185,10 +178,9 @@
                 <li>
                   <router-link
                   active-class="active-nav"
-                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300"
+                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'StudentSchedule' }"
                   >
-                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                     Schedule
                   </router-link>
                 </li>
@@ -196,10 +188,9 @@
                 <li>
                   <router-link
                   active-class="active-nav"
-                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300"
+                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'StudentRequests' }"
                   >
-                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                     Your requests
                   </router-link>
                 </li>
@@ -207,10 +198,9 @@
                 <li>
                   <router-link
                   active-class="active-nav"
-                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300"
+                    class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'StudentNotifications' }"
                   >
-                    <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                     Notifications
                   </router-link>
                 </li>
@@ -244,9 +234,8 @@
               <!-- Logout Button -->
               <button
                 @click="logout"
-                class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300"
+                class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
               >
-                <!-- SVG HERE: class="shrink-0 size-4" width="24"  height="24" viewBox="0 0 24 24" -->
                 Logout
               </button>
             </div>

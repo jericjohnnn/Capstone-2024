@@ -43,7 +43,7 @@ class BookingFactory extends Factory
              'location' => $location,
              'online_meeting_platform' => $onlineMeetingPlatform,
              'contact_number' => $this->faker->phoneNumber(),
-             'status' => 'Pending',
+             'status' => $this->faker->randomElement(['Pending', 'Ongoing', 'Completed']),
          ];
      }
 }

@@ -1,51 +1,57 @@
 <template>
-  <div class="mb-5">
-    <!-- Tutor Cards -->
-    <div class="flex items-center justify-between p-3 w-11/12 bg-white">
-      <div class="flex gap-x-3">
-        <div class=" shrink-0">
-          <img
-            class="shrink-0 size-16 rounded-full"
-            :src="tutors.profile_image"
-            :alt="tutors.tutor_name"
-          />
-        </div>
+  <div class="mb-3">
+    <div class="flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+      <!-- Tutor Info Section -->
+      <div class="p-4 md:p-5 flex items-center justify-between">
+        <div class="flex items-center gap-x-3">
+          <div class="shrink-0">
+            <img
+              class="size-14 rounded-full object-cover border-2 border-gray-100"
+              :src="tutors.profile_image || defaultProfileImage"
+              :alt="tutors.tutor_name"
+            />
+          </div>
 
-        <div class="">
-          <h1 class="text-lg font-medium text-gray-800 dark:text-neutral-200">
-            {{ tutors.tutor_name }}
-          </h1>
-          <!-- badges -->
-          <div class="flex-wrap gap-2">
-            <span
-              v-for="subject in tutors.tutor_subjects"
-              :key="subject"
-              class="inline-flex items-center py-1 px-3 rounded-full text-xs  bg-blue-600 text-white dark:bg-blue-500"
-            >
-              {{ subject }}
-            </span>
+          <div class="flex flex-col gap-1">
+            <h1 class="text-lg font-bold text-gray-800 dark:text-white line-clamp-1">
+              {{ tutors.tutor_name }}
+            </h1>
+            <div class="flex items-center gap-2">
+              <span
+                class="inline-flex items-center py-0.5 px-2 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+              >
+                {{ tutors.tutor_subjects[tutors.tutor_subjects.length-1].abbreviation }}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="">
-        <StarRating :rating="tutors.tutor_rating"></StarRating>
-        <div>
+        <!-- Rating and Button -->
+        <div class="shrink-0 flex flex-col items-end gap-2">
+          <StarRating :rating="tutors.tutor_rating" class="text-sm"></StarRating>
           <button
             type="button"
-            class="py-1 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 focus:outline-none focus:border-blue-500 focus:text-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:text-blue-400 dark:hover:border-blue-400"
+            class="py-1.5 px-4 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
           >
-            See Profile
+            View Profile
           </button>
         </div>
       </div>
     </div>
-    <!-- Tutor Cards -->
   </div>
 </template>
 
 <script setup>
 import StarRating from '@/components/StarRating.vue'
+
+const defaultProfileImage =
+  'data:image/svg+xml;base64,' +
+  btoa(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="11" fill="white" stroke="#E5E7EB" stroke-width="2"/>
+    <circle cx="12" cy="8" r="3.5" fill="#9CA3AF"/>
+    <path d="M12 12.5c-3 0-5.5 1.5-7 3.5 1.5 3 4 5 7 5s5.5-2 7-5c-1.5-2-4-3.5-7-3.5z" fill="#9CA3AF"/>
+  </svg>`)
 
 defineProps({
   tutors: {

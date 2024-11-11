@@ -1,11 +1,10 @@
 <template>
-  <ol class="flex items-center whitespace-nowrap">
+  <ol class="flex items-center whitespace-nowrap space-x-2">
     <li v-for="(crumb, index) in breadcrumbs" :key="index" class="inline-flex items-center">
-      <!-- Use router-link for all except the last breadcrumb (current page) -->
       <router-link
         v-if="index < breadcrumbs.length - 1"
         :to="crumb.route"
-        class="flex items-center text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 dark:text-neutral-500 dark:hover:text-blue-500 dark:focus:text-blue-500"
+        class="flex items-center text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 dark:text-neutral-500 dark:hover:text-blue-500 dark:focus:text-blue-500 transition-colors duration-200"
       >
         {{ crumb.label }}
       </router-link>
@@ -16,7 +15,6 @@
       >
         {{ crumb.label }}
       </span>
-      <!-- Separator icon, only displayed between items -->
       <svg
         v-if="index < breadcrumbs.length - 1"
         class="shrink-0 mx-2 size-4 text-gray-400 dark:text-neutral-600"

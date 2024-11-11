@@ -3,6 +3,12 @@
     <SideBar>
       <main class="container flex flex-col justify-center gap-14 min-h-screen">
         <!-- Breadcrumb -->
+        <BreadCrumb
+          :breadcrumbs="[
+            { label: 'Requests', route: '/tutor/requests' },
+            { label: 'Book Details', route: '/tutor/book-details' },
+          ]"
+        />
         <div v-if="!bookDetails">LOADING</div>
         <div v-else>
           <div class="h-[calc(100vh-150px)] flex gap-10">
@@ -99,6 +105,7 @@
 </template>
 
 <script setup>
+import BreadCrumb from '@/components/BreadCrumb.vue'
 import BookMessages from '@/components/TutorBookDetails/BookMessages.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
