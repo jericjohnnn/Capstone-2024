@@ -41,13 +41,22 @@ import 'vue-cal/dist/vuecal.css'
 const router = useRouter()
 // const route = useRoute()
 
-const events = ref([])
+
+const props = defineProps({
+  routePath: {
+    type: String,
+    required: true
+  }
+})
 
 const goToBookingDetails = bookDetails => {
   router.push({
-    path: `/tutor/schedule/${bookDetails.booking_id}`,
+    path: `${props.routePath}/${bookDetails.booking_id}`
   })
 }
+
+const events = ref([])
+
 
 const parsedUserData = JSON.parse(localStorage.getItem('user_data') || '{}')
 const userData = ref(parsedUserData)

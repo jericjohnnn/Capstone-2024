@@ -2,7 +2,13 @@
 <main class="">
     <SideBar>
       <main class="container p-5 mx-auto">
-        <SchedulesCalendar></SchedulesCalendar>
+        <!-- Breadcrumb -->
+        <BreadCrumb
+          :breadcrumbs="[
+            { label: 'Schedule', route: '/tutor/schedule' },
+          ]"
+        />
+        <SchedulesCalendar :routePath="'/tutor/schedule'"></SchedulesCalendar>
       </main>
     </SideBar>
 
@@ -11,7 +17,8 @@
 </template>
 
 <script setup>
-import SchedulesCalendar from '@/components/TutorSchedule/SchedulesCalendar.vue';
+import BreadCrumb from '@/components/BreadCrumb.vue'
+import SchedulesCalendar from '@/components/Reusables/SchedulesCalendar.vue';
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 // import { ref, reactive, onMounted, watch } from 'vue'

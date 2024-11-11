@@ -19,26 +19,29 @@ class SubjectFactory extends Factory
 
     public function definition(): array
     {
-        $subjects = [
-            'Mathematics',
-            'Science',
-            'History',
-            'Literature',
-            'Biology',
-            'Chemistry',
-            'Physics',
-            'Geography',
-            'Computer Science',
-            'Art',
-            'Music',
-            'Physical Education',
-            'Economics',
-            'Philosophy',
-            'Psychology',
+        $subjectsWithAbbreviations = [
+            'Mathematics' => 'Math',
+            'Science' => 'Sci',
+            'History' => 'Hist',
+            'Literature' => 'Lit',
+            'Biology' => 'Bio',
+            'Chemistry' => 'Chem',
+            'Physics' => 'Phys',
+            'Geography' => 'Geo',
+            'Computer Science' => 'CS',
+            'Art' => 'Art',
+            'Music' => 'Mus',
+            'Physical Education' => 'PE',
+            'Economics' => 'Econ',
+            'Philosophy' => 'Phil',
+            'Psychology' => 'Psych'
         ];
 
+        $subject = $this->faker->unique()->randomElement(array_keys($subjectsWithAbbreviations));
+
         return [
-            'name' => $this->faker->unique()->randomElement($subjects),
+            'name' => $subject,
+            'abbreviation' => $subjectsWithAbbreviations[$subject],
         ];
     }
 }

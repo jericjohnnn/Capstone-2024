@@ -2,6 +2,12 @@
   <main class="bg-blue-50">
     <SideBar>
       <main class="container flex flex-col gap-14 min-h-screen ">
+        <!-- Breadcrumb -->
+        <BreadCrumb
+          :breadcrumbs="[
+            { label: 'Requests', route: '/tutor/requests' },
+          ]"
+        />
         <RequestsTabs>
           <template #pending>
             <PendingRequestsCard />
@@ -16,6 +22,7 @@
   </main>
 </template>
 <script setup>
+import BreadCrumb from '@/components/BreadCrumb.vue'
 import SideBar from '@/components/SideBar.vue'
 import RequestsTabs from '@/components/TutorReceivedRequests/RequestsTabs.vue'
 // import HelpButton from '@/components/HelpButton.vue'
