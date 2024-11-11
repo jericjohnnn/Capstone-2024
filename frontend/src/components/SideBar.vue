@@ -41,7 +41,7 @@
           <li
             class="flex items-center text-sm text-gray-800 dark:text-neutral-400"
           >
-            Application Layout
+            App
             <svg
               class="shrink-0 mx-3 overflow-visible size-2.5 text-gray-400 dark:text-neutral-500"
               width="16"
@@ -62,7 +62,7 @@
             class="text-sm font-semibold text-gray-800 truncate dark:text-neutral-400"
             aria-current="page"
           >
-            Dashboard
+            Home
           </li>
         </ol>
         <!-- End Breadcrumb -->
@@ -108,6 +108,7 @@
                     class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 focus:outline-none focus:bg-white/10 dark:bg-neutral-700 dark:text-white transition-colors duration-200"
                     :to="{ name: 'TutorProfile' }"
                   >
+                  <ProfileIcon />
                     Profile
                   </router-link>
                 </li>
@@ -118,6 +119,7 @@
                     class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'TutorSchedule' }"
                   >
+                    <ScheduleIcon />
                     Schedule
                   </router-link>
                 </li>
@@ -128,6 +130,7 @@
                     class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'TutorRequests' }"
                   >
+                    <RequestIcon />
                     Student requests
                   </router-link>
                 </li>
@@ -138,6 +141,7 @@
                     class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'TutorNotifications' }"
                   >
+                    <NotificationIcon />
                     Notifications
                   </router-link>
                 </li>
@@ -147,6 +151,7 @@
                     class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'TutorSettings' }"
                   >
+                    <SettingsIcon />
                     Settings
                   </router-link>
                 </li>
@@ -161,6 +166,7 @@
                     class="flex items-center gap-x-3.5 py-2 px-2.5  text-sm text-white rounded-md hover:bg-white/10 focus:outline-none focus:bg-white/10 dark:bg-neutral-700 dark:text-white transition-colors duration-200"
                     :to="{ name: 'StudentHome' }"
                   >
+                    <HomeIcon />
                     Home
                   </router-link>
                 </li>
@@ -171,6 +177,7 @@
                     class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'StudentProfile' }"
                   >
+                    <ProfileIcon />
                     Profile
                   </router-link>
                 </li>
@@ -181,6 +188,7 @@
                     class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'StudentSchedule' }"
                   >
+                    <ScheduleIcon />
                     Schedule
                   </router-link>
                 </li>
@@ -191,6 +199,7 @@
                     class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'StudentRequests' }"
                   >
+                    <RequestIcon />
                     Your requests
                   </router-link>
                 </li>
@@ -201,6 +210,7 @@
                     class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
                     :to="{ name: 'StudentNotifications' }"
                   >
+                    <NotificationIcon />
                     Notifications
                   </router-link>
                 </li>
@@ -236,6 +246,7 @@
                 @click="logout"
                 class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-md hover:bg-white/10 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors duration-200"
               >
+                <LogoutIcon />
                 Logout
               </button>
             </div>
@@ -259,6 +270,13 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
+import HomeIcon from '@/assets/HomeIcon.vue';
+import NotificationIcon from '@/assets/NotificationIcon.vue';
+import ProfileIcon from '@/assets/ProfileIcon.vue';
+import RequestIcon from '@/assets/RequestIcon.vue';
+import ScheduleIcon from '@/assets/ScheduleIcon.vue';
+import LogoutIcon from '@/assets/LogoutIcon.vue';
+import SettingsIcon from '@/assets/SettingsIcon.vue';
 
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +

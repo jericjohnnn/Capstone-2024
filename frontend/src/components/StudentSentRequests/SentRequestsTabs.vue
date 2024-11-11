@@ -1,51 +1,33 @@
 <template>
   <div class="border-b border-gray-200 dark:border-neutral-700">
-    <nav
-      class="flex gap-x-4 overflow-x-auto scrollbar-hide"
-      aria-label="Tabs"
-      role="tablist"
-      aria-orientation="horizontal"
-    >
+    <nav class="flex gap-x-4 overflow-x-auto scrollbar-hide">
       <button
-        type="button"
+        class="px-1 py-4 text-sm font-medium transition-colors"
         :class="{
-          'font-medium text-blue-600 border-b-2 border-blue-600':
-            currentTab === 'all',
-          'text-gray-500 hover:text-blue-600 transition-colors':
-            currentTab !== 'all',
+          'text-blue-600 border-b-2 border-blue-600': currentTab === 'all',
+          'text-gray-500 hover:text-blue-600': currentTab !== 'all',
         }"
         @click="switchTab('all')"
-        role="tab"
-        aria-selected="currentTab === 'all'"
       >
         All
       </button>
       <button
-        type="button"
+        class="px-1 py-4 text-sm font-medium transition-colors"
         :class="{
-          'font-medium text-blue-600 border-b-2 border-blue-600':
-            currentTab === 'pending',
-          'text-gray-500 hover:text-blue-600 transition-colors':
-            currentTab !== 'pending',
+          'text-blue-600 border-b-2 border-blue-600': currentTab === 'pending',
+          'text-gray-500 hover:text-blue-600': currentTab !== 'pending',
         }"
         @click="switchTab('pending')"
-        role="tab"
-        aria-selected="currentTab === 'pending'"
       >
         Pending
       </button>
-
       <button
-        type="button"
+        class="px-1 py-4 text-sm font-medium transition-colors"
         :class="{
-          'font-medium text-blue-600 border-b-2 border-blue-600':
-            currentTab === 'completed',
-          'text-gray-500 hover:text-blue-600 transition-colors':
-            currentTab !== 'completed',
+          'text-blue-600 border-b-2 border-blue-600': currentTab === 'completed',
+          'text-gray-500 hover:text-blue-600': currentTab !== 'completed',
         }"
         @click="switchTab('completed')"
-        role="tab"
-        aria-selected="currentTab === 'completed'"
       >
         Completed
       </button>
@@ -53,17 +35,18 @@
   </div>
 
   <div class="mt-6">
-    <div v-show="currentTab === 'all'">
+    <div class="w-full" v-show="currentTab === 'all'">
       <slot name="all"></slot>
     </div>
-    <div v-show="currentTab === 'pending'">
+    <div class="w-full" v-show="currentTab === 'pending'">
       <slot name="pending"></slot>
     </div>
-    <div v-show="currentTab === 'completed'">
+    <div class="w-full" v-show="currentTab === 'completed'">
       <slot name="completed"></slot>
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -79,7 +62,6 @@ const switchTab = tabName => {
     path: '/student/requests',
     query: {
       tab: tabName,
-      // page: route.query.page,
     },
   })
 }

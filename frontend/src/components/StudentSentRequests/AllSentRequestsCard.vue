@@ -49,7 +49,6 @@
         :links="paginationLinks"
         :current-page="currentPage"
         :last-page="lastPage"
-        :basePathName="TutorRequests"
       />
     </div>
   </div>

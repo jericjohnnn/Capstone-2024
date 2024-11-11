@@ -91,6 +91,9 @@ const fetchTutorSchedules = async () => {
     const response = await axiosInstance.get(`/api/booking-schedules`)
     const { bookings } = response.data
 
+    if(!bookings){
+      return
+    }
     events.value = bookings.flatMap(booking =>
       booking.booking_dates.map(date => ({
         id: date.id,

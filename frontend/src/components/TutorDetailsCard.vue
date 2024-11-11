@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-lg focus:outline-none focus:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70 h-full">
     <!-- Header Section with Blue Background -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-5 rounded-t-xl">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-5 rounded-t-xl ">
       <div class="flex justify-between items-start">
         <!-- Tutor Info -->
-        <div class="flex items-center gap-4">
+        <div class="flex items-center w-3/5 gap-4 ">
           <img
             alt="Tutor avatar"
             :src="tutor.profile_image || defaultProfileImage"
@@ -25,7 +25,7 @@
         </div>
 
         <!-- Actions -->
-        <div class="flex flex-col items-end gap-2">
+        <div class="flex flex-col items-end gap-2 ">
           <button
             @click="goToBook"
             class="bg-white px-6 py-2 rounded-md text-blue-600 font-medium hover:bg-blue-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
@@ -145,7 +145,7 @@
             <img
               :src="schoolImage"
               alt="School Logo"
-              class="w-12 h-12 rounded-full object-cover mr-4"
+              class="w-12 h-12 object-cover mr-4"
             />
             <div>
               <p class="font-medium text-gray-900 dark:text-white">{{ school.name }}</p>
