@@ -12,12 +12,14 @@
             />
           </div>
           <div class="flex">
-            <div class=" flex">
+            <div class="flex">
               <div class="flex flex-col">
                 <h1 class="text-lg font-medium text-gray-800">
                   {{ book.tutor.first_name }} {{ book.tutor.last_name }}
                 </h1>
-                <button @click="selectTutor(book.tutor_id)" class="bg-blue-300">view profile</button>
+                <button @click="selectTutor(book.tutor_id)" class="bg-blue-300">
+                  view profile
+                </button>
               </div>
               <button class="underline">report</button>
             </div>
