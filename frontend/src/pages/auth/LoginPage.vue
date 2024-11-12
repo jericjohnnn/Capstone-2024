@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <h1>Login</h1>
+    <h1 class="text-xl font-medium">Login</h1>
     <form @submit.prevent="handleLogin">
       <div class="input-group">
         <label for="email">Email</label>
@@ -8,7 +8,7 @@
           type="email"
           id="email"
           v-model="email"
-          placeholder="Enter your email"
+          placeholder="example@gmail.com"
           required
         />
       </div>
@@ -24,7 +24,7 @@
         />
       </div>
 
-      <button type="submit">Login</button>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-400 ">Sign in</button>
     </form>
 
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -96,7 +96,7 @@ const handleLogin = async () => {
 label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 input {
@@ -110,16 +110,13 @@ input {
 button {
   width: 100%;
   padding: 10px;
-  background-color: #4caf50;
+  
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #45a049;
-}
 
 .error {
   color: red;

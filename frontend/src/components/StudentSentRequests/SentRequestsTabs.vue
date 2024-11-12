@@ -1,5 +1,5 @@
 <template>
-  <div class="border-b border-gray-200 dark:border-neutral-700">
+  <div class="border-b pb-2 border-gray-200 dark:border-neutral-700 text-lg font-medium">
     <nav
       class="flex gap-x-4 overflow-x-auto scrollbar-hide"
       aria-label="Tabs"

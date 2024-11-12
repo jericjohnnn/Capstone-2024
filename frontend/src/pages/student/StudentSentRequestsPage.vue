@@ -1,11 +1,11 @@
 <template>
   <main class="bg-blue-50">
     <SideBar>
-      <main class="container flex flex-col gap-14 min-h-screen ">
-        <BreadCrumb :breadcrumbs="[{ label: 'Requests', route: '/student/requests' }]" />
+      <main class="container flex flex-col gap-2 mt-2 min-h-screen ">
+        <BreadCrumb :breadcrumbs="[{ label: '', route: '/student/requests' }]" />
         <SentRequestsTabs>
           <template #all>
-            <AllSentRequestsCard />
+            <AllSentRequestsCard  />
           </template>
           <template #pending>
             <PendingSentRequestsCard />
