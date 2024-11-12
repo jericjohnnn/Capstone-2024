@@ -1,7 +1,7 @@
 <template>
   <main class="bg-blue-50 h-screen">
     <SideBar>
-      <main class="h-full py-5">
+      <main class="container h-full py-5">
         <!-- Search Components -->
         <div class="mb-6">
           <BreadCrumb :breadcrumbs="[{ label: 'Home', route: '/student/home' }]" />

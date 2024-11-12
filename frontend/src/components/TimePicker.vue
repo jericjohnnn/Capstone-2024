@@ -1,37 +1,37 @@
 <template>
-  <div class="p-4">
-    <div class="flex">
-      <div class="mb-4 flex items-center gap-2">
+  <div class="py-2">
+    <div class="flex gap-4">
+      <div class="mb-4 flex items-center gap-1">
         <label class="">Start:</label>
-        <select v-model="startHour" class="border px-8 rounded">
+        <select v-model="startHour" class="border px-12 rounded">
           <option v-for="hour in 12" :key="hour" :value="hour">
             {{ String(hour).padStart(2, '0') }}
           </option>
         </select>
         <span>:</span>
-        <select v-model="startMinute" class="border px-8 rounded">
+        <select v-model="startMinute" class="border px-12 rounded">
           <option value="00">00</option>
           <option value="30">30</option>
         </select>
-        <select v-model="startPeriod" class="border px-8 rounded">
+        <select v-model="startPeriod" class="border px-12 rounded">
           <option value="AM">AM</option>
           <option value="PM">PM</option>
         </select>
       </div>
 
-      <div class="mb-6 flex items-center gap-2">
+      <div class="mb-6 flex items-center gap-1">
         <label class="">End:</label>
-        <select v-model="endHour" class="border px-8 rounded">
+        <select v-model="endHour" class="border px-12 rounded">
           <option v-for="hour in 12" :key="hour" :value="hour">
             {{ String(hour).padStart(2, '0') }}
           </option>
         </select>
         <span>:</span>
-        <select v-model="endMinute" class="border px-8 rounded">
+        <select v-model="endMinute" class="border px-12 rounded">
           <option value="00">00</option>
           <option value="30">30</option>
         </select>
-        <select v-model="endPeriod" class="border px-8 rounded">
+        <select v-model="endPeriod" class="border px-12 rounded">
           <option value="AM">AM</option>
           <option value="PM">PM</option>
         </select>
@@ -40,9 +40,9 @@
     <button
       @click="addTime"
       class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
-      :disabled="isDay"
+      :disabled="isDisabled"
     >
-      Add
+      {{ isDisabled ? 'Select a date' : 'Add time' }}
     </button>
   </div>
 </template>
@@ -51,10 +51,14 @@
 import { ref } from 'vue'
 import { convertTo24Hour } from '@/utils/dateTime'
 
-const emit = defineEmits(['update:start-time', 'update:end-time'])
+const emit = defineEmits([
+  'update:start-time',
+  'update:end-time',
+  'triggerTimeUpdate',
+])
 
 defineProps({
-  isDay: {
+  isDisabled: {
     type: Boolean,
     required: false,
     default: false,
@@ -80,7 +84,7 @@ const addTime = () => {
     endMinute.value,
     endPeriod.value,
   )
-
+  emit('triggerTimeUpdate')
   emit('update:start-time', startTime)
   emit('update:end-time', endTime)
 }

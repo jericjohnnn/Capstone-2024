@@ -130,7 +130,7 @@ import PopUpModal from '../reusables/PopUpModal.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
-import RescheduleCalendar from '../TutorBookDetails/RescheduleCalendar.vue'
+import RescheduleCalendar from '@/components/shared/calendar/RescheduleCalendar.vue'
 
 const props = defineProps({
   bookDetailsProps: {

@@ -100,12 +100,12 @@ const confirmTimes = () => {
   const startTime = convertTo24Hour(
     startHour.value,
     startMinute.value,
-    startPeriod.value,
+    startPeriod.value
   )
   const endTime = convertTo24Hour(
     endHour.value,
     endMinute.value,
-    endPeriod.value,
+    endPeriod.value
   )
 
   emit('update:start-time', startTime)

@@ -27,8 +27,8 @@ export const formatTo12Hour = (timeString) => {
 }
 
 
-export const convertTo24Hour = ({ hour, minute = '00', period }) => {
-  let hours = hour
+export const convertTo24Hour = (hour, minute = '00', period) => {
+  let hours = parseInt(hour, 10)
   if (period === 'PM' && hours < 12) hours += 12
   if (period === 'AM' && hours === 12) hours = 0
   return `${String(hours).padStart(2, '0')}:${minute}:00`

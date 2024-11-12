@@ -127,7 +127,7 @@
   </div>
 </template>
 <script setup>
-import RescheduleCalendar from './RescheduleCalendar.vue'
+import RescheduleCalendar from '@/components/shared/calendar/RescheduleCalendar.vue'
 import PopUpModal from '../reusables/PopUpModal.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
