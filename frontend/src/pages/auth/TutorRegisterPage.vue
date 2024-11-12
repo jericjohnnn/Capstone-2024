@@ -1,6 +1,6 @@
 <template>
   <div class="register-container flex flex-col items-center justify-start mt-10 h-screen text-center p-5 rounded-md">
-    <div class="bg-red-200 px-4 rounded-xl flex pb-2">
+    <div class="bg-gray-300 px-4 rounded-xl flex pb-2">
       <div class="pb-5">
         <h2 class="py-5 font-bold text-xl">Sign-up as TUTOR</h2>
 
@@ -11,7 +11,7 @@
               <div class="flex items-center">
                 <!-- Step circle with dynamic classes -->
                 <span :class="{
-                  'bg-blue-600 text-white': currentStep >= step.id, // Highlight current step and previous steps
+                  'bg-blue-400 text-white': currentStep >= step.id, // Highlight current step and previous steps
                   'bg-gray-100 text-black': currentStep < step.id, // Default state for future steps
                 }" class="size-7 flex justify-center items-center shrink-0 font-medium rounded-full">
                   {{ step.id }}
@@ -80,13 +80,13 @@
                     </option>
                   </select>
                   <button @click.prevent="addSelectedSubjects"
-                    class="add-button bg-blue-600 text-white px-3 py-1 rounded-md">
+                    class="add-button bg-blue-500 text-white px-3 py-1 rounded-md">
                     Add
                   </button>
                 </div>
                 <div class="selected-subjects flex flex-wrap gap-2 mt-2">
                   <span v-for="subjectId in form.subjects" :key="subjectId"
-                    class="subject-badge bg-blue-200 px-2 py-1 rounded-md flex items-center gap-1">
+                    class="subject-badge bg-white px-2 py-1 rounded-md flex items-center gap-1">
                     {{ getSubjectName(subjectId) }}
                     <button @click.prevent="removeSubject(subjectId)" class="remove-badge text-red-500">
                       ×
@@ -115,16 +115,16 @@
             <!-- Navigation Buttons -->
             <div class="button-group flex space-x-4">
               <button type="button" v-if="currentStep > 1" @click="prevStep"
-                class="bg-indigo-500 text-white hover:bg-indigo-400 rounded-md py-1 justify-center w-20">
+                class="bg-blue-600 text-white hover:bg-blue-400 rounded-md py-1 justify-center w-20">
                 Back
               </button>
               <button type="button" v-if="currentStep < 3" @click="nextStep"
-                class="bg-indigo-500 hover:bg-indigo-400 text-white rounded-md py-1 justify-center w-20">
+                class="bg-blue-600 hover:bg-blue-400 text-white rounded-md py-1 justify-center w-20">
                 Next
               </button>
               <button v-if="currentStep === 3" type="submit" :disabled="!form.agreeToTerms"
                 class="text-white rounded-md py-1 justify-center w-20 transition-colors" :class="{
-                  'bg-indigo-500 hover:bg-indigo-400 cursor-pointer':
+                  'bg-blue-600 hover:bg-blue-400 cursor-pointer':
                     form.agreeToTerms,
                   'bg-gray-400 cursor-not-allowed': !form.agreeToTerms,
                 }">
