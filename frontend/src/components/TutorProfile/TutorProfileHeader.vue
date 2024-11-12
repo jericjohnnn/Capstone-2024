@@ -100,8 +100,9 @@
 import { ref, reactive } from 'vue'
 import axiosInstance from '@/axiosInstance'
 
-const userEmail = ref(localStorage.getItem('user_email'))
-const userData = ref(JSON.parse(localStorage.getItem('user_data') || '{}'))
+import { getUserData } from '@/utils/user'
+
+const userData = getUserData()
 
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +
@@ -154,7 +155,6 @@ const submitNewDetails = async () => {
 }
 
 const cancelEdit = () => {
-  // userData.value = JSON.parse(localStorage.getItem('user_data') || '{}')
   currentProfileImage.value = userData.value.profile_image || defaultProfileImage
   selectedImage.value = null
   isProfileEdit.value = false

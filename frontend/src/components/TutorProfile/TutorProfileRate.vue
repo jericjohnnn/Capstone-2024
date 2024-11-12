@@ -22,43 +22,36 @@
 <script setup>
 import { ref } from 'vue';
 import axiosInstance from '@/axiosInstance'
+import { getUserData } from '@/utils/user'
 
-// Retrieve user data from local storage
-const getUserData = localStorage.getItem('user_data');
-const parsedUserData = getUserData ? JSON.parse(getUserData) : {};
-const userData = ref(parsedUserData);
+const userData = getUserData()
 
-// Local state for tutor rate, initialized with user data
 const tutorRate = ref(userData.value.tutor_rate || 0);
-const isEditing = ref(false); // Ref to track editing state
+const isEditing = ref(false);
 
-// Toggle edit mode
 const toggleEditMode = () => {
   if (isEditing.value) {
-    tutorRate.value = userData.value.tutor_rate; // Reset to original value when cancelling
+    tutorRate.value = userData.value.tutor_rate;
   } else {
-    tutorRate.value = userData.value.tutor_rate; // Set to current tutor rate when entering edit mode
+    tutorRate.value = userData.value.tutor_rate;
   }
-  isEditing.value = !isEditing.value; // Toggle editing state
+  isEditing.value = !isEditing.value;
 };
 
-// Function to save the tutor rate to the backend
+
 const saveTutorRate = async () => {
   try {
-    // Prepare the data to be sent in the PUT request
     const data = {
-      tutor_rate: Math.floor(tutorRate.value) // Ensure value is an integer
+      tutor_rate: Math.floor(tutorRate.value)
     };
 
-    // Make the PUT request to your API endpoint
-    await axiosInstance.post('/api/edit-details', data); // Replace with your actual API endpoint
+    await axiosInstance.post('/api/edit-details', data);
 
-    // Update the user data in local storage after a successful request
-    userData.value.tutor_rate = data.tutor_rate; // Update with the new rate
-    localStorage.setItem('user_data', JSON.stringify(userData.value)); // Save updated data to local storage
-    isEditing.value = false; // Exit edit mode after saving
+    userData.value.tutor_rate = data.tutor_rate;
+    localStorage.setItem('user_data', JSON.stringify(userData.value));
+    isEditing.value = false;
   } catch (error) {
-    console.error('Error saving tutor rate:', error); // Handle any errors
+    console.error('Error saving tutor rate:', error);
   }
 };
 </script>

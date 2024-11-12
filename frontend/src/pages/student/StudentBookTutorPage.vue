@@ -49,8 +49,8 @@
             </p>
             <p v-else>
               {{ tutorDetails.first_name }} {{ tutorDetails.last_name }} is
-              available {{ formatTo12HourTime(tutorDetails.work_days.start_time) }} -
-              {{ formatTo12HourTime(tutorDetails.work_days.end_time) }}
+              available {{ formatTo12Hour(tutorDetails.work_days.start_time) }} -
+              {{ formatTo12Hour(tutorDetails.work_days.end_time) }}
               <span class="float-right"
                 >Rate: P{{ tutorDetails.tutor_rate }}/Hour</span
               >
@@ -210,29 +210,20 @@ import axiosInstance from '@/axiosInstance'
 import BookCalendar from '@/components/BookCalendar.vue'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
+import { getUserData } from '@/utils/user'
+import { formatTo12Hour } from '@/utils/dateTime'
+
+
+
+const userData = getUserData()
 
 const route = useRoute()
 const tutorDetails = ref({})
 const tutorDetail = ref(null)
-
-const getUserData = localStorage.getItem('user_data')
-const userData = getUserData ? JSON.parse(getUserData) : null
 const studentContactNumber = userData ? userData.contact_number : null
 const modifiedContactNumber = ref('')
 
 const isReadonly = ref(true)
-
-function formatTo12HourTime(timeString) {
-  if (!timeString) return null;
-
-  const [hours, minutes] = timeString.split(':');
-  let hour = parseInt(hours, 10);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-
-  hour = hour % 12 || 12;
-
-  return `${hour}:${minutes} ${ampm}`;
-}
 
 // Convert multiple refs to a reactive state object
 const initialBookingState = {

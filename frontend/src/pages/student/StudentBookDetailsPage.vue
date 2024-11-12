@@ -4,7 +4,11 @@
       <main class="container flex flex-col justify-center gap-14 min-h-screen">
         <!-- Breadcrumb -->
         <BreadCrumb
-          :breadcrumbs="[{ label: 'Requests', route: '/student/requests' }, { label: 'Book Details', route: '/student/book-details' }]" />
+          :breadcrumbs="[
+            { label: 'Requests', route: '/student/requests' },
+            { label: 'Book Details', route: '/student/book-details' },
+          ]"
+        />
 
         <div v-if="!bookDetails">LOADING</div>
         <div v-else>
@@ -16,59 +20,77 @@
               <!-- Profile Section -->
               <div class="flex gap-4 mb-6">
                 <div class="shrink-0">
-                  <img class="h-14 w-14 rounded-full" :src="bookDetails.tutor.profile_image" alt="profile image" />
+                  <img
+                    class="h-14 w-14 rounded-full"
+                    :src="bookDetails.tutor.profile_image"
+                    alt="profile image"
+                  />
                 </div>
-                <div class="w-full flex  items-center">
-                  <div class="flex flex-row justify-between w-full  ">
-                    <p class="font-medium capitalize ">
+                <div class="w-full flex items-center">
+                  <div class="flex flex-row justify-between w-full">
+                    <p class="font-medium capitalize">
                       {{ bookDetails.tutor.first_name }}
                       {{ bookDetails.tutor.last_name }}
                     </p>
                     <button
-                      class="text-red-600 border font-medium rounded-md border-red-600 px-4 py-1 hover:text-red-400 text-sm">
+                      class="text-red-600 border font-medium rounded-md border-red-600 px-4 py-1 hover:text-red-400 text-sm"
+                    >
                       Report
                     </button>
                   </div>
                 </div>
-
               </div>
 
               <!-- Details -->
               <div class="space-y-4">
                 <div class="flex items-center">
                   <span class="text-sm">Status:</span>
-                  <span class=" text-green-500 px-3 font-medium  rounded-full text-md">
+                  <span
+                    class="text-green-500 px-3 font-medium rounded-full text-md"
+                  >
                     {{ bookDetails.status || 'pending' }}
                   </span>
                 </div>
 
                 <div class="flex items-center gap-2">
                   <span class="text-sm">Subject:</span>
-                  <span class="flex justify-center py-1 px-3 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300 ">
+                  <span
+                    class="flex justify-center py-1 px-3 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300"
+                  >
                     {{ bookDetails.subject }}
                   </span>
                 </div>
 
                 <p>
-                  <span class="text-sm">Mode of tutor:</span> {{ bookDetails.learning_mode || 'online' }}
+                  <span class="text-sm">Mode of tutor:</span>
+                  {{ bookDetails.learning_mode || 'online' }}
                 </p>
                 <p>
-  <span v-if="bookDetails.learning_mode === 'Online'">
-    Online Meeting Platform: {{ bookDetails.online_meeting_platform }}
-  </span>
-  <span v-else>
-    <span class="text-sm">Location:</span> {{ bookDetails.location }}
-  </span>
-</p>
+                  <span v-if="bookDetails.learning_mode === 'Online'">
+                    Online Meeting Platform:
+                    {{ bookDetails.online_meeting_platform }}
+                  </span>
+                  <span v-else>
+                    <span class="text-sm">Location:</span>
+                    {{ bookDetails.location }}
+                  </span>
+                </p>
 
-                <p><span class="text-sm">Contact info:</span> {{ bookDetails.contact_number }}</p>
+                <p>
+                  <span class="text-sm">Contact info:</span>
+                  {{ bookDetails.contact_number }}
+                </p>
 
                 <!-- Date and Time -->
                 <div v-if="bookDetails.messages?.length">
                   <p class="text-sm mb-2">Date & Time:</p>
-                  <div v-for="dateTime in bookDetails.messages[
-                    bookDetails.messages.length - 1
-                  ].dates" :key="dateTime.id" class="">
+                  <div
+                    v-for="dateTime in bookDetails.messages[
+                      bookDetails.messages.length - 1
+                    ].dates"
+                    :key="dateTime.id"
+                    class=""
+                  >
                     {{ formatDate(dateTime.start_time) }} -
                     {{ formatDate(dateTime.end_time) }}
                   </div>
@@ -77,8 +99,12 @@
             </div>
 
             <!-- Messages Section -->
-            <StudentBookMessages :bookDetailsProps="bookDetails" :tutorBookings="fetchedTutorBookings"
-              :tutorWorkDays="tutorWorkDays" :studentBookings="fetchedStudentBookings"></StudentBookMessages>
+            <StudentBookMessages
+              :bookDetailsProps="bookDetails"
+              :tutorBookings="fetchedTutorBookings"
+              :tutorWorkDays="tutorWorkDays"
+              :studentBookings="fetchedStudentBookings"
+            ></StudentBookMessages>
             <!-- BUTTONS -->
           </div>
         </div>
@@ -95,20 +121,8 @@ import { useRoute, useRouter } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
-import StudentBookMessages from '@/components/StudentBookDetails/StudentBookMessages.vue';
-
-//HELPER FUNCTIONS
-const formatDate = date => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date))
-}
-
-//HELPER FUNCTIONS
-// const parsedUserData = JSON.parse(localStorage.getItem('user_data') || '{}')
-// const userData = ref(parsedUserData)
+import StudentBookMessages from '@/components/StudentBookDetails/StudentBookMessages.vue'
+import { formatDate } from '@/utils/dateTime'
 
 const route = useRoute()
 const router = useRouter()
@@ -158,13 +172,10 @@ const fetchBookingDetails = async bookId => {
   }
 }
 
-
 const tutorWorkDays = ref({})
 const fetchTutorWorkDays = async tutorId => {
   try {
-    const response = await axiosInstance.get(
-      `/api/tutor-detail/${tutorId}`,
-    )
+    const response = await axiosInstance.get(`/api/tutor-detail/${tutorId}`)
     const tutorData = response.data.tutor
 
     tutorWorkDays.value = tutorData.work_days
@@ -173,9 +184,6 @@ const fetchTutorWorkDays = async tutorId => {
     router.push({ name: 'NotFound' }) // Redirect to 404 in case of error
   }
 }
-
-
-
 
 watch(
   () => bookDetails.value,

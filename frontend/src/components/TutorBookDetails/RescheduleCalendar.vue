@@ -60,24 +60,9 @@
 <script setup>
 import TimePicker from '../TimePicker.vue'
 import { ref, computed, watch } from 'vue'
-// import { useRouter } from 'vue-router'
-// import axiosInstance from '@/axiosInstance'
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
-
-//HELPER FUNCTIONS!
-function formatTimeToInteger(timeString) {
-  if (!timeString) return null
-
-  const [hours] = timeString.split(':')
-  return parseInt(hours, 10)
-}
-
-const formatRawDateTime = dateString => {
-  // Format to 'YYYY-MM-DD HH:mm:ss'
-  return new Date(dateString).toISOString().slice(0, 19).replace('T', ' ')
-}
-//HELPER FUNCTIONS!
+import { formatRawDateTime, formatTimeToInteger } from '@/utils/dateTime'
 
 const emit = defineEmits(['selectedCellValue', 'pendingBookings', 'update:added-schedules'])
 

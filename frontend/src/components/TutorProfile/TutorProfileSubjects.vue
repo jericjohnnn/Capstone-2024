@@ -33,12 +33,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axiosInstance from '@/axiosInstance';
+import { getUserData } from '@/utils/user'
 
-const userData = ref(JSON.parse(localStorage.getItem('user_data') || '{}'));
+const userData = getUserData()
 const subjects = ref(userData.value.subjects || []);
 const isEditing = ref(false);
 const originalSubjects = ref([]);
-// const newSubjects = ref([])
 const availableSubjects = ref([]);
 const selectedSubject = ref(null);
 

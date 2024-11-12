@@ -82,12 +82,11 @@ import TimePickerModal from './TimePickerModal.vue'
 import { ref, computed, watch } from 'vue'
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
+import { formatTimeToInteger } from '@/utils/dateTime'
 
-// TESTING PURPOSES!!
 
-// import JamalModal from './JamalModal.vue'
 
-// TESTING PURPOSES!!
+
 const emit = defineEmits(['update:added-schedules'])
 
 const props = defineProps({
@@ -231,13 +230,6 @@ const specialHours = computed(() => {
     7: dailyHours.value,
   }
 })
-
-function formatTimeToInteger(timeString) {
-  if (!timeString) return null // Return null if the input is empty or undefined
-
-  const [hours] = timeString.split(':') // Split by ':' and take the hour part
-  return parseInt(hours, 10) // Convert the hour to an integer
-}
 
 const dailyHours = computed(() => {
   if (!isTutorDetailsLoaded.value) {

@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-lg focus:outline-none focus:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70 h-full">
     <!-- Header Section with Blue Background -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-5 rounded-t-xl">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-5 rounded-t-xl ">
       <div class="flex justify-between items-start">
         <!-- Tutor Info -->
-        <div class="flex items-center gap-4">
+        <div class="flex items-center w-3/5 gap-4 ">
           <img
             alt="Tutor avatar"
             :src="tutor.profile_image || defaultProfileImage"
@@ -25,7 +25,7 @@
         </div>
 
         <!-- Actions -->
-        <div class="flex flex-col items-end gap-2">
+        <div class="flex flex-col items-end gap-2 ">
           <button
             @click="goToBook"
             class="bg-white px-6 py-2 rounded-md text-blue-600 font-medium hover:bg-blue-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
@@ -114,8 +114,8 @@
               Hours Available
             </h3>
             <p class="text-blue-600 dark:text-blue-400 font-semibold text-lg">
-              {{ formatTo12HourTime(tutor.work_days.start_time) }} -
-              {{ formatTo12HourTime(tutor.work_days.end_time) }}
+              {{ formatTo12Hour(tutor.work_days.start_time) }} -
+              {{ formatTo12Hour(tutor.work_days.end_time) }}
             </p>
           </div>
         </div>
@@ -145,7 +145,7 @@
             <img
               :src="schoolImage"
               alt="School Logo"
-              class="w-12 h-12 rounded-full object-cover mr-4"
+              class="w-12 h-12 object-cover mr-4"
             />
             <div>
               <p class="font-medium text-gray-900 dark:text-white">{{ school.name }}</p>
@@ -220,6 +220,7 @@ import StarRating from './StarRating.vue'
 import RatingsCarousel from './RatingsCarousel.vue'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { formatDate, formatTo12Hour } from '@/utils/dateTime'
 
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +
@@ -281,24 +282,4 @@ const ratingComments = computed(() => {
   )
   return ratingsWithComments
 })
-
-function formatTo12HourTime(timeString) {
-  if (!timeString) return null;
-
-  const [hours, minutes] = timeString.split(':');
-  let hour = parseInt(hours, 10);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-
-  hour = hour % 12 || 12;
-
-  return `${hour}:${minutes} ${ampm}`;
-}
-
-const formatDate = date => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date))
-}
 </script>

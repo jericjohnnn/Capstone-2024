@@ -51,7 +51,7 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 
-const props = defineProps({
+defineProps({
   links: {
     type: Array,
     default: () => [],
@@ -67,9 +67,6 @@ const props = defineProps({
     default: 1,
     required: true
   },
-  basePathName: {
-    type: String,
-  },
 });
 
 const handleClick = (link) => {
@@ -77,7 +74,6 @@ const handleClick = (link) => {
     const page = new URL(link.url).searchParams.get('page');
     const currentTab = ref(route.query.tab)
     router.push({
-      name: props.basePathName,
       query: {
         tab: currentTab.value,
         page: parseInt(page),

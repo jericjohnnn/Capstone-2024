@@ -109,7 +109,6 @@
             negotiate
           </button>
         </div>
-        
         <button @click="updateBookingStatus('Canceled')" class="bg-red-300">
           decline
         </button>
@@ -129,7 +128,7 @@
 </template>
 <script setup>
 import RescheduleCalendar from './RescheduleCalendar.vue'
-import PopUpModal from '../Reusables/PopUpModal.vue'
+import PopUpModal from '../reusables/PopUpModal.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
