@@ -31,7 +31,6 @@
 
             <div class="p-4 bg-white rounded-lg shadow-md">
               <h3 class="font-semibold">Education</h3>
-              <!-- <EducationTest></EducationTest> -->
               <TutorProfileEducation></TutorProfileEducation>
             </div>
 
@@ -56,8 +55,6 @@
 </template>
 
 <script setup>
-// import EducationTest from '@/components/EducationTest.vue'
-
 import TutorProfileCertificate from '@/components/TutorProfile/TutorProfileCertificate.vue'
 import TutorProfileEducation from '@/components/TutorProfile/TutorProfileEducation.vue'
 import TutorProfileBiography from '@/components/TutorProfile/TutorProfileBiography.vue'
@@ -71,8 +68,12 @@ import RatingsCarousel from '@/components/RatingsCarousel.vue'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import StarRating from '@/components/StarRating.vue'
-import { computed, ref, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import axiosInstance from '@/axiosInstance'
+import { getUserData } from '@/utils/user'
+
+
+const userData = getUserData()
 
 // TESTINGGG
 
@@ -80,8 +81,8 @@ import axiosInstance from '@/axiosInstance'
 
 // const route = useRoute()
 
-const parsedUserData = JSON.parse(localStorage.getItem('user_data') || '{}')
-const userData = ref(parsedUserData)
+// const parsedUserData = JSON.parse(localStorage.getItem('user_data') || '{}')
+// const userData = ref(parsedUserData)
 
 const averageRatings = computed(() => {
   const ratings = userData.value.ratings.map(rating => rating.rate)

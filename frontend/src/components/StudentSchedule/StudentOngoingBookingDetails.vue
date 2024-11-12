@@ -135,16 +135,9 @@ import { useRoute } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
+import { formatDate } from '@/utils/dateTime'
 
 const route = useRoute()
-
-const formatDate = date => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date))
-}
 
 // check booking if its expired
 const isExpired = ref(true)

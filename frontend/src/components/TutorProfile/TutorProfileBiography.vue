@@ -6,7 +6,7 @@
         {{ userData.biography || 'No biography provided' }}
       </p>
       <button
-        @click="isEditing = true"
+        @click="startEditing"
         class="text-blue-500 text-sm hover:underline"
       >
         Edit
@@ -15,7 +15,7 @@
 
     <div v-else>
       <textarea
-        v-model="userData.biography"
+        v-model="editedBiography"
         class="w-full p-2 border border-gray-300 rounded-sm text-sm"
         placeholder="Write your biography here..."
       ></textarea>
@@ -40,20 +40,23 @@
 <script setup>
 import { ref } from 'vue'
 import axiosInstance from '@/axiosInstance'
+import { getUserData } from '@/utils/user'
 
-// Fetch user data from local storage
-const getUserData = localStorage.getItem('user_data')
-const parsedUserData = getUserData ? JSON.parse(getUserData) : {}
-const userData = ref(parsedUserData)
-
+const userData = getUserData()
 const isEditing = ref(false)
+const editedBiography = ref(userData.value.biography || '')
+
+const startEditing = () => {
+  editedBiography.value = userData.value.biography || ''
+  isEditing.value = true
+}
 
 const saveBiography = async () => {
   try {
     await axiosInstance.post('/api/edit-details', {
-      biography: userData.value.biography,
+      biography: editedBiography.value,
     })
-    // Save the updated data locally after successful save
+    userData.value.biography = editedBiography.value
     localStorage.setItem('user_data', JSON.stringify(userData.value))
     isEditing.value = false
   } catch (error) {
@@ -63,8 +66,6 @@ const saveBiography = async () => {
 }
 
 const cancelEdit = () => {
-  // Restore the original biography if editing is canceled
-  userData.value.biography = parsedUserData.biography
   isEditing.value = false
 }
 </script>

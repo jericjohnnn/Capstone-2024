@@ -112,19 +112,10 @@ import { useRoute, useRouter } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
+import { formatDate } from '@/utils/dateTime'
+import { getUserData } from '@/utils/user'
 
-//HELPER FUNCTIONS
-const formatDate = date => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date))
-}
-
-//HELPER FUNCTIONS
-const parsedUserData = JSON.parse(localStorage.getItem('user_data') || '{}')
-const userData = ref(parsedUserData)
+const userData = getUserData()
 
 const route = useRoute()
 const router = useRouter()

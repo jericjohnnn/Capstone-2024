@@ -73,7 +73,7 @@ import TutorCard from '@/components/TutorCard.vue'
 import PaginationLinks from '@/components/PaginationLinks.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
-import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
+import LoaderSpinner from '@/components/reusables/LoaderSpinner.vue'
 
 const router = useRouter()
 const route = useRoute()

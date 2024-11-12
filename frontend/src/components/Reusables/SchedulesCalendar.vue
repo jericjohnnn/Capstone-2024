@@ -37,10 +37,12 @@ import { useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
+import { formatRawDateTime } from '@/utils/dateTime'
+import { getUserData } from '@/utils/user'
+
+const userData = getUserData()
 
 const router = useRouter()
-// const route = useRoute()
-
 
 const props = defineProps({
   routePath: {
@@ -56,10 +58,6 @@ const goToBookingDetails = bookDetails => {
 }
 
 const events = ref([])
-
-
-const parsedUserData = JSON.parse(localStorage.getItem('user_data') || '{}')
-const userData = ref(parsedUserData)
 
 const hiddenWeekDays = computed(() => {
   if (!userData.value || !userData.value.work_days) {
@@ -80,11 +78,6 @@ const hiddenWeekDays = computed(() => {
     .filter(day => !userData.value.work_days[day])
     .map(day => dayToNumber[day])
 })
-
-const formatRawDateTime = dateString => {
-  // Format to 'YYYY-MM-DD HH:mm:ss'
-  return new Date(dateString).toISOString().slice(0, 19).replace('T', ' ')
-}
 
 const fetchTutorSchedules = async () => {
   try {

@@ -67,10 +67,10 @@
 import { ref } from 'vue'
 import axiosInstance from '@/axiosInstance'
 import schoolImage from '@/assets/school.png'
+import { getUserData } from '@/utils/user'
+import { formatDate } from '@/utils/dateTime'
 
-const getUserData = localStorage.getItem('user_data')
-const parsedUserData = getUserData ? JSON.parse(getUserData) : {}
-const userData = ref(parsedUserData)
+const userData = getUserData()
 
 const editingIndex = ref([])
 const addingNew = ref(false)
@@ -81,14 +81,6 @@ const newSchool = ref({
   start_date: '',
   end_date: '',
 })
-
-const formatDate = date => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date))
-}
 
 const editSchool = index => {
   if (!editingIndex.value.includes(index)) {

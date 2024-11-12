@@ -126,7 +126,7 @@
   </div>
 </template>
 <script setup>
-import PopUpModal from '../Reusables/PopUpModal.vue'
+import PopUpModal from '../reusables/PopUpModal.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'

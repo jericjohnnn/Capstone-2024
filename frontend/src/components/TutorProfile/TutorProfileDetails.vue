@@ -15,11 +15,7 @@
       </li>
       <li v-if="!isEditing">{{ userData.address }}</li>
       <li v-else>
-        <input
-          type="text"
-          v-model="address"
-          class="border rounded px-2 py-1"
-        />
+        <input type="text" v-model="address" class="border rounded px-2 py-1" />
       </li>
       <li v-if="!isEditing">{{ userData.contact_number }}</li>
       <li v-else>
@@ -37,62 +33,45 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 import axiosInstance from '@/axiosInstance'
+import { formatDate } from '@/utils/dateTime'
+import { getUserData } from '@/utils/user'
 
-// Retrieve user data from local storage
-const getUserData = localStorage.getItem('user_data');
-const parsedUserData = getUserData ? JSON.parse(getUserData) : {};
-const userData = ref(parsedUserData);
+const userData = getUserData()
 
-// Local state for editable fields
-const birthdate = ref(userData.value.birthdate);
-const address = ref(userData.value.address);
-const contactNumber = ref(userData.value.contact_number);
-const isEditing = ref(false); // Ref to track editing state
+const birthdate = ref(userData.value.birthdate)
+const address = ref(userData.value.address)
+const contactNumber = ref(userData.value.contact_number)
+const isEditing = ref(false)
 
-// Format the date for display
-const formatDate = (date) => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date));
-};
-
-// Toggle edit mode
 const toggleEditMode = () => {
   if (isEditing.value) {
-    // Reset the input fields to the original user data if cancelled
-    birthdate.value = userData.value.birthdate;
-    address.value = userData.value.address;
-    contactNumber.value = userData.value.contact_number;
+    birthdate.value = userData.value.birthdate
+    address.value = userData.value.address
+    contactNumber.value = userData.value.contact_number
   }
-  isEditing.value = !isEditing.value; // Toggle editing state
-};
+  isEditing.value = !isEditing.value
+}
 
-// Function to save the personal details to the backend
 const saveDetails = async () => {
   try {
-    // Prepare the data to be sent in the PUT request
     const data = {
       birthdate: birthdate.value,
       address: address.value,
       contact_number: contactNumber.value,
-    };
+    }
 
-    // Make the PUT request to your API endpoint
-    await axiosInstance.post('api/edit-details', data); // Replace with your actual API endpoint
+    await axiosInstance.post('api/edit-details', data)
 
-    // Update user data in local storage after a successful request
-    userData.value.birthdate = data.birthdate; // Update with the new birthdate
-    userData.value.address = data.address; // Update with the new address
-    userData.value.contact_number = data.contact_number; // Update with the new contact number
-    localStorage.setItem('user_data', JSON.stringify(userData.value)); // Save updated data to local storage
+    userData.value.birthdate = data.birthdate
+    userData.value.address = data.address
+    userData.value.contact_number = data.contact_number
+    localStorage.setItem('user_data', JSON.stringify(userData.value))
 
-    isEditing.value = false; // Exit edit mode after saving
+    isEditing.value = false
   } catch (error) {
-    console.error('Error saving personal details:', error); // Handle any errors
+    console.error('Error saving personal details:', error)
   }
-};
+}
 </script>

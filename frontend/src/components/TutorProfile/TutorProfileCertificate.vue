@@ -61,10 +61,10 @@
 import { ref } from 'vue'
 import axiosInstance from '@/axiosInstance'
 import certificateImage from '@/assets/certificate.png'
+import { formatDate } from '@/utils/dateTime'
+import { getUserData } from '@/utils/user'
 
-const getUserData = localStorage.getItem('user_data')
-const parsedUserData = getUserData ? JSON.parse(getUserData) : {}
-const userData = ref(parsedUserData)
+const userData = getUserData()
 
 const editingIndex = ref([])
 const addingNew = ref(false)
@@ -74,14 +74,6 @@ const newCertificate = ref({
   issuer: '',
   date_issued: '',
 })
-
-const formatDate = date => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date))
-}
 
 const editCertificate = index => {
   if (!editingIndex.value.includes(index)) {

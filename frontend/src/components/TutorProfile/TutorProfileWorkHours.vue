@@ -42,38 +42,22 @@
 <script setup>
 import { ref } from 'vue'
 import axiosInstance from '@/axiosInstance'
+import { parseTo12Hour, convertTo24Hour, formatTo12Hour } from '@/utils/dateTime'
+import { getUserData } from '@/utils/user'
+
 
 // State management
 const isEditing = ref(false)
-const userData = JSON.parse(localStorage.getItem('user_data') || '{}')
+const userData = getUserData()
 const startTime = ref(parseTo12Hour(userData.work_days?.start_time || '06:00:00'))
 const endTime = ref(parseTo12Hour(userData.work_days?.end_time || '20:00:00'))
-
-// Helper functions
-function parseTo12Hour(time24h) {
-  const [hours] = time24h.split(':')
-  const hour = parseInt(hours, 10)
-  return { hour: hour % 12 || 12, period: hour >= 12 ? 'PM' : 'AM' }
-}
-
-function formatTo12Hour(time24h) {
-  const { hour, period } = parseTo12Hour(time24h)
-  const minutes = time24h.split(':')[1]
-  return `${hour}:${minutes} ${period}`
-}
-
-function convertTo24Hour({ hour, period }) {
-  if (period === 'PM' && hour !== 12) hour += 12
-  if (period === 'AM' && hour === 12) hour = 0
-  return `${String(hour).padStart(2, '0')}:00:00`
-}
 
 // Save hours function
 async function saveHours() {
   const start24 = convertTo24Hour(startTime.value)
   const end24 = convertTo24Hour(endTime.value)
 
-  userData.work_days = { start_time: start24, end_time: end24 }
+  userData.value.work_days = { start_time: start24, end_time: end24 }
   localStorage.setItem('user_data', JSON.stringify(userData))
 
   try {

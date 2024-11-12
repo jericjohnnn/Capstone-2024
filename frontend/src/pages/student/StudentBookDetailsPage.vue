@@ -108,19 +108,7 @@ import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
 import StudentBookMessages from '@/components/StudentBookDetails/StudentBookMessages.vue';
-
-//HELPER FUNCTIONS
-const formatDate = date => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date))
-}
-
-//HELPER FUNCTIONS
-// const parsedUserData = JSON.parse(localStorage.getItem('user_data') || '{}')
-// const userData = ref(parsedUserData)
+import { formatDate  } from '@/utils/dateTime'
 
 const route = useRoute()
 const router = useRouter()

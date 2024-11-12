@@ -20,7 +20,7 @@
     </button>
 
     <!-- Scrollable Container -->
-   
+
       <button
         v-for="subject in subjects"
         :key="subject"

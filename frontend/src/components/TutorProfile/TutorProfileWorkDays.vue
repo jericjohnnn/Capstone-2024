@@ -26,11 +26,9 @@
 <script setup>
 import { computed, ref } from 'vue';
 import axiosInstance from '@/axiosInstance'
+import { getUserData } from '@/utils/user'
 
-// Retrieve user data from local storage
-const getUserData = localStorage.getItem('user_data');
-const parsedUserData = getUserData ? JSON.parse(getUserData) : {};
-const userData = ref(parsedUserData);
+const userData = getUserData()
 
 const daysOfWeek = [
   'monday',
@@ -62,7 +60,6 @@ const toggleEditMode = () => {
 };
 
 const saveDays = async () => {
-  // Create an object to hold the days in the format you need
   const daysData = {};
   daysOfWeek.forEach(day => {
     daysData[day] = selectedDays.value.includes(day) ? 1 : 0; // Set to 1 if selected, otherwise 0

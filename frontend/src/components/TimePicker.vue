@@ -49,6 +49,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { convertTo24Hour } from '@/utils/dateTime'
 
 const emit = defineEmits(['update:start-time', 'update:end-time'])
 
@@ -60,7 +61,6 @@ defineProps({
   },
 })
 
-// Initialize time picker values
 const startHour = ref(9)
 const startMinute = ref('00')
 const startPeriod = ref('AM')
@@ -69,21 +69,13 @@ const endHour = ref(10)
 const endMinute = ref('00')
 const endPeriod = ref('AM')
 
-// Convert to 24-hour format
-const convertTo24HourFormat = (hour, minute, period) => {
-  let hours = hour
-  if (period === 'PM' && hours < 12) hours += 12
-  if (period === 'AM' && hours === 12) hours = 0
-  return `${String(hours).padStart(2, '0')}:${minute}:00`
-}
-
 const addTime = () => {
-  const startTime = convertTo24HourFormat(
+  const startTime = convertTo24Hour(
     startHour.value,
     startMinute.value,
     startPeriod.value,
   )
-  const endTime = convertTo24HourFormat(
+  const endTime = convertTo24Hour(
     endHour.value,
     endMinute.value,
     endPeriod.value,

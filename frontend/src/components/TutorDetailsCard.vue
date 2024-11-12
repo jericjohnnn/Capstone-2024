@@ -114,8 +114,8 @@
               Hours Available
             </h3>
             <p class="text-blue-600 dark:text-blue-400 font-semibold text-lg">
-              {{ formatTo12HourTime(tutor.work_days.start_time) }} -
-              {{ formatTo12HourTime(tutor.work_days.end_time) }}
+              {{ formatTo12Hour(tutor.work_days.start_time) }} -
+              {{ formatTo12Hour(tutor.work_days.end_time) }}
             </p>
           </div>
         </div>
@@ -220,6 +220,7 @@ import StarRating from './StarRating.vue'
 import RatingsCarousel from './RatingsCarousel.vue'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { formatDate, formatTo12Hour } from '@/utils/dateTime'
 
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +
@@ -281,24 +282,4 @@ const ratingComments = computed(() => {
   )
   return ratingsWithComments
 })
-
-function formatTo12HourTime(timeString) {
-  if (!timeString) return null;
-
-  const [hours, minutes] = timeString.split(':');
-  let hour = parseInt(hours, 10);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-
-  hour = hour % 12 || 12;
-
-  return `${hour}:${minutes} ${ampm}`;
-}
-
-const formatDate = date => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date))
-}
 </script>
