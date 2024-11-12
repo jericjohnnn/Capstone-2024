@@ -7,6 +7,12 @@
           <div class="flex-shrink-0 flex items-center">
             <h1 class="text-2xl font-bold text-gray-800">MyApp</h1>
           </div>
+          
+          <div class="space-x-4 flex items-center">
+            <button>About</button>
+            <button>Services</button>
+            <button>Become a Tutor</button>
+          </div>
 
           <div class="flex items-center space-x-4">
             <!-- Dynamic Navbar Links -->
@@ -39,12 +45,27 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex items-center justify-center h-screen">
-      <div class="text-center">
-        <h2 class="text-4xl font-bold text-gray-800 mb-4">Welcome to MyApp!</h2>
-        <p class="text-gray-600 mb-8">Explore, learn, and grow with us.</p>
-      </div>
-    </main>
+    <main class="flex  max-w-7xl mx-auto  sm:px-6 lg:px-8  h-screen relative">
+
+  <!-- Content -->
+  <div class="flex flex-row space-x-12">
+    <div class=" w-[680px] h-[500px] mt-[80px]">
+    <h2 class="text-[50px] flex font-bold text-gray-800 mb-4">Empower Your Learning Journey with TUDLO's Peer Tutoring</h2>
+    <p class="text-gray-600 mb-8">Find the support you need from fellow students, and excel in your studies with personalized tutoring.</p>
+    <button class="px-4 py-2 rounded-md text-white bg-indigo-500 hover:bg-indigo-400">Get Started</button>
+  </div>
+  <div class="w-[500px] h-[500px]]">
+    <img src="/image/hero.png" alt="Hero image">
+
+  </div>
+  </div>
+</main>
+    <div class="flex justify-center">
+    <h1 class="text-[50px] font-bold">About</h1>
+    <div>
+      
+    </div>
+  </div>
   </div>
 </template>
 
