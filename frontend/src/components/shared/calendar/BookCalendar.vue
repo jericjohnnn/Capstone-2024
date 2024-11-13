@@ -1,49 +1,18 @@
 <template>
   <div>
-    <div class="">
-      <div
-        v-for="schedule in addedPendingSchedules"
-        :key="schedule.id"
-        class="mb-2"
-      >
-        <div class="bg-red-500 outline p-2 flex flex-col text-white">
-          <button @click="deleteSchedule(schedule.id)">X</button>
-          <div class="font-semibold">
-            {{ new Date(schedule.start).format('MMMM-DD-YYYY') }}
-          </div>
-          <div>
-            {{ new Date(schedule.start).formatTime('hh:mm{am}') }} to
-            {{ new Date(schedule.end).formatTime('hh:mm{am}') }}
-          </div>
-        </div>
-      </div>
-      <div>
-        <TimePicker
-          :isDisabled="activeView !== 'day'"
-          @update:start-time="updateStartTime"
-          @update:end-time="updateEndTime"
-          @triggerTimeUpdate="addScheduleRequest"
-        />
-      </div>
-    </div>
-
-    <!-- USE THIS AFTER TESTING HEHE -->
-    <!-- :disable-views="['years', 'year', 'week']"
-    hide-view-selector -->
-
     <vue-cal
       :click-to-navigate="activeView !== 'day'"
       v-model:active-view="activeView"
       :disable-views="['years', 'year', 'week']"
       :min-date="availableStartingDate"
       :hide-weekdays="hiddenWeekDays"
+      :special-hours="specialHours"
       :time-from="0 * 60"
       :time-to="25 * 60"
-      :special-hours="specialHours"
       :events="events"
-      @cell-click="storeCellDate"
-      class="vuecal--full-height-delete"
-      style="height: 500px"
+      @cell-click="getCellDate"
+      class="h-[calc(100%-300px)] w-96"
+      style="height: 300px"
     >
       <template #title="{ view }">
         🎉
@@ -61,53 +30,92 @@
         <span>{{ event.end.formatTime('hh:mm{am}') }}</span>
       </template>
     </vue-cal>
+    <div class="">
+      <TimePicker
+        :isDisabled="activeView !== 'day'"
+        @update:start-time="updateStartTime"
+        @update:end-time="updateEndTime"
+        @triggerTimeUpdate="addScheduleRequest"
+      />
+      <div
+        v-for="schedule in addedPendingSchedules"
+        :key="schedule.id"
+        class="mb-2"
+      >
+        <div class="bg-red-500 outline p-2 flex flex-col text-white">
+          <button @click="deleteSchedule(schedule.id)">X</button>
+          <div class="font-semibold">
+            {{ new Date(schedule.start).format('MMMM-DD-YYYY') }}
+          </div>
+          <div>
+            {{ new Date(schedule.start).formatTime('hh:mm{am}') }} to
+            {{ new Date(schedule.end).formatTime('hh:mm{am}') }}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import TimePicker from '@/components/TimePicker.vue'
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
-import { formatTimeToInteger, formatRawDateTime } from '@/utils/dateTime'
-
-const emit = defineEmits(['update:added-schedules'])
+import {
+  formatRawDateTime,
+  formatTimeToInteger,
+  formatDateAndTimeToTimestamp,
+} from '@/utils/dateTime'
+import {
+  getAvailableStartingDate,
+  getActiveView,
+  getSpecialHours,
+  getHiddenWeekDays,
+} from '@/utils/calendar/calendarViews'
+import {
+  checkEventOverlap,
+  getBusinessHours,
+  formatNewEvent,
+} from '@/utils/calendar/calendarActions'
 
 const props = defineProps({
-  tutorDetails: {
-    type: Object,
-    required: true,
-  },
-  isBookSubmitted: {
-    type: Boolean,
-    required: true,
-  },
   tutorBookings: {
     type: Array,
+    required: true,
+    default: () => [],
+  },
+  tutorWorkDays: {
+    type: Object,
+    required: true,
+    default: () => {},
+  },
+  studentBookings: {
+    type: Array,
+    required: false,
     default: () => [],
   },
 })
 
-watch(
-  () => props.tutorBookings,
-  newBookings => {
-    events.value = newBookings.flatMap(booking =>
-      booking.booking_dates.map(date => ({
-        id: date.id,
-        booking_id: booking.booking_id,
-        start: formatRawDateTime(date.start_time),
-        end: formatRawDateTime(date.end_time),
-        title: booking.subject,
-        class: 'tutorSchedule',
-      })),
-    )
-  },
-)
+const hiddenWeekDays = ref([])
+const specialHours = ref([])
+const availableStartingDate = ref('')
+const activeView = ref('')
+const tutorWorkHours = ref([])
 
-const isTutorDetailsLoaded = computed(() => !!props.tutorDetails)
+const emit = defineEmits(['update:added-schedules'])
 
-const selectedStartTime = ref('09:00:00')
-const selectedEndTime = ref('10:00:00')
+const events = ref([])
+const addedPendingSchedules = ref([])
+
+//ADD NEW DATES
+const selectedCellDate = ref('')
+const selectedStartTime = ref('')
+const selectedEndTime = ref('')
+
+const getCellDate = event => {
+  selectedCellDate.value = event
+}
 
 const updateStartTime = time => {
   selectedStartTime.value = time
@@ -117,57 +125,38 @@ const updateEndTime = time => {
   selectedEndTime.value = time
 }
 
-const storeCellDate = event => {
-  console.log(event)
-  clickedCellDate.value = event
-}
-
-const clickedCellDate = ref()
-
-const addedPendingSchedules = ref([])
-
-const events = ref([])
-
-const isEventOverlap = (newStart, newEnd, event) => {
-  const existingStartTime = new Date(event.start).getTime();
-  const existingEndTime = new Date(event.end).getTime();
-
-  // Check if the new slot overlaps with the existing slot
-  return newStart < existingEndTime && newEnd > existingStartTime;
-};
-
 const addScheduleRequest = () => {
-  const newStart = new Date(
-    `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedStartTime.value}`
-  ).getTime();
-  const newEnd = new Date(
-    `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedEndTime.value}`
-  ).getTime();
+  const newStart = formatDateAndTimeToTimestamp(
+    selectedCellDate.value,
+    selectedStartTime.value,
+  )
+  const newEnd = formatDateAndTimeToTimestamp(
+    selectedCellDate.value,
+    selectedEndTime.value,
+  )
 
-  // Check for overlap in existing events
-  const hasOverlap = events.value.some(event =>
-    isEventOverlap(newStart, newEnd, event)
-  );
+  const hasOverlap = checkEventOverlap(newStart, newEnd, events.value)
 
   if (hasOverlap) {
-    alert('Event time overlaps with an existing event. Please choose another time.');
-    return;
+    alert(
+      'Event time overlaps with an existing event. Please choose another time.',
+    )
+    return
   }
 
-  // If no overlap, add the new event
-  const newEvent = {
-    id: Date.now(),
-    start: `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedStartTime.value}`,
-    end: `${clickedCellDate.value.format('YYYY-MM-DD')} ${selectedEndTime.value}`,
-    title: 'You Added',
-    class: 'addedSchedule',
-    deletable: true,
-  };
+  const newEvent = formatNewEvent(
+    selectedCellDate.value.format('YYYY-MM-DD'),
+    selectedStartTime.value,
+    selectedEndTime.value,
+  )
 
-  events.value.push(newEvent);
-  addedPendingSchedules.value.push(newEvent);
-  emit('update:added-schedules', addedPendingSchedules.value);
-};
+  events.value.push(newEvent.newEvent)
+  addedPendingSchedules.value.push(newEvent.newEvent)
+  emit('update:added-schedules', addedPendingSchedules.value)
+  //TODO: make a slide notification that item is added
+}
+
+//
 
 function deleteSchedule(id) {
   addedPendingSchedules.value = addedPendingSchedules.value.filter(
@@ -175,100 +164,72 @@ function deleteSchedule(id) {
   )
   events.value = events.value.filter(schedule => schedule.id !== id)
   emit('update:added-schedules', addedPendingSchedules.value)
+  //TODO: make a slide notification that item is deleted
 }
 
-// calendar views
-const activeView = ref('month')
-// const isDay = computed(() => activeView.value !== 'day')
-
-// calendar min-date
-const availableStartingDate = computed(() => {
-  const date = new Date()
-  date.setDate(date.getDate())
-  return date
-})
-
-// calendar special hours
-const specialHours = computed(() => {
-  return {
-    1: dailyHours.value,
-    2: dailyHours.value,
-    3: dailyHours.value,
-    4: dailyHours.value,
-    5: dailyHours.value,
-    6: dailyHours.value,
-    7: dailyHours.value,
-  }
-})
-
-const dailyHours = computed(() => {
-  if (!isTutorDetailsLoaded.value) {
-    return [
-      { from: 6 * 60, to: 12 * 60, class: 'business-hours' },
-      { from: 13 * 60, to: 23 * 60, class: 'business-hours' },
-    ]
-  }
-
-  const tutorStartTime =
-    formatTimeToInteger(props.tutorDetails.work_days?.start_time) ?? 6
-  const tutorEndTime =
-    formatTimeToInteger(props.tutorDetails.work_days?.end_time) ?? 23
-
-  if (
-    (tutorStartTime < 12 && tutorEndTime <= 12) ||
-    (tutorStartTime >= 13 && tutorEndTime <= 23)
-  ) {
-    return [
-      {
-        from: tutorStartTime * 60,
-        to: tutorEndTime * 60,
-        class: 'business-hours',
-      },
-    ]
-  }
-
-  return [
-    { from: tutorStartTime * 60, to: 12 * 60, class: 'business-hours' },
-    { from: 13 * 60, to: tutorEndTime * 60, class: 'business-hours' },
-  ]
-})
-
-const hiddenWeekDays = computed(() => {
-  if (!props.tutorDetails || !props.tutorDetails.work_days) {
-    return []
-  }
-
-  const dayToNumber = {
-    monday: 1,
-    tuesday: 2,
-    wednesday: 3,
-    thursday: 4,
-    friday: 5,
-    saturday: 6,
-    sunday: 7,
-  }
-
-  return Object.keys(props.tutorDetails.work_days)
-    .filter(day => !props.tutorDetails.work_days[day])
-    .map(day => dayToNumber[day])
-})
-
-// watch([selectedStartTime, selectedEndTime], () => {
-//   if (selectedStartTime.value && selectedEndTime.value) {
-//     addScheduleRequest()
-//   }
-// })
-
+//WATCHES
 watch(
-  () => props.isBookSubmitted,
-  () => {
-    addedPendingSchedules.value = []
-    events.value = events.value.filter(schedule => schedule.deletable !== true)
+  () => [props.tutorBookings, props.studentBookings],
+  ([tutorBookings, studentBookings]) => {
+    events.value = [
+      ...(tutorBookings?.flatMap(
+        booking =>
+          booking.booking_dates?.map(date => ({
+            id: date.id,
+            booking_id: booking.booking_id,
+            start: formatRawDateTime(date.start_time),
+            end: formatRawDateTime(date.end_time),
+            title: booking.subject || '',
+            class: 'tutorBookings',
+          })) || [],
+      ) || []),
+      ...(studentBookings?.flatMap(
+        booking =>
+          booking.booking_dates?.map(date => ({
+            id: date.id,
+            booking_id: booking.booking_id,
+            start: formatRawDateTime(date.start_time),
+            end: formatRawDateTime(date.end_time),
+            title: booking.subject || '',
+            class: 'studentBookings',
+          })) || [],
+      ) || []),
+    ]
+
+    hiddenWeekDays.value = getHiddenWeekDays(props.tutorWorkDays)
+    specialHours.value = getSpecialHours(tutorWorkHours)
+    availableStartingDate.value = getAvailableStartingDate()
+    activeView.value = getActiveView()
+    tutorWorkHours.value = getBusinessHours(
+      formatTimeToInteger(props.tutorWorkDays.start_time),
+      formatTimeToInteger(props.tutorWorkDays.end_time),
+    )
+  },
+  {
+    immediate: true,
+    deep: true,
   },
 )
 </script>
 
 <style>
+.vuecal__event.tutorBookings {
+  background-color: rgba(250, 190, 61, 0.902);
+  border: 1px solid rgba(255, 253, 248, 0.902);
+  color: hsla(0, 0%, 100%, 0.902);
+  font-size: 0.75em;
+}
+
+.vuecal__cell--before-min {
+  color: #b6d6c7;
+}
+
+.vuecal__cell--after-max {
+  color: #00f0f0;
+}
+
+/*  */
+
 .business-hours {
   background-color: rgba(255, 255, 0, 0.15);
   border: solid rgba(255, 210, 0, 0.3);
@@ -280,13 +241,7 @@ watch(
   color: #bbb;
 }
 
-.vuecal__cell--before-min {
-  color: #b6d6c7;
-}
-
-.vuecal__cell--after-max {
-  color: #00f0f0;
-}
+/*  */
 
 .vuecal__event.tutorSchedule {
   background-color: rgba(235, 235, 235, 0.9);

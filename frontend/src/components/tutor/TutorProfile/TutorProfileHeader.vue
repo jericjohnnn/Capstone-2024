@@ -102,6 +102,7 @@ import axiosInstance from '@/axiosInstance'
 
 import { getUserData } from '@/utils/user'
 
+const userEmail = localStorage.getItem('user_email')
 const userData = getUserData()
 
 const defaultProfileImage =

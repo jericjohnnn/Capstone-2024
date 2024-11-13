@@ -106,7 +106,7 @@
 
 <script setup>
 import BreadCrumb from '@/components/BreadCrumb.vue'
-import BookMessages from '@/components/TutorBookDetails/BookMessages.vue'
+import BookMessages from '@/components/tutor/TutorBookDetails/BookMessages.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'

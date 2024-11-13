@@ -84,9 +84,9 @@ const addTime = () => {
     endMinute.value,
     endPeriod.value,
   )
-  emit('triggerTimeUpdate')
   emit('update:start-time', startTime)
   emit('update:end-time', endTime)
+  emit('triggerTimeUpdate')
 }
 </script>
 

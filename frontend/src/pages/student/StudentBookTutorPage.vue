@@ -29,10 +29,10 @@
             </div>
             <div v-else>
               <BookCalendar
-                :tutorDetails="tutorDetails"
                 :tutorBookings="tutorBookings"
-                :isBookSubmitted="isBookSubmitted"
-                @update:added-schedules="addSchedules"
+                :tutorWorkDays="tutorWorkDays"
+                :studentBookings="studentBookings"
+                @update:added-schedules="storePendingBookingDates"
               />
             </div>
           </div>
@@ -220,11 +220,17 @@ import { formatTo12Hour } from '@/utils/dateTime'
 
 const userData = getUserData()
 
+const tutorBookings = ref([])
+const studentBookings = ref([])
+const tutorWorkDays = ref({})
+
+
 const route = useRoute()
 const tutorDetails = ref({})
+
+
 const modifiedContactNumber = ref('')
 
-const isReadonly = ref(true)
 
 const averageRatings = computed(() => {
   if (!tutorDetails.value?.ratings || tutorDetails.value.ratings.length === 0) {
@@ -235,7 +241,6 @@ const averageRatings = computed(() => {
   return total / ratings.length
 })
 
-// Convert multiple refs to a reactive state object
 const initialBookingState = {
   selectedSubject: '',
   modeOfTutoring: 'In School',
@@ -249,14 +254,13 @@ const initialBookingState = {
 
 const bookingState = reactive({ ...initialBookingState })
 
-const addSchedules = schedules => {
-  const startAndEndArray = schedules.map(item => ({
-    start: item.start,
-    end: item.end,
-  }))
 
-  bookingState.selectedDateTimes = startAndEndArray
+// const pendingBookingDates = ref([])
+const storePendingBookingDates = bookingDates => {
+  bookingState.selectedDateTimes = bookingDates
 }
+
+const isReadonly = ref(true)
 
 const toggleEditing = () => {
   isReadonly.value = !isReadonly.value
@@ -291,23 +295,18 @@ const submitBookingRequest = async () => {
   }
 
   try {
-    const response = await axiosInstance.post('api/create-booking', bookRequest)
-    console.log(response)
+    await axiosInstance.post('api/create-booking', bookRequest)
 
-    // Reset bookingState to its initial state
 
     Object.assign(bookingState, initialBookingState)
     isBookSubmitted.value = !isBookSubmitted.value
-    console.log(isBookSubmitted.value)
   } catch (error) {
     console.error('Error submitting form:', error)
-    console.log(bookingState.selectedDateTimes)
 
     alert('There was an error submitting the form.')
   }
 }
 
-const tutorBookings = ref([])
 
 const fetchTutorSchedules = async tutorId => {
   try {
@@ -318,7 +317,6 @@ const fetchTutorSchedules = async tutorId => {
       tutorBookings.value = []
     }
     tutorBookings.value = bookings
-    console.log(tutorBookings.value)
   } catch (err) {
     console.error('Error fetching tutor details:', err)
   }
@@ -328,6 +326,7 @@ const fetchTutorDetails = async tutorId => {
   try {
     const response = await axiosInstance.get(`/api/tutor-detail/${tutorId}`)
     tutorDetails.value = response.data.tutor
+    tutorWorkDays.value = tutorDetails.value.work_days
   } catch (err) {
     console.error('Error fetching tutor details:', err)
   }

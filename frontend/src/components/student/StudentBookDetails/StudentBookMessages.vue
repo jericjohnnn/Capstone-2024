@@ -60,12 +60,17 @@
           </template>
 
           <template #mainContent>
-            <RescheduleCalendar
-              :tutorBookings="tutorBookings"
-              :tutorWorkDays="tutorWorkDays"
-              :studentBookings="studentBookings"
-              @update:added-schedules="storePendingBookingDates"
-            />
+            <div v-if="!tutorBookings && !studentBookings && !tutorWorkDays">
+              <LoaderSpinner/>
+            </div>
+            <div v-else>
+              <BookCalendar
+                :tutorBookings="tutorBookings"
+                :tutorWorkDays="tutorWorkDays"
+                :studentBookings="studentBookings"
+                @update:added-schedules="storePendingBookingDates"
+              />
+            </div>
           </template>
           <template #mainButton>
             <p>Confirm</p>
@@ -99,7 +104,11 @@
     <!-- BUTTONS -->
     <div class="flex justify-between w-full">
       <!-- NEGOTIATE -->
-      <div v-if="bookDetails.messages.length === 3 || bookDetails.messages.length === 1">
+      <div
+        v-if="
+          bookDetails.messages.length === 3 || bookDetails.messages.length === 1
+        "
+      >
         <p>waiting for tutor negotiation</p>
       </div>
       <!-- NEGOTIATE -->
@@ -126,11 +135,12 @@
   </div>
 </template>
 <script setup>
-import PopUpModal from '../reusables/PopUpModal.vue'
+import PopUpModal from '@/components/reusables/PopUpModal.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
-import RescheduleCalendar from '@/components/shared/calendar/RescheduleCalendar.vue'
+import BookCalendar from '@/components/shared/calendar/BookCalendar.vue'
+import LoaderSpinner from '@/components/reusables/LoaderSpinner.vue'
 
 const props = defineProps({
   bookDetailsProps: {

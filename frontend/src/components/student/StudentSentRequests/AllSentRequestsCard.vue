@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-import PaginationLinks from '../PaginationLinks.vue'
+import PaginationLinks from '@/components/PaginationLinks.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'

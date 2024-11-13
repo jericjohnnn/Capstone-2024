@@ -4,7 +4,9 @@
       <main class="container h-full py-5">
         <!-- Search Components -->
         <div class="mb-6">
-          <BreadCrumb :breadcrumbs="[{ label: 'Home', route: '/student/home' }]" />
+          <BreadCrumb
+            :breadcrumbs="[{ label: 'Home', route: '/student/home' }]"
+          />
           <TutorSearch class="pt-3"></TutorSearch>
           <div>
             <AllSubjects></AllSubjects>
@@ -17,19 +19,22 @@
           <div class="w-full md:w-[380px] h-[calc(100vh-220px)]">
             <!-- Scrollable Tutor Cards Container -->
             <div class="h-[calc(100%-60px)] overflow-y-auto pr-3">
-              <div v-if="tutorsLoading" class="flex justify-center items-center h-full">
+              <div
+                v-if="tutorsLoading"
+                class="flex justify-center items-center h-full"
+              >
                 <LoaderSpinner />
               </div>
-              <template v-else>
+              <div v-else>
                 <TutorCard
                   v-for="tutor in tutors"
                   :key="tutor.id"
-                  :tutors="tutor"
+                  :tutor="tutor"
                   :loading="tutorsLoading"
                   @click="selectTutor(tutor.id)"
                 />
                 <div ref="loadMore" class="h-10 md:hidden"></div>
-              </template>
+              </div>
             </div>
 
             <!-- Pagination -->
@@ -43,14 +48,22 @@
           </div>
 
           <!-- Right Column - Tutor Details -->
-          <div class="w-full md:w-[calc(100%-380px-2rem)] h-[calc(100vh-220px)] hidden md:block">
-            <div v-if="tutorDetailsLoading" class="flex justify-center items-center h-full">
+          <div
+            class="w-full md:w-[calc(100%-380px-2rem)] h-[calc(100vh-220px)] hidden md:block"
+          >
+            <div
+              v-if="tutorDetailsLoading"
+              class="flex justify-center items-center h-full"
+            >
               <LoaderSpinner />
             </div>
             <div v-else-if="tutorDetails" class="h-full">
               <TutorDetailsCard :tutor="tutorDetails"></TutorDetailsCard>
             </div>
-            <div v-else class="h-full flex items-center justify-center rounded-sm shadow-sm">
+            <div
+              v-else
+              class="h-full flex items-center justify-center rounded-sm shadow-sm"
+            >
               <p class="text-center text-gray-500">Select a Tutor</p>
             </div>
           </div>
@@ -90,7 +103,8 @@ const fetchTutors = async (page = 1) => {
   try {
     tutorsLoading.value = true
     const response = await axiosInstance.get(`/api/tutors?page=${page}`)
-    const { data, current_page, last_page, links } = response.data.tutor_previews
+    const { data, current_page, last_page, links } =
+      response.data.tutor_previews
 
     tutors.value = data
     currentPage.value = current_page
@@ -132,7 +146,7 @@ watch(
       const page = parseInt(newPage) || 1
       fetchTutors(page)
     }
-  }
+  },
 )
 
 watch(
@@ -141,7 +155,7 @@ watch(
     if (newTutorId !== oldTutorId && newTutorId) {
       fetchTutorDetails(newTutorId)
     }
-  }
+  },
 )
 
 onMounted(() => {
@@ -156,4 +170,3 @@ onMounted(() => {
   }
 })
 </script>
-

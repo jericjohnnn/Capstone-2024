@@ -104,7 +104,7 @@
               :tutorBookings="fetchedTutorBookings"
               :tutorWorkDays="tutorWorkDays"
               :studentBookings="fetchedStudentBookings"
-            ></StudentBookMessages>
+            />
             <!-- BUTTONS -->
           </div>
         </div>
@@ -121,7 +121,7 @@ import { useRoute, useRouter } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
-import StudentBookMessages from '@/components/StudentBookDetails/StudentBookMessages.vue'
+import StudentBookMessages from '@/components/student/StudentBookDetails/StudentBookMessages.vue'
 import { formatDate } from '@/utils/dateTime'
 
 const route = useRoute()
