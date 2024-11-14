@@ -58,10 +58,10 @@
       </div>
 
       <!-- Search Button -->
-      <div class="shrink-0">
+      <div class="md:w-32">
         <button
           type="button"
-          class="h-full px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+          class="w-full px-4 py-2.5 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
         >
           <svg
             class="shrink-0 size-4 text-slate-50 dark:text-white/60"

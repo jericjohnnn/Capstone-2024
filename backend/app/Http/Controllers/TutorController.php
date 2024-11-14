@@ -45,7 +45,7 @@ class TutorController extends Controller
         $tutors = Tutor::where('approval_status', 'Accepted')
             ->whereNot('offense_status', 'Banned')
             ->with('subjects:id,name,abbreviation', 'ratings:id,tutor_id,rate')
-            ->paginate(4);
+            ->paginate(5);
 
         // ignore lang ning red sa "through" kay wa pako kita
         // sa extension nga modetect na siya, kay bag o na nga feature sa laravel

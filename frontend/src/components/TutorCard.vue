@@ -1,8 +1,8 @@
 <template>
-  <div class="mb-3">
-    <div class="flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+  <div class="mb-2.5">
+    <div class=" bg-blue-50 border border-white shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
       <!-- Tutor Info Section -->
-      <div class="p-4 md:p-5 flex items-center justify-between">
+      <div class="p-4 md:p-3 flex items-center justify-between">
         <div class="flex items-center gap-x-3">
           <div class="shrink-0">
             <img
@@ -13,7 +13,7 @@
           </div>
 
           <div class="flex flex-col gap-1">
-            <h1 class="text-lg font-bold text-gray-800 dark:text-white line-clamp-1">
+            <h1 class="text-sm font-bold text-gray-800 dark:text-white line-clamp-1">
               {{ tutor.tutor_name }}
             </h1>
             <div class="flex items-center gap-2">
@@ -32,7 +32,14 @@
           <button
             @click="triggerSelectTutor"
             type="button"
-            class="py-1.5 px-4 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
+            class="hidden md:block py-1.5 px-4 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
+          >
+            View Profile
+          </button>
+          <button
+            @click="triggerSelectTutorMobile"
+            type="button"
+            class="block md:hidden py-1.5 px-4 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
           >
             View Profile
           </button>
@@ -61,9 +68,13 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['triggerSelectTutor'])
+const emit = defineEmits(['triggerSelectTutor', 'triggerSelectTutorMobile'])
 
 const triggerSelectTutor = () => {
   emit('triggerSelectTutor')
+}
+
+const triggerSelectTutorMobile = () => {
+  emit('triggerSelectTutorMobile')
 }
 </script>

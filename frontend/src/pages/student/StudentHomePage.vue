@@ -1,18 +1,18 @@
 <template>
-  <main class="w-full min-h-screen bg-white">
+  <main class="w-full min-h-screen bg-blue-100">
     <SideBar>
       <!-- Container with gap between grid items -->
-      <div class="grid grid-cols-1 gap-4 min-h-screen  py-5">
+      <div class="grid grid-cols-1 gap-4 min-h-screen py-5 md:grid-rows-[auto,auto,1fr] md:grid-flow-col">
         
         <!-- Breadcrumb Section -->
-        <div class="w-full h-fit ">
+        <div class="w-full  md:row-span-1 ">
           <BreadCrumb
             :breadcrumbs="[{ label: 'Home', route: '/student/home' }]"
           />
         </div>
 
         <!-- Search Section -->
-        <div class="w-full h-fit ">
+        <div class="w-full pb-4 md:pb-10 md:row-span-1 ">
           <TutorSearch></TutorSearch>
           <div>
             <AllSubjects></AllSubjects>
@@ -20,26 +20,28 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4  min-h-20 ">
+        <div class="grid grid-cols-1  md:grid-cols-9 gap-4   md:row-span-1 ">
           
           <!-- Left Column - Split into two rows -->
-          <div class="grid grid-rows-[1fr,auto] gap-4">
+          <div class="grid grid-rows-[1fr,auto] gap-4 md:col-span-4 md:max-h-[calc(100vh-14rem)] ">
             
             <!-- Tutor Cards Section -->
-            <div class="w-full min-h-96 "> <!-- Ensuring minimum height during loading -->
+            <div class="w-full min-h-96">
               <div
                 v-if="tutorsLoading"
-                class="flex justify-center items-center h-full "
+                class="flex justify-center items-center h-full"
               >
                 <LoaderSpinner />
               </div>
-              <div v-else>
+              <div v-else class="space-y-4">
                 <TutorCard
                   v-for="tutor in tutors"
                   :key="tutor.id"
                   :tutor="tutor"
                   :loading="tutorsLoading"
                   @triggerSelectTutor="selectTutor(tutor.id)"
+                  @triggerSelectTutorMobile="selectTutorMobile(tutor.id)"
+                  class="md:w-11/12"
                 />
               </div>
             </div>
@@ -50,24 +52,25 @@
                 :links="paginationLinks"
                 :current-page="currentPage"
                 :last-page="lastPage"
+                class="md:w-11/12 "
               />
             </div>
           </div>
 
           <!-- Tutor Details Section -->
-          <div class="w-full hidden md:block min-h-[400px] "> <!-- Consistent height for layout stability -->
+          <div class="w-full hidden md:block md:col-span-5  max-h-[calc(100vh-14rem)]"> 
             <div
               v-if="tutorDetailsLoading"
-              class="flex justify-center items-center h-full "
+              class="flex justify-center items-center h-full"
             >
               <LoaderSpinner />
             </div>
-            <div v-else-if="tutorDetails" class="h-full ">
-              <TutorDetailsCard :tutor="tutorDetails"></TutorDetailsCard>
+            <div v-else-if="tutorDetails" class="h-full">
+              <TutorDetailsCard :tutor="tutorDetails" class="h-full border"/>
             </div>
             <div
               v-else
-              class="h-full flex items-center justify-center rounded-sm shadow-sm "
+              class="flex items-center justify-center rounded-sm shadow-sm h-full"
             >
               <p class="text-center text-gray-500">Select a Tutor</p>
             </div>
@@ -151,6 +154,12 @@ const selectTutor = tutorId => {
       ...route.query, // Preserve existing query parameters
       tutor_id: tutorId,
     },
+  })
+}
+
+const selectTutorMobile = tutorId => {
+  router.push({
+    path: `/student/tutorProfile/${tutorId}`,
   })
 }
 
