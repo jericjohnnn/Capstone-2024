@@ -24,8 +24,8 @@
 <script setup>
 import BreadCrumb from '@/components/BreadCrumb.vue'
 import SideBar from '@/components/SideBar.vue'
-import RequestsTabs from '@/components/TutorReceivedRequests/RequestsTabs.vue'
+import RequestsTabs from '@/components/tutor/TutorReceivedRequests/RequestsTabs.vue'
 // import HelpButton from '@/components/HelpButton.vue'
-import PendingRequestsCard from '@/components/TutorReceivedRequests/PendingRequestsCard.vue'
-import CompletedRequestsCard from '@/components/TutorReceivedRequests/CompletedRequestsCard.vue'
+import PendingRequestsCard from '@/components/tutor/TutorReceivedRequests/PendingRequestsCard.vue'
+import CompletedRequestsCard from '@/components/tutor/TutorReceivedRequests/CompletedRequestsCard.vue'
 </script>

@@ -81,8 +81,9 @@
                     :key="dateTime.id"
                     class="text-blue-600"
                   >
-                    {{ formatDate(dateTime.start_time) }} -
-                    {{ formatDate(dateTime.end_time) }}
+                  {{ formatDate(dateTime.start_time) }}
+                    {{ formatTo12Hour(extractTimeFromISO(dateTime.start_time)) }} -
+                    {{ formatTo12Hour(extractTimeFromISO(dateTime.end_time)) }}
                   </div>
                 </div>
               </div>
@@ -106,13 +107,13 @@
 
 <script setup>
 import BreadCrumb from '@/components/BreadCrumb.vue'
-import BookMessages from '@/components/TutorBookDetails/BookMessages.vue'
+import BookMessages from '@/components/tutor/TutorBookDetails/BookMessages.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
-import { formatDate } from '@/utils/dateTime'
+import { formatDate, extractTimeFromISO, formatTo12Hour } from '@/utils/dateTime'
 import { getUserData } from '@/utils/user'
 
 const userData = getUserData()

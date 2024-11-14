@@ -7,20 +7,20 @@
           <div class="shrink-0">
             <img
               class="size-14 rounded-full object-cover border-2 border-gray-100"
-              :src="tutors.profile_image || defaultProfileImage"
-              :alt="tutors.tutor_name"
+              :src="tutor.profile_image || defaultProfileImage"
+              :alt="tutor.tutor_name"
             />
           </div>
 
           <div class="flex flex-col gap-1">
             <h1 class="text-lg font-bold text-gray-800 dark:text-white line-clamp-1">
-              {{ tutors.tutor_name }}
+              {{ tutor.tutor_name }}
             </h1>
             <div class="flex items-center gap-2">
               <span
                 class="inline-flex items-center py-0.5 px-2 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
               >
-                {{ tutors.tutor_subjects[tutors.tutor_subjects.length-1].abbreviation }}
+                {{ tutor.tutor_subjects[tutor.tutor_subjects.length-1].abbreviation }}
               </span>
             </div>
           </div>
@@ -28,8 +28,9 @@
 
         <!-- Rating and Button -->
         <div class="shrink-0 flex flex-col items-end gap-2">
-          <StarRating :rating="tutors.tutor_rating" class="text-sm"></StarRating>
+          <StarRating :rating="tutor.tutor_rating" class="text-sm"></StarRating>
           <button
+            @click="triggerSelectTutor"
             type="button"
             class="py-1.5 px-4 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
           >
@@ -54,9 +55,15 @@ const defaultProfileImage =
   </svg>`)
 
 defineProps({
-  tutors: {
+  tutor: {
     type: Object,
     required: true,
   },
 })
+
+const emit = defineEmits(['triggerSelectTutor'])
+
+const triggerSelectTutor = () => {
+  emit('triggerSelectTutor')
+}
 </script>

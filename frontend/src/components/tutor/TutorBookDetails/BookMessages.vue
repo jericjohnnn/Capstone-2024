@@ -58,14 +58,13 @@
           <template #modalTitle>
             <p>Change Dates</p>
           </template>
-
           <template #mainContent>
-            <RescheduleCalendar
+            <BookCalendar
               :tutorBookings="tutorBookings"
               :tutorWorkDays="tutorWorkDays"
               :studentBookings="studentBookings"
               @update:added-schedules="storePendingBookingDates"
-            />
+              />
           </template>
           <template #mainButton>
             <p>Confirm</p>
@@ -103,7 +102,10 @@
         <p>waiting for student negotiation</p>
       </div>
       <!-- NEGOTIATE -->
-      <div v-if="!isNegotiating && bookDetails.messages.length !== 2" class="flex gap-4">
+      <div
+        v-if="!isNegotiating && bookDetails.messages.length !== 2"
+        class="flex gap-4"
+      >
         <div v-if="bookDetails.messages.length === 1">
           <button @click="isNegotiating = true" class="outline">
             negotiate
@@ -127,11 +129,11 @@
   </div>
 </template>
 <script setup>
-import RescheduleCalendar from './RescheduleCalendar.vue'
-import PopUpModal from '../reusables/PopUpModal.vue'
+import PopUpModal from '@/components/reusables/PopUpModal.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
+import BookCalendar from '@/components/shared/calendar/BookCalendar.vue';
 
 const props = defineProps({
   bookDetailsProps: {

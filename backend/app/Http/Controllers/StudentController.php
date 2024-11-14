@@ -75,18 +75,21 @@ class StudentController extends Controller
                 ->where('student_id', $student->id)
                 ->whereNot('status', 'Ongoing')
                 ->whereNot('status', 'Canceled')
+                ->orderBy('created_at', 'desc')
                 ->paginate(6);
         }
         if ($tab === 'pending') {
             $StudentRequests = Booking::with('tutor')
                 ->where('student_id', $student->id)
                 ->where('status', 'Pending')
+                ->orderBy('created_at', 'desc')
                 ->paginate(6);
         }
         if ($tab === 'completed') {
             $StudentRequests = Booking::with('tutor')
                 ->where('student_id', $student->id)
                 ->where('status', 'Completed')
+                ->orderBy('created_at', 'desc')
                 ->paginate(6);
         }
 

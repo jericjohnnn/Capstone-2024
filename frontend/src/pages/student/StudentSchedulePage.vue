@@ -18,7 +18,7 @@
 
 <script setup>
 import BreadCrumb from '@/components/BreadCrumb.vue'
-import SchedulesCalendar from '@/components/reusables/SchedulesCalendar.vue';
+import SchedulesCalendar from '@/components/shared/calendar/SchedulesCalendar.vue';
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 // import { ref, reactive, onMounted, watch } from 'vue'

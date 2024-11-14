@@ -5,7 +5,7 @@ import StudentSentRequestsPage from "@/pages/student/StudentSentRequestsPage.vue
 import StudentNotificationPage from "@/pages/student/StudentNotificationPage.vue";
 import StudentProfilePage from "@/pages/student/StudentProfilePage.vue";
 import StudentBookDetailsPage from "@/pages/student/StudentBookDetailsPage.vue";
-import StudentOngoingBookingDetails from "@/components/StudentSchedule/StudentOngoingBookingDetails.vue";
+import StudentOngoingBookingDetails from "@/components/student/StudentSchedule/StudentOngoingBookingDetails.vue";
 
 const studentRoutes = [
   {

@@ -4,7 +4,7 @@ import TutorBookDetailsPage from "@/pages/tutor/TutorBookDetailsPage.vue";
 import TutorReceivedRequestsPage from "@/pages/tutor/TutorReceivedRequestsPage.vue";
 import TutorSchedulePage from "@/pages/tutor/TutorSchedulePage.vue";
 import TutorSettingsPage from "@/pages/tutor/TutorSettingsPage.vue";
-import OngoingBookingDetails from "@/components/TutorSchedule/OngoingBookingDetails.vue";
+import OngoingBookingDetails from "@/components/tutor/TutorSchedule/OngoingBookingDetails.vue";
 
 
 const tutorRoutes = [

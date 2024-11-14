@@ -43,6 +43,7 @@ import axiosInstance from '@/axiosInstance'
 import { getUserData } from '@/utils/user'
 
 const userData = getUserData()
+
 const isEditing = ref(false)
 const editedBiography = ref(userData.value.biography || '')
 

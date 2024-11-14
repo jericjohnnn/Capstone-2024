@@ -5,7 +5,7 @@
         <!-- Breadcrumb -->
         <BreadCrumb
           :breadcrumbs="[
-            { label: 'Schedule', route: '/student/schedule' },
+            { label: 'Schedule', route: '/tutor/schedule' },
             { label: 'Booking Details', route: '' }
           ]"
         />
@@ -82,8 +82,9 @@
                     :key="dateTime.id"
                     class="text-blue-600"
                   >
-                    {{ formatDate(dateTime.start_time) }} -
-                    {{ formatDate(dateTime.end_time) }}
+                  {{ formatDate(dateTime.start_time) }}
+                    {{ formatTo12Hour(extractTimeFromISO(dateTime.start_time)) }} -
+                    {{ formatTo12Hour(extractTimeFromISO(dateTime.end_time)) }}
                   </div>
                 </div>
 
@@ -135,7 +136,7 @@ import { useRoute } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
-import { formatDate } from '@/utils/dateTime'
+import { formatDate, extractTimeFromISO, formatTo12Hour } from '@/utils/dateTime'
 
 const route = useRoute()
 

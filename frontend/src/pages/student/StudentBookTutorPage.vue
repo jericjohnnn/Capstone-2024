@@ -1,237 +1,178 @@
 <template>
-  <main class="">
+  <main>
     <SideBar>
-      <main class="container p-5 mx-auto">
+      <main class="container mx-auto">
         <BreadCrumb
           :breadcrumbs="[
             { label: 'Home', route: '/student/home' },
             { label: 'Book', route: '/student/book/:tutorId' },
           ]"
         />
-        <div class="bg-white shadow-md rounded-lg p-6">
-          <!-- Tutor Info section remains unchanged -->
-          <div class="flex items-center mb-4">
-            <img
-              :src="tutorDetails.profile_image"
-              alt="Tutor"
-              class="w-16 h-16 rounded-full"
-            />
-            <div class="ml-4">
-              <h2 class="text-xl font-semibold">
-                {{ tutorDetails.first_name }} {{ tutorDetails.last_name }}
-              </h2>
-              <div
-                v-if="
-                  !tutorDetails.subjects || tutorDetails.subjects.length === 0
-                "
-              >
-                <p>No subjects</p>
-              </div>
-              <div v-else class="flex flex-wrap gap-1">
-                <span
-                  v-for="subject in tutorDetails.subjects"
-                  :key="subject.id"
-                  class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                >
-                  {{ subject.name }}
-                </span>
-              </div>
+        <div class="flex gap-8 mt-6">
+          <!-- Left Column - Calendar -->
+          <div class="w-1/2">
+            <!-- Availability Info -->
+            <div class="mb-4">
+              <TutorAvailability :tutor="tutorDetails" />
             </div>
-          </div>
-
-          <div class="text-sm text-gray-600 mb-4">
-            <p
-              v-if="
-                !tutorDetails.work_days || tutorDetails.work_days.length === 0
-              "
-            >
-              No availability
-            </p>
-            <p v-else>
-              {{ tutorDetails.first_name }} {{ tutorDetails.last_name }} is
-              available {{ formatTo12Hour(tutorDetails.work_days.start_time) }} -
-              {{ formatTo12Hour(tutorDetails.work_days.end_time) }}
-              <span class="float-right"
-                >Rate: P{{ tutorDetails.tutor_rate }}/Hour</span
-              >
-            </p>
-          </div>
-          <div v-if="!tutorDetail">
-            <p class="text-center text-gray-500">LOADING</p>
-          </div>
-          <div v-else>
-            <BookCalendar
-              :tutorDetails="tutorDetails"
-              :tutorBookings="tutorBookings"
-              :isBookSubmitted="isBookSubmitted"
-              @update:added-schedules="addSchedules"
-            ></BookCalendar>
-          </div>
-
-          <!-- Updated Booking Form with bookingState -->
-          <form @submit.prevent="submitBookingRequest" class="space-y-4">
-            <div>
-              <label class="block text-gray-700">Select subject:</label>
-              <select
-                v-model="bookingState.selectedSubject"
-                class="border rounded w-full p-2"
-              >
-                <option value="">Select Subject</option>
-                <option
-                  v-for="subject in tutorDetails.subjects"
-                  :key="subject.id"
-                  :value="subject.name"
-                >
-                  {{ subject.name }}
-                </option>
-              </select>
+            <div v-if="!tutorDetails">
+              <p class="text-center text-gray-500">LOADING</p>
             </div>
-
-            <div>
-              <label class="block text-gray-700"
-                >Choose mode of tutoring:</label
-              >
-              <select
-                v-model="bookingState.modeOfTutoring"
-                class="border rounded w-full p-2"
-              >
-                <option value="In School">In School</option>
-                <option value="Online">Online</option>
-                <option value="Face to Face">Face to Face</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-gray-700">
-                {{
-                  bookingState.modeOfTutoring === 'Online'
-                    ? 'Select Video Conferencing Platform:'
-                    : 'Location:'
-                }}
-              </label>
-
-              <select
-                v-if="bookingState.modeOfTutoring === 'Online'"
-                v-model="bookingState.videoPlatform"
-                class="border rounded w-full p-2"
-              >
-                <option value="Zoom">Zoom</option>
-                <option value="Google Meet">Google Meet</option>
-                <option value="Skype">Skype</option>
-              </select>
-
-              <input
-                v-else-if="bookingState.modeOfTutoring === 'Face to Face'"
-                v-model="bookingState.location"
-                type="text"
-                class="border rounded w-full p-2"
-                placeholder="Enter location"
+            <div v-else>
+              <BookCalendar
+                :tutorBookings="tutorBookings"
+                :tutorWorkDays="tutorWorkDays"
+                :studentBookings="studentBookings"
+                @update:added-schedules="storePendingBookingDates"
               />
-
-              <div
-                v-else
-                class="border rounded w-full p-2 bg-gray-100 text-gray-700"
-              >
-                {{ bookingState.location }}
-              </div>
             </div>
+          </div>
 
-            <div class="border rounded p-2">
-              <label class="block text-gray-700">Message:</label>
-              <input
-                v-model="bookingState.tutorTopic"
-                class="w-full border-none outline-none mb-1"
-                placeholder="Enter the topic that needs tutoring"
-              />
-              <textarea
-                v-model="bookingState.tutorMessage"
-                class="w-full border-none outline-none mt-1 h-24 resize-none"
-                placeholder="Enter objectives, concerns, and further details of your inquiry"
-              ></textarea>
-            </div>
-
+          <!-- Right Column - Tutor Info & Form -->
+          <div class="w-1/2">
+            <!-- Tutor Info and Booking Form -->
             <div>
-              <label class="block text-gray-700">Contact number:</label>
-              <input
-                v-model="bookingState.contactNumber"
-                type="text"
-                class="border rounded w-full p-2"
-                :readonly="isReadonly"
-              />
-              <div class="mt-2">
-                <button
-                  type="button"
-                  class="text-blue-600 hover:underline mr-2"
-                  @click="toggleEditing"
-                >
-                  {{ isReadonly ? 'Change number' : 'Apply' }}
-                </button>
-                <button
-                  v-if="!isReadonly"
-                  type="button"
-                  class="text-green-600 hover:underline"
-                  @click="cancelChanges"
-                >
-                  cancel
-                </button>
+              <div>
+                <TutorInfo :tutor="tutorDetails" />
               </div>
-            </div>
 
-            <div class="flex justify-end gap-4">
-              <router-link :to="{ name: 'StudentHome' }">
-                <button
-                  type="button"
-                  class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100"
-                >
-                  Cancel
-                </button>
-              </router-link>
-              <button
-                type="submit"
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                BOOK
-              </button>
+              <hr class="my-4" />
+
+              <!-- Booking Form -->
+              <form @submit.prevent="submitBookingRequest" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <!-- Subject Selection -->
+                  <div>
+                    <SelectSubject
+                      :tutor="tutorDetails"
+                      @update:selectedSubject="updateSelectedSubject"
+                    />
+                  </div>
+
+                  <!-- Mode of Tutoring -->
+                  <div>
+                    <SelectLearningPreference
+                      @update:learningPreference="updateLearningPreference"
+                    />
+                  </div>
+                </div>
+
+                <!-- Location/Platform -->
+                <div>
+                  <SelectLocationOrPlatform
+                    :learningPreference="bookingState.learningPreference"
+                    :inSchoolAddress="bookingState.location"
+                    @update:videoPlatform="updateVideoPlatform"
+                    @update:location="updateLocation"
+                  />
+                </div>
+
+                <!-- Message -->
+                <div>
+                  <InputMessage
+                    @update:tutorTopic="updateTutorTopic"
+                    @update:tutorMessage="updateTutorMessage"
+                  />
+                </div>
+
+                <!-- Contact Number -->
+                <div>
+                  <ChangeContactNumber
+                    :contactNumber="bookingState.contactNumber"
+                    @update:contactNumber="updateContactNumber"
+                  />
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="flex justify-end gap-4 pt-4">
+                  <router-link :to="{ name: 'StudentHome' }">
+                    <button
+                      type="button"
+                      class="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                    >
+                      Cancel
+                    </button>
+                  </router-link>
+                  <button
+                    type="submit"
+                    class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                  >
+                    BOOK
+                  </button>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </main>
     </SideBar>
-
-    <HelpButton />
   </main>
 </template>
 
 <script setup>
+import TutorAvailability from '@/components/student/StudentBookTutor/TutorAvailability.vue'
+import ChangeContactNumber from '@/components/student/StudentBookTutor/form/changeContactNumber.vue'
+import InputMessage from '@/components/student/StudentBookTutor/form/InputMessage.vue'
+import SelectLocationOrPlatform from '@/components/student/StudentBookTutor/form/SelectLocationOrPlatform.vue'
+import SelectSubject from '@/components/student/StudentBookTutor/form/SelectSubject.vue'
+import SelectLearningPreference from '@/components/student/StudentBookTutor/form/SelectLearningPreference.vue'
+import TutorInfo from '@/components/student/StudentBookTutor/TutorInfo.vue'
 import BreadCrumb from '@/components/BreadCrumb.vue'
 import { ref, reactive, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
-import BookCalendar from '@/components/BookCalendar.vue'
+import BookCalendar from '@/components/shared/calendar/BookCalendar.vue'
 import SideBar from '@/components/SideBar.vue'
-import HelpButton from '@/components/HelpButton.vue'
+// import HelpButton from '@/components/HelpButton.vue'
 import { getUserData } from '@/utils/user'
-import { formatTo12Hour } from '@/utils/dateTime'
-
-
 
 const userData = getUserData()
 
+const tutorBookings = ref([])
+const studentBookings = ref([])
+const tutorWorkDays = ref({})
+
 const route = useRoute()
 const tutorDetails = ref({})
-const tutorDetail = ref(null)
-const studentContactNumber = userData ? userData.contact_number : null
-const modifiedContactNumber = ref('')
 
-const isReadonly = ref(true)
+const updateSelectedSubject = newSubject => {
+  bookingState.selectedSubject = newSubject
+}
 
-// Convert multiple refs to a reactive state object
+const updateLearningPreference = newPreference => {
+  bookingState.learningPreference = newPreference
+}
+
+const updateVideoPlatform = newPlatform => {
+  bookingState.videoPlatform = newPlatform
+}
+
+const updateLocation = newLocation => {
+  bookingState.location = newLocation
+}
+
+const updateTutorTopic = newTopic => {
+  bookingState.tutorTopic = newTopic
+}
+
+const updateTutorMessage = newMessage => {
+  bookingState.tutorMessage = newMessage
+}
+
+const updateContactNumber = newContactNumber => {
+  bookingState.contactNumber = newContactNumber
+}
+
+const storePendingBookingDates = bookingDates => {
+  bookingState.selectedDateTimes = bookingDates
+}
+
 const initialBookingState = {
   selectedSubject: '',
-  modeOfTutoring: 'In School',
+  learningPreference: 'In School',
   location: 'CCTC',
   videoPlatform: '',
-  contactNumber: studentContactNumber,
+  contactNumber: userData.value.contact_number || '',
   tutorTopic: '',
   tutorMessage: '',
   selectedDateTimes: [],
@@ -239,39 +180,19 @@ const initialBookingState = {
 
 const bookingState = reactive({ ...initialBookingState })
 
-const addSchedules = schedules => {
-  const startAndEndArray = schedules.map(item => ({
-    start: item.start,
-    end: item.end,
-  }))
-
-  bookingState.selectedDateTimes = startAndEndArray
-}
-
-const toggleEditing = () => {
-  isReadonly.value = !isReadonly.value
-  modifiedContactNumber.value = bookingState.contactNumber
-}
-
-const cancelChanges = () => {
-  bookingState.contactNumber = modifiedContactNumber.value
-  isReadonly.value = true
-}
-const isBookSubmitted = ref(true)
-
 const submitBookingRequest = async () => {
   const bookRequest = {
     tutor_id: route.params.tutorId,
-    student_id: userData.id,
+    student_id: userData.value.id,
     subject: bookingState.selectedSubject,
-    learning_mode: bookingState.modeOfTutoring,
+    learning_mode: bookingState.learningPreference,
     location:
-      bookingState.modeOfTutoring === 'Face to Face' ||
-      bookingState.modeOfTutoring === 'In School'
+      bookingState.learningPreference === 'Face to Face' ||
+      bookingState.learningPreference === 'In School'
         ? bookingState.location
         : null,
     online_meeting_platform:
-      bookingState.modeOfTutoring === 'Online'
+      bookingState.learningPreference === 'Online'
         ? bookingState.videoPlatform
         : null,
     contact_number: bookingState.contactNumber,
@@ -281,23 +202,15 @@ const submitBookingRequest = async () => {
   }
 
   try {
-    const response = await axiosInstance.post('api/create-booking', bookRequest)
-    console.log(response)
-
-    // Reset bookingState to its initial state
+    await axiosInstance.post('api/create-booking', bookRequest)
 
     Object.assign(bookingState, initialBookingState)
-    isBookSubmitted.value = !isBookSubmitted.value
-    console.log(isBookSubmitted.value)
-
-    console.log(bookRequest)
   } catch (error) {
     console.error('Error submitting form:', error)
+
     alert('There was an error submitting the form.')
   }
 }
-
-const tutorBookings = ref([])
 
 const fetchTutorSchedules = async tutorId => {
   try {
@@ -308,7 +221,6 @@ const fetchTutorSchedules = async tutorId => {
       tutorBookings.value = []
     }
     tutorBookings.value = bookings
-    console.log(tutorBookings.value)
   } catch (err) {
     console.error('Error fetching tutor details:', err)
   }
@@ -318,15 +230,14 @@ const fetchTutorDetails = async tutorId => {
   try {
     const response = await axiosInstance.get(`/api/tutor-detail/${tutorId}`)
     tutorDetails.value = response.data.tutor
-    tutorDetail.value = response.data
+    tutorWorkDays.value = tutorDetails.value.work_days
   } catch (err) {
     console.error('Error fetching tutor details:', err)
   }
 }
 
-// Update watch to use bookingState
 watch(
-  () => bookingState.modeOfTutoring,
+  () => bookingState.learningPreference,
   newMode => {
     if (newMode === 'In School') {
       bookingState.location = 'CCTC'

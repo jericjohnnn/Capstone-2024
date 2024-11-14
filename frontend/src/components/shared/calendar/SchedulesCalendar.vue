@@ -13,14 +13,12 @@
       style="height: 500px"
     >
       <!-- <template #title="{ view }">
-        🎉
         <span class="" v-if="view.id === 'month'">{{
           view.startDate.format("MMMM YYYY")
         }}</span>
         <span class="" v-if="view.id === 'day'">{{
           view.endDate.format("dddd | MMMM D")
         }}</span>
-        🎉
       </template> -->
       <template #event="{ event }">
         <div class="vuecal__event-title" v-html="event.title" />
@@ -32,13 +30,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
 import { formatRawDateTime } from '@/utils/dateTime'
 import { getUserData } from '@/utils/user'
+import { getHiddenWeekDays } from '@/utils/calendar/calendarViews'
 
 const userData = getUserData()
 
@@ -59,25 +58,8 @@ const goToBookingDetails = bookDetails => {
 
 const events = ref([])
 
-const hiddenWeekDays = computed(() => {
-  if (!userData.value || !userData.value.work_days) {
-    return []
-  }
+const hiddenWeekDays = getHiddenWeekDays(userData.value.work_days)
 
-  const dayToNumber = {
-    monday: 1,
-    tuesday: 2,
-    wednesday: 3,
-    thursday: 4,
-    friday: 5,
-    saturday: 6,
-    sunday: 7,
-  }
-
-  return Object.keys(userData.value.work_days)
-    .filter(day => !userData.value.work_days[day])
-    .map(day => dayToNumber[day])
-})
 
 const fetchTutorSchedules = async () => {
   try {

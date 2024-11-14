@@ -5,7 +5,7 @@
         <!-- Breadcrumb -->
         <BreadCrumb
           :breadcrumbs="[
-            { label: 'Schedule', route: '/tutor/schedule' },
+            { label: 'Schedule', route: '/student/schedule' },
             { label: 'Booking Details', route: '' }
           ]"
         />
@@ -22,15 +22,15 @@
                 <div class="shrink-0">
                   <img
                     class="h-14 w-14 rounded-full"
-                    :src="bookDetails.student.profile_image"
+                    :src="bookDetails.tutor.profile_image"
                     alt="profile image"
                   />
                 </div>
                 <div class="w-full">
                   <div class="flex justify-between bg-gray-50 p-2 rounded mb-2">
                     <p class="font-medium">
-                      {{ bookDetails.student.first_name }}
-                      {{ bookDetails.student.last_name }}, 25
+                      {{ bookDetails.tutor.first_name }}
+                      {{ bookDetails.tutor.last_name }}, 25
                     </p>
                     <button class="text-blue-600 underline text-sm">
                       report
@@ -82,8 +82,9 @@
                     :key="dateTime.id"
                     class="text-blue-600"
                   >
-                    {{ formatDate(dateTime.start_time) }} -
-                    {{ formatDate(dateTime.end_time) }}
+                  {{ formatDate(dateTime.start_time) }}
+                    {{ formatTo12Hour(extractTimeFromISO(dateTime.start_time)) }} -
+                    {{ formatTo12Hour(extractTimeFromISO(dateTime.end_time)) }}
                   </div>
                 </div>
 
@@ -135,7 +136,7 @@ import { useRoute } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
-import { formatDate } from '@/utils/dateTime'
+import { formatDate, extractTimeFromISO, formatTo12Hour } from '@/utils/dateTime'
 
 const route = useRoute()
 
@@ -163,7 +164,7 @@ const bookDetails = ref(null)
 const fetchBookingDetails = async bookId => {
   try {
     const response = await axiosInstance.get(
-      `/api/book-request-details/${bookId}`,
+      `/api/student-book-details/${bookId}`,
     )
     bookDetails.value = response.data.book_details
     checkIfExpired()
