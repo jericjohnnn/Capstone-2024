@@ -4,10 +4,17 @@
 export const formatDate = (date) => {
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
   }).format(new Date(date))
 }
+
+// expected output: 09:00, input: 2024-11-20T09:00:00.000000Z
+export const extractTimeFromISO = (isoString) => {
+  if (!isoString) return null
+  return isoString.split('T')[1].substring(0, 5)
+}
+
 
 // expected output: { hour: 12, period: 'PM' }, input: 12:00 PM
 export const parseTo12Hour = (time24h) => {
@@ -16,7 +23,7 @@ export const parseTo12Hour = (time24h) => {
   return { hour: hour % 12 || 12, period: hour >= 12 ? 'PM' : 'AM' }
 }
 
-// expected output: 12:00 PM
+// expected output: 12:00 PM, input: 12:00:00
 export const formatTo12Hour = (timeString) => {
   if (!timeString) return null;
 

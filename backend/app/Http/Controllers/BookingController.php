@@ -67,12 +67,13 @@ class BookingController extends Controller
         }
 
         $bookingsData = $bookings->map(function ($booking) {
+            // Get the last message by sorting messages by created_at
+            $lastMessage = $booking->messages->sortByDesc('created_at')->first();
+
             return [
                 'booking_id' => $booking->id,
                 'subject' => $booking->subject,
-                'booking_dates' => $booking->messages->flatMap(function ($message) {
-                    return $message->dates;
-                }),
+                'booking_dates' => $lastMessage ? $lastMessage->dates : [],
             ];
         });
 
@@ -96,12 +97,13 @@ class BookingController extends Controller
         }
 
         $bookingsData = $bookings->map(function ($booking) {
+            // Get the last message by sorting messages by created_at
+            $lastMessage = $booking->messages->sortByDesc('created_at')->first();
+
             return [
                 'booking_id' => $booking->id,
                 'subject' => $booking->subject,
-                'booking_dates' => $booking->messages->flatMap(function ($message) {
-                    return $message->dates;
-                }),
+                'booking_dates' => $lastMessage ? $lastMessage->dates : [],
             ];
         });
 
@@ -136,12 +138,13 @@ class BookingController extends Controller
         }
 
         $bookingsData = $bookings->map(function ($booking) {
+            // Get the last message by sorting messages by created_at
+            $lastMessage = $booking->messages->sortByDesc('created_at')->first();
+
             return [
                 'booking_id' => $booking->id,
                 'subject' => $booking->subject,
-                'booking_dates' => $booking->messages->flatMap(function ($message) {
-                    return $message->dates;
-                }),
+                'booking_dates' => $lastMessage ? $lastMessage->dates : [],
             ];
         });
 

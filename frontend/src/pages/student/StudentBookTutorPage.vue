@@ -13,20 +13,7 @@
           <div class="w-1/2">
             <!-- Availability Info -->
             <div class="mb-4">
-              <p
-                v-if="
-                  !tutorDetails.work_days || tutorDetails.work_days.length === 0
-                "
-                class="text-gray-600"
-              >
-                No availability
-              </p>
-              <p v-else class="text-gray-600">
-                {{ tutorDetails.first_name }} {{ tutorDetails.last_name }} is
-                available
-                {{ formatTo12Hour(tutorDetails.work_days.start_time) }} -
-                {{ formatTo12Hour(tutorDetails.work_days.end_time) }}
-              </p>
+              <TutorAvailability :tutor="tutorDetails" />
             </div>
             <div v-if="!tutorDetails">
               <p class="text-center text-gray-500">LOADING</p>
@@ -123,6 +110,7 @@
 </template>
 
 <script setup>
+import TutorAvailability from '@/components/student/StudentBookTutor/TutorAvailability.vue'
 import ChangeContactNumber from '@/components/student/StudentBookTutor/form/changeContactNumber.vue'
 import InputMessage from '@/components/student/StudentBookTutor/form/InputMessage.vue'
 import SelectLocationOrPlatform from '@/components/student/StudentBookTutor/form/SelectLocationOrPlatform.vue'
@@ -137,7 +125,6 @@ import BookCalendar from '@/components/shared/calendar/BookCalendar.vue'
 import SideBar from '@/components/SideBar.vue'
 // import HelpButton from '@/components/HelpButton.vue'
 import { getUserData } from '@/utils/user'
-import { formatTo12Hour } from '@/utils/dateTime'
 
 const userData = getUserData()
 
@@ -147,8 +134,6 @@ const tutorWorkDays = ref({})
 
 const route = useRoute()
 const tutorDetails = ref({})
-
-// const modifiedContactNumber = ref('')
 
 const updateSelectedSubject = newSubject => {
   bookingState.selectedSubject = newSubject
@@ -178,6 +163,10 @@ const updateContactNumber = newContactNumber => {
   bookingState.contactNumber = newContactNumber
 }
 
+const storePendingBookingDates = bookingDates => {
+  bookingState.selectedDateTimes = bookingDates
+}
+
 const initialBookingState = {
   selectedSubject: '',
   learningPreference: 'In School',
@@ -190,10 +179,6 @@ const initialBookingState = {
 }
 
 const bookingState = reactive({ ...initialBookingState })
-
-const storePendingBookingDates = bookingDates => {
-  bookingState.selectedDateTimes = bookingDates
-}
 
 const submitBookingRequest = async () => {
   const bookRequest = {
@@ -251,7 +236,6 @@ const fetchTutorDetails = async tutorId => {
   }
 }
 
-// Update watch to use bookingState
 watch(
   () => bookingState.learningPreference,
   newMode => {

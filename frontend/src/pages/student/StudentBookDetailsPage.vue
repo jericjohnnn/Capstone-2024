@@ -91,8 +91,9 @@
                     :key="dateTime.id"
                     class=""
                   >
-                    {{ formatDate(dateTime.start_time) }} -
-                    {{ formatDate(dateTime.end_time) }}
+                    {{ formatDate(dateTime.start_time) }}
+                    {{ formatTo12Hour(extractTimeFromISO(dateTime.start_time)) }} -
+                    {{ formatTo12Hour(extractTimeFromISO(dateTime.end_time)) }}
                   </div>
                 </div>
               </div>
@@ -122,7 +123,7 @@ import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
 import StudentBookMessages from '@/components/student/StudentBookDetails/StudentBookMessages.vue'
-import { formatDate } from '@/utils/dateTime'
+import { formatDate, extractTimeFromISO, formatTo12Hour } from '@/utils/dateTime'
 
 const route = useRoute()
 const router = useRouter()
@@ -165,7 +166,7 @@ const fetchBookingDetails = async bookId => {
     } else {
       bookDetails.value = bookData
     }
-    fetchTutorWorkDays(bookData.tutor_id)
+    fetchTutorDetails(bookData.tutor_id)
   } catch (err) {
     console.error('Error fetching booking details:', err)
     router.push({ name: 'NotFound' }) // Redirect to 404 in case of error
@@ -173,7 +174,7 @@ const fetchBookingDetails = async bookId => {
 }
 
 const tutorWorkDays = ref({})
-const fetchTutorWorkDays = async tutorId => {
+const fetchTutorDetails = async tutorId => {
   try {
     const response = await axiosInstance.get(`/api/tutor-detail/${tutorId}`)
     const tutorData = response.data.tutor

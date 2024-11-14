@@ -109,7 +109,7 @@
           bookDetails.messages.length === 3 || bookDetails.messages.length === 1
         "
       >
-        <p>waiting for tutor negotiation</p>
+        <p>waiting for tutor to respond</p>
       </div>
       <!-- NEGOTIATE -->
       <div

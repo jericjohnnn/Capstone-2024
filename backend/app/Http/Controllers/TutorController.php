@@ -112,12 +112,13 @@ class TutorController extends Controller
         }
 
         $bookingData = $tutorBookings->map(function ($booking) {
+            // Get the last message by sorting messages by created_at
+            $lastMessage = $booking->messages->sortByDesc('created_at')->first();
+
             return [
                 'booking_id' => $booking->id,
                 'subject' => $booking->subject,
-                'booking_dates' => $booking->messages->flatMap(function ($message) {
-                    return $message->dates;
-                }),
+                'booking_dates' => $lastMessage ? $lastMessage->dates : [],
             ];
         });
 
@@ -318,12 +319,14 @@ class TutorController extends Controller
             $StudentRequests = Booking::with('student')
                 ->where('tutor_id', $tutor->id)
                 ->where('status', 'Pending')
+                ->orderBy('created_at', 'desc')
                 ->paginate(6);
         }
         if ($tab === 'completed') {
             $StudentRequests = Booking::with('student')
                 ->where('tutor_id', $tutor->id)
                 ->where('status', 'Completed')
+                ->orderBy('created_at', 'desc')
                 ->paginate(6);
         }
 
