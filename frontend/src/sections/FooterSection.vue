@@ -6,7 +6,7 @@
         <div>
           <h3 class="text-lg font-semibold mb-4">About Us</h3>
           <p class="text-gray-300">
-            TutorMatch connects students with qualified tutors for personalized learning experiences.
+            TUDLO connects students with qualified tutors for personalized learning experiences.
           </p>
         </div>
 
@@ -24,8 +24,8 @@
         <div>
           <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
           <div class="text-gray-300 space-y-2">
-            <p>Email: info@tutormatch.com</p>
-            <p>Phone: (123) 456-7890</p>
+            <p>Email: tudlo@gmail.com</p>
+            <p>Phone: (+63) 912-345-6789</p>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@
       <!-- Copyright -->
       <div class="text-center mt-8 pt-8 border-t border-gray-700">
         <p class="text-gray-400">
-          © {{ new Date().getFullYear() }} TutorMatch. All rights reserved.
+          © {{ new Date().getFullYear() }} TUDLO. All rights reserved.
         </p>
       </div>
     </div>

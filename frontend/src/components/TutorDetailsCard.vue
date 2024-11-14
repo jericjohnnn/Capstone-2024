@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-lg focus:outline-none focus:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70 h-full">
+  <div class="flex flex-col bg-white border shadow-sm rounded-xl h-full hover:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
     <!-- Header Section with Blue Background -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-5 rounded-t-xl ">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-5 rounded-t-xl flex-none">
       <div class="flex justify-between items-start">
         <!-- Tutor Info -->
         <div class="flex items-center w-3/5 gap-4 ">
@@ -32,11 +32,8 @@
           >
             Book Now
           </button>
-          <button class="text-blue-100 text-sm hover:text-white transition-colors duration-200 flex items-center gap-1">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
-            Report an issue
+          <button class="underline text-blue-100 text-sm hover:text-white transition-colors duration-200 flex items-center gap-1">
+            Report tutor
           </button>
         </div>
       </div>
@@ -47,21 +44,34 @@
       <!-- Bio Section -->
       <div class="prose prose-sm max-w-none dark:prose-invert">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">About</h3>
-        <p class="text-gray-600 dark:text-neutral-400 leading-relaxed">{{ tutor.biography }}</p>
+        <p class="text-gray-600 dark:text-neutral-400 leading-relaxed">
+          <span v-if="!showFullBio">{{ truncatedBio }}</span>
+          <span v-else>{{ tutor.biography }}</span>
+          <button 
+            v-if="tutor.biography?.length > 150"
+            @click="showFullBio = !showFullBio" 
+            class="text-blue-600 dark:text-blue-400 font-medium ml-1 focus:outline-none hover:underline"
+          >
+            {{ showFullBio ? 'See less' : 'See more...' }}
+          </button>
+        </p>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-8">
-        <!-- Left Column -->
-        <div class="space-y-6">
-          <!-- Subjects Section -->
-          <div class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg">
-            <h3 class="font-medium text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+      <!-- Tutor Information Card -->
+      <div class="prose prose-sm max-w-none dark:prose-invert">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Tutor Information</h3>
+        
+        <!-- Main Grid Container -->
+        <div class="grid gap-4">
+          <!-- Subjects Section - Full width -->
+          <div class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg text-center">
+            <h4 class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2">
               <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
               </svg>
               Subjects Offered
-            </h3>
-            <div class="flex flex-wrap gap-2">
+            </h4>
+            <div class="flex flex-wrap justify-center gap-2">
               <span
                 v-for="subject in tutor.subjects"
                 :key="subject.id"
@@ -72,29 +82,15 @@
             </div>
           </div>
 
-          <!-- Rate Section -->
-          <div class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg">
-            <h3 class="font-medium text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-              <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              Rate
-            </h3>
-            <p class="text-blue-600 dark:text-blue-400 font-semibold text-lg">{{ tutor.tutor_rate }}</p>
-          </div>
-        </div>
-
-        <!-- Right Column -->
-        <div v-if="availableDays" class="space-y-6">
-          <!-- Days Available -->
-          <div class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg">
-            <h3 class="font-medium text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+          <!-- Available Days - Full width -->
+          <div class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg text-center">
+            <h4 class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2">
               <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
               </svg>
               Available Days
-            </h3>
-            <div class="flex flex-wrap gap-2">
+            </h4>
+            <div class="flex flex-wrap justify-center gap-2">
               <span
                 v-for="day in availableDays"
                 :key="day"
@@ -105,18 +101,32 @@
             </div>
           </div>
 
-          <!-- Hours Available -->
-          <div class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg">
-            <h3 class="font-medium text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-              <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              Hours Available
-            </h3>
-            <p class="text-blue-600 dark:text-blue-400 font-semibold text-lg">
-              {{ formatTo12Hour(tutor.work_days.start_time) }} -
-              {{ formatTo12Hour(tutor.work_days.end_time) }}
-            </p>
+          <!-- Bottom Row Grid - Two columns -->
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Hours Available -->
+            <div class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg text-center">
+              <h4 class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2">
+                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Hours Available
+              </h4>
+              <p class="text-blue-600 dark:text-blue-400 font-semibold text-lg">
+                {{ formatTo12Hour(tutor.work_days.start_time) }} -
+                {{ formatTo12Hour(tutor.work_days.end_time) }}
+              </p>
+            </div>
+
+            <!-- Rate Section -->
+            <div class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg text-center">
+              <h4 class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2">
+                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Rate
+              </h4>
+              <p class="text-blue-600 dark:text-blue-400 font-semibold text-lg">₱{{ tutor.tutor_rate }}/hr</p>
+            </div>
           </div>
         </div>
       </div>
@@ -218,7 +228,7 @@ import schoolImage from '@/assets/school.png'
 import certificateImage from '@/assets/certificate.png'
 import StarRating from './StarRating.vue'
 import RatingsCarousel from './RatingsCarousel.vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatDate, formatTo12Hour } from '@/utils/dateTime'
 
@@ -281,5 +291,14 @@ const ratingComments = computed(() => {
     rating => !!rating.comment,
   )
   return ratingsWithComments
+})
+
+const showFullBio = ref(false)
+
+const truncatedBio = computed(() => {
+  if (!props.tutor?.biography) return ''
+  return props.tutor.biography.length > 150 
+    ? props.tutor.biography.slice(0, 150) + '...'
+    : props.tutor.biography
 })
 </script>

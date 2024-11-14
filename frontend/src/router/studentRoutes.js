@@ -6,12 +6,17 @@ import StudentNotificationPage from "@/pages/student/StudentNotificationPage.vue
 import StudentProfilePage from "@/pages/student/StudentProfilePage.vue";
 import StudentBookDetailsPage from "@/pages/student/StudentBookDetailsPage.vue";
 import StudentOngoingBookingDetails from "@/components/student/StudentSchedule/StudentOngoingBookingDetails.vue";
-
+import StudentTutorProfilePage from "@/pages/student/StudentTutorProfile.vue";
 const studentRoutes = [
   {
     path: '/student/home',
     name: 'StudentHome',
     component: StudentHomePage
+  },
+  {
+    path: '/student/tutorProfile/:tutorId',
+    name: 'StudentTutorProfile',
+    component: StudentTutorProfilePage
   },
   {
     path: '/student/profile',

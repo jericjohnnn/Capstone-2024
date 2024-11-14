@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex items-center pb-5">
+  <div class="relative flex items-center">
     <!-- Left Arrow -->
     <div
       ref="scrollContainer"
