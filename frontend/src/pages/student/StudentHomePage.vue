@@ -1,27 +1,35 @@
 <template>
-  <main class="bg-blue-50 h-screen">
+  <main class="w-full min-h-screen bg-white">
     <SideBar>
-      <main class="container h-full py-5">
-        <!-- Search Components -->
-        <div class="mb-6">
+      <!-- Container with gap between grid items -->
+      <div class="grid grid-cols-1 gap-4 min-h-screen  py-5">
+        
+        <!-- Breadcrumb Section -->
+        <div class="w-full h-fit ">
           <BreadCrumb
             :breadcrumbs="[{ label: 'Home', route: '/student/home' }]"
           />
-          <TutorSearch class="pt-3"></TutorSearch>
+        </div>
+
+        <!-- Search Section -->
+        <div class="w-full h-fit ">
+          <TutorSearch></TutorSearch>
           <div>
             <AllSubjects></AllSubjects>
           </div>
         </div>
 
         <!-- Main Content Area -->
-        <div class="flex flex-col md:flex-row md:gap-8">
-          <!-- Left Column - Tutor Cards -->
-          <div class="w-full md:w-[380px] h-[calc(100vh-220px)]">
-            <!-- Scrollable Tutor Cards Container -->
-            <div class="h-[calc(100%-60px)] overflow-y-auto pr-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4  min-h-20 ">
+          
+          <!-- Left Column - Split into two rows -->
+          <div class="grid grid-rows-[1fr,auto] gap-4">
+            
+            <!-- Tutor Cards Section -->
+            <div class="w-full min-h-96 "> <!-- Ensuring minimum height during loading -->
               <div
                 v-if="tutorsLoading"
-                class="flex justify-center items-center h-full"
+                class="flex justify-center items-center h-full "
               >
                 <LoaderSpinner />
               </div>
@@ -31,14 +39,13 @@
                   :key="tutor.id"
                   :tutor="tutor"
                   :loading="tutorsLoading"
-                  @click="selectTutor(tutor.id)"
+                  @triggerSelectTutor="selectTutor(tutor.id)"
                 />
-                <div ref="loadMore" class="h-10 md:hidden"></div>
               </div>
             </div>
 
-            <!-- Pagination -->
-            <div class="h-[60px] hidden md:block pt-4">
+            <!-- Pagination Section -->
+            <div class="w-full ">
               <PaginationLinks
                 :links="paginationLinks"
                 :current-page="currentPage"
@@ -47,36 +54,38 @@
             </div>
           </div>
 
-          <!-- Right Column - Tutor Details -->
-          <div
-            class="w-full md:w-[calc(100%-380px-2rem)] h-[calc(100vh-220px)] hidden md:block"
-          >
+          <!-- Tutor Details Section -->
+          <div class="w-full hidden md:block min-h-[400px] "> <!-- Consistent height for layout stability -->
             <div
               v-if="tutorDetailsLoading"
-              class="flex justify-center items-center h-full"
+              class="flex justify-center items-center h-full "
             >
               <LoaderSpinner />
             </div>
-            <div v-else-if="tutorDetails" class="h-full">
+            <div v-else-if="tutorDetails" class="h-full ">
               <TutorDetailsCard :tutor="tutorDetails"></TutorDetailsCard>
             </div>
             <div
               v-else
-              class="h-full flex items-center justify-center rounded-sm shadow-sm"
+              class="h-full flex items-center justify-center rounded-sm shadow-sm "
             >
               <p class="text-center text-gray-500">Select a Tutor</p>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </SideBar>
+    
+    <FooterSection class="md:hidden" />
     <HelpButton></HelpButton>
   </main>
 </template>
 
+
 <script setup>
+import FooterSection from '@/sections/FooterSection.vue'
 import BreadCrumb from '@/components/BreadCrumb.vue'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import TutorSearch from '@/components/TutorSearch.vue'
@@ -98,11 +107,17 @@ const tutorDetailsLoading = ref(false)
 const currentPage = ref(1)
 const lastPage = ref(1)
 const paginationLinks = ref([])
+// Mobile View
+const isMobileView = ref(window.innerWidth < 640)
+const resizeHandler = () => {
+  isMobileView.value = window.innerWidth < 640
+}
 
 const fetchTutors = async (page = 1) => {
   try {
     tutorsLoading.value = true
-    const response = await axiosInstance.get(`/api/tutors?page=${page}`)
+    const endpoint = isMobileView.value ? `/api/tutors-mobile` : `/api/tutors`
+    const response = await axiosInstance.get(`${endpoint}?page=${page}`)
     const { data, current_page, last_page, links } =
       response.data.tutor_previews
 
@@ -158,7 +173,18 @@ watch(
   },
 )
 
+watch(isMobileView, (newIsMobile, oldIsMobile) => {
+  if (newIsMobile !== oldIsMobile) {
+    // Re-fetch tutors with current page when view changes
+    const currentPageNumber = parseInt(route.query.page) || 1
+    fetchTutors(currentPageNumber)
+  }
+})
+
 onMounted(() => {
+  // Add resize event listener
+  window.addEventListener('resize', resizeHandler)
+
   // Initial fetch of tutors
   const initialPage = parseInt(route.query.page) || 1
   fetchTutors(initialPage)
@@ -168,5 +194,9 @@ onMounted(() => {
   if (initialTutorId) {
     fetchTutorDetails(initialTutorId)
   }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeHandler)
 })
 </script>

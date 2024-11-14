@@ -1,11 +1,11 @@
 <template>
   <div>
-    <nav v-if="links && links.length > 0" class="flex justify-between items-center gap-x-1" aria-label="Pagination">
+    <nav class="flex justify-between items-center gap-x-1" aria-label="Pagination">
       <!-- Previous Button -->
       <button
-        v-if="links[0]"
+        v-if="links && links.length > 0"
         @click="handleClick(links[0])"
-        :disabled="!links[0].url"
+        :disabled="!links[0]?.url"  
         type="button"
         class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-2 text-sm rounded-md text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10 transition-colors duration-200"
         aria-label="Previous"
@@ -29,9 +29,9 @@
 
       <!-- Next Button -->
       <button
-        v-if="links[links.length - 1]"
+        v-if="links && links.length > 1"
         @click="handleClick(links[links.length - 1])"
-        :disabled="!links[links.length - 1].url"
+        :disabled="!links[links.length - 1]?.url"  
         type="button"
         class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-2 text-sm rounded-md text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10 transition-colors duration-200"
       >
@@ -70,7 +70,7 @@ defineProps({
 });
 
 const handleClick = (link) => {
-  if (link.url) {
+  if (link?.url) {  // Optional chaining to check if the link is defined
     const page = new URL(link.url).searchParams.get('page');
     const currentTab = ref(route.query.tab)
     router.push({

@@ -30,6 +30,7 @@
         <div class="shrink-0 flex flex-col items-end gap-2">
           <StarRating :rating="tutor.tutor_rating" class="text-sm"></StarRating>
           <button
+            @click="triggerSelectTutor"
             type="button"
             class="py-1.5 px-4 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
           >
@@ -59,4 +60,10 @@ defineProps({
     required: true,
   },
 })
+
+const emit = defineEmits(['triggerSelectTutor'])
+
+const triggerSelectTutor = () => {
+  emit('triggerSelectTutor')
+}
 </script>
