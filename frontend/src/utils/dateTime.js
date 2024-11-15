@@ -1,12 +1,18 @@
 // Date formatting
 
-// expected output: November 13, 2024, input: 2024-11-13
+// expected output: Nov 13, 2024, input: 2024-11-13
 export const formatDate = (date) => {
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   }).format(new Date(date))
+}
+
+// expected output: 10:00:00, input: 2024-11-01 10:00:00
+export const extractTimeFromDateTimeString = (dateTimeString) => {
+  if (!dateTimeString) return null;
+  return dateTimeString.split(' ')[1];
 }
 
 // expected output: 09:00, input: 2024-11-20T09:00:00.000000Z

@@ -5,7 +5,7 @@
       <div class="grid grid-cols-1 gap-4 min-h-screen py-5 md:grid-rows-[auto,auto,1fr] md:grid-flow-col">
         
         <!-- Breadcrumb Section -->
-        <div class="w-full  md:row-span-1 ">
+        <div class="w-full  hidden md:block md:row-span-1 ">
           <BreadCrumb
             :breadcrumbs="[{ label: 'Home', route: '/student/home' }]"
           />
@@ -98,7 +98,7 @@ import TutorCard from '@/components/TutorCard.vue'
 import PaginationLinks from '@/components/PaginationLinks.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
-import LoaderSpinner from '@/components/reusables/LoaderSpinner.vue'
+import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
 
 const router = useRouter()
 const route = useRoute()

@@ -140,7 +140,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
 import BookCalendar from '@/components/shared/calendar/BookCalendar.vue'
-import LoaderSpinner from '@/components/reusables/LoaderSpinner.vue'
+import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
 
 const props = defineProps({
   bookDetailsProps: {

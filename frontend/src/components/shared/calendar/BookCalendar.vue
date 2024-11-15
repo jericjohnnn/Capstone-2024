@@ -1,5 +1,13 @@
 <template>
-  <div>
+  <div class="flex flex-col">
+    <div class="order-last md:order-first">
+      <TimePicker
+        :isDisabled="activeView !== 'day'"
+        @update:start-time="updateStartTime"
+        @update:end-time="updateEndTime"
+        @triggerTimeUpdate="addScheduleRequest"
+      />
+    </div>
     <vue-cal
       :click-to-navigate="activeView !== 'day'"
       v-model:active-view="activeView"
@@ -11,8 +19,8 @@
       :time-to="25 * 60"
       :events="events"
       @cell-click="getCellDate"
-      class="h-[calc(100%-300px)] w-96"
-      style="height: 300px"
+      small
+      class="min-h-[450px] max-h-[450px] md:min-h-[calc(100vh-14rem)] md:max-h-[calc(100vh-14rem)]"
     >
       <template #title="{ view }">
         🎉
@@ -30,30 +38,7 @@
         <span>{{ event.end.formatTime('hh:mm{am}') }}</span>
       </template>
     </vue-cal>
-    <div class="">
-      <TimePicker
-        :isDisabled="activeView !== 'day'"
-        @update:start-time="updateStartTime"
-        @update:end-time="updateEndTime"
-        @triggerTimeUpdate="addScheduleRequest"
-      />
-      <div
-        v-for="schedule in addedPendingSchedules"
-        :key="schedule.id"
-        class="mb-2"
-      >
-        <div class="bg-red-500 outline p-2 flex flex-col text-white">
-          <button @click="deleteSchedule(schedule.id)">X</button>
-          <div class="font-semibold">
-            {{ new Date(schedule.start).format('MMMM-DD-YYYY') }}
-          </div>
-          <div>
-            {{ new Date(schedule.start).formatTime('hh:mm{am}') }} to
-            {{ new Date(schedule.end).formatTime('hh:mm{am}') }}
-          </div>
-        </div>
-      </div>
-    </div>
+    
   </div>
 </template>
 
@@ -95,6 +80,11 @@ const props = defineProps({
     required: false,
     default: () => [],
   },
+  // addedSchedules: {
+  //   type: Array,
+  //   required: false,
+  //   default: () => [],
+  // },
 })
 
 const hiddenWeekDays = ref([])
@@ -158,16 +148,25 @@ const addScheduleRequest = () => {
 
 //
 
-function deleteSchedule(id) {
-  addedPendingSchedules.value = addedPendingSchedules.value.filter(
-    schedule => schedule.id !== id,
-  )
-  events.value = events.value.filter(schedule => schedule.id !== id)
-  emit('update:added-schedules', addedPendingSchedules.value)
-  //TODO: make a slide notification that item is deleted
-}
+// function deleteSchedule(id) {
+//   addedPendingSchedules.value = addedPendingSchedules.value.filter(
+//     schedule => schedule.id !== id,
+//   )
+//   events.value = events.value.filter(schedule => schedule.id !== id)
+//   emit('update:added-schedules', addedPendingSchedules.value)
+//   //TODO: make a slide notification that item is deleted
+// }
 
 //WATCHES
+watch(
+  () => props.addedSchedules,
+  (newSchedules) => {
+    addedPendingSchedules.value = newSchedules
+    events.value = newSchedules
+    console.log('addedPendingSchedules', addedPendingSchedules.value)
+  },
+)
+
 watch(
   () => [props.tutorBookings, props.studentBookings],
   ([tutorBookings, studentBookings]) => {

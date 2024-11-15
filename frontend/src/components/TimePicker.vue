@@ -1,49 +1,53 @@
 <template>
-  <div class="py-2">
-    <div class="flex gap-4">
-      <div class="mb-4 flex items-center gap-1">
-        <label class="">Start:</label>
-        <select v-model="startHour" class="border px-12 rounded">
+  <!-- <div class="outline grid grid-cols-2 gap-3 grid-flow-row py-2"></div> -->
+  <div class=" grid grid-rows-3 gap-3 py-2 md:grid-rows-2">
+    <div class="flex  items-center text-sm ">
+      <label class="min-w-12">Start:</label>
+      <div class=" flex w-full gap-1">
+        <select v-model="startHour" class="grow  rounded">
           <option v-for="hour in 12" :key="hour" :value="hour">
             {{ String(hour).padStart(2, '0') }}
           </option>
         </select>
-        <span>:</span>
-        <select v-model="startMinute" class="border px-12 rounded">
+        <select v-model="startMinute" class="grow   rounded">
           <option value="00">00</option>
           <option value="30">30</option>
         </select>
-        <select v-model="startPeriod" class="border px-12 rounded">
-          <option value="AM">AM</option>
-          <option value="PM">PM</option>
-        </select>
-      </div>
-
-      <div class="mb-6 flex items-center gap-1">
-        <label class="">End:</label>
-        <select v-model="endHour" class="border px-12 rounded">
-          <option v-for="hour in 12" :key="hour" :value="hour">
-            {{ String(hour).padStart(2, '0') }}
-          </option>
-        </select>
-        <span>:</span>
-        <select v-model="endMinute" class="border px-12 rounded">
-          <option value="00">00</option>
-          <option value="30">30</option>
-        </select>
-        <select v-model="endPeriod" class="border px-12 rounded">
+        <select v-model="startPeriod" class="grow   rounded">
           <option value="AM">AM</option>
           <option value="PM">PM</option>
         </select>
       </div>
     </div>
-    <button
-      @click="addTime"
-      class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
-      :disabled="isDisabled"
-    >
-      {{ isDisabled ? 'Select a date' : 'Add time' }}
-    </button>
+
+    <div class="flex  items-center text-sm ">
+      <label class="min-w-12">End:</label>
+      <div class=" flex w-full gap-1">
+        <select v-model="endHour" class="grow rounded">
+          <option v-for="hour in 12" :key="hour" :value="hour">
+            {{ String(hour).padStart(2, '0') }}
+          </option>
+        </select>
+        <select v-model="endMinute" class="grow rounded">
+          <option value="00">00</option>
+          <option value="30">30</option>
+        </select>
+        <select v-model="endPeriod" class="grow rounded">
+          <option value="AM">AM</option>
+          <option value="PM">PM</option>
+        </select>
+      </div>
+    </div>
+    <div class=" md:col-span-2">
+      <button
+        @click="addTime"
+        class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
+        :disabled="isDisabled"
+      >
+        <p class="block md:hidden">{{ isDisabled ? 'Select a date above' : 'Add time' }}</p>
+        <p class="hidden md:block">{{ isDisabled ? 'Select a date below' : 'Add time' }}</p>
+      </button>
+    </div>
   </div>
 </template>
 
