@@ -14,17 +14,18 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     //NORMAL USER METHODS INSERT HERE
-    public function getUserNotifications()
-    {
-        $user = Auth::user();
+   public function getUserNotifications()
+{
+    $user = Auth::user();
 
-        $notifications = Notification::where('id', $user->id)->get();
+    // Get notifications by user_id
+    $notifications = Notification::where('user_id', $user->id)->get();
 
-        return response()->json([
-            'message' => 'Notifications retrieved successfully.',
-            'notifications' => $notifications,
-        ]);
-    }
+    return response()->json([
+        'message' => 'Notifications retrieved successfully.',
+        'notifications' => $notifications,
+    ]);
+}
 
 
 
