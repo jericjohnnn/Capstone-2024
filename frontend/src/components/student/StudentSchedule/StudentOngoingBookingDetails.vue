@@ -16,7 +16,7 @@
 
         <!-- Overview Section -->
         <div
-          class="md:row-span-1 md:col-span-2 bg-white rounded-lg py-3 md:overflow-scroll shadow-sm"
+          class="md:row-span-1 md:col-span-2 bg-white rounded-lg py-3 md:overflow-auto shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200"
         >
           <h2 class="text-xl font-medium text-center">Overview</h2>
           <div
@@ -156,8 +156,12 @@
               <div
                 v-for="(message, index) in bookDetails.messages"
                 :key="message.id"
-                class="py-3 rounded-lg border "
-                :class="index % 2 === 0 ? 'bg-blue-100 border-blue-300' : 'bg-slate-100 border-slate-300'"
+                class="py-3 rounded-lg border"
+                :class="
+                  index % 2 === 0
+                    ? 'bg-blue-100 border-blue-300'
+                    : 'bg-slate-100 border-slate-300'
+                "
               >
                 <h3 class="text-base text-center font-medium">
                   {{
@@ -174,7 +178,9 @@
                   <div
                     class="p-2 border rounded min-h-20"
                     :class="
-                      index % 2 === 0 ? 'border-blue-400 bg-white/40' : 'border-slate-400 bg-white/40'
+                      index % 2 === 0
+                        ? 'border-blue-400 bg-white/40'
+                        : 'border-slate-400 bg-white/40'
                     "
                   >
                     <p>{{ message.title }}</p>
@@ -183,17 +189,17 @@
                 <p class="pl-2 text-xs">Message:</p>
                 <div class="pb-2 px-2">
                   <div
-                    class="p-2 border  rounded min-h-40"
+                    class="p-2 border rounded min-h-40"
                     :class="
-                      index % 2 === 0 ? 'border-blue-400 bg-white/40' : 'border-slate-400 bg-white/40'
+                      index % 2 === 0
+                        ? 'border-blue-400 bg-white/40'
+                        : 'border-slate-400 bg-white/40'
                     "
                   >
                     {{ message.message }}
                   </div>
                 </div>
-
               </div>
-
             </div>
           </div>
         </div>

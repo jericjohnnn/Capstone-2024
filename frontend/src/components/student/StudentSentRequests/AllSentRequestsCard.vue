@@ -1,7 +1,20 @@
 <template>
   <div class="">
     <!-- Tutor Cards -->
-    <div v-for="book in pendingRequests" :key="book.id" class="mb-3">
+    <div
+      v-if="!pendingRequests"
+      class="min-h-[calc(100vh-15rem)] justify-center flex"
+    >
+      <div class="flex items-center justify-center">
+        <LoaderSpinner />
+      </div>
+    </div>
+    <div
+      v-if="pendingRequests"
+      v-for="book in pendingRequests"
+      :key="book.id"
+      class="mb-3"
+    >
       <div
         class="grid grid-rows-[auto,1fr,auto] md:grid-cols-3 md:grid-rows-1 p-3 gap-2 rounded-xl bg-blue-200 border-blue-50 border-2"
       >
@@ -68,7 +81,7 @@
           <div class="w-full h-full md:hidden">
             <button
               @click="selectTutorMobile(book.tutor_id)"
-              class=" h-full w-full md:w-fit py-1.5 px-3 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
+              class="h-full w-full md:w-fit py-1.5 px-3 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
             >
               View Profile
             </button>
@@ -103,6 +116,7 @@
 </template>
 
 <script setup>
+import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
 import PaginationLinks from '@/components/PaginationLinks.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -120,7 +134,7 @@ const defaultProfileImage =
     <path d="M12 12.5c-3 0-5.5 1.5-7 3.5 1.5 3 4 5 7 5s5.5-2 7-5c-1.5-2-4-3.5-7-3.5z" fill="#9CA3AF"/>
   </svg>`)
 
-const pendingRequests = ref([])
+const pendingRequests = ref(null)
 const currentPage = ref(1)
 const lastPage = ref(1)
 const paginationLinks = ref([])

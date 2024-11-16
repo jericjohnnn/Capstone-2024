@@ -208,7 +208,7 @@ watch(
 
 <style>
 .vuecal__event.tutorBookings {
-  background-color: rgba(250, 190, 61, 0.902);
+  background-color: rgba(201, 201, 201, 0.902);
   border: 1px solid rgba(255, 253, 248, 0.902);
   color: hsla(0, 0%, 100%, 0.902);
   font-size: 0.75em;

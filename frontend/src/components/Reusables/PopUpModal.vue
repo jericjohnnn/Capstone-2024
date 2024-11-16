@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot as="template" :show="open">
-    <Dialog class="relative z-30" @close="open = false">
+    <Dialog class="relative z-50" @close="open = false">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"
@@ -29,11 +29,11 @@
             leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <DialogPanel
-              class=" relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+              class=" relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-1 sm:w-full sm:max-w-lg"
             >
-              <div class=" bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div class=" bg-white px-4 pb-4  sm:p-6 sm:pb-2">
                 <div class=" justify-center sm:flex sm:items-start">
-                  <div class=" mt-3 text-center sm:mt-0 sm:text-left">
+                  <div class=" mt-2 text-center sm:mt-0 sm:text-left">
                     <DialogTitle
                       as="h3"
                       class=" text-base text-center font-semibold text-gray-900"
@@ -51,7 +51,7 @@
                 <button
                   type="button"
                   @click="emitMainButton"
-                  class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                  class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
                 >
                 <slot name="mainButton"></slot>
                 </button>

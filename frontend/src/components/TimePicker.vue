@@ -98,7 +98,7 @@ const addTime = () => {
 button {
   display: inline-block;
   width: 100%;
-  background-color: rgb(37 99 235);
+  background-color: rgb(96 165 250);
   color: white;
   padding: 0.5rem;
   border-radius: 0.375rem;
@@ -107,7 +107,7 @@ button {
 }
 
 button:hover {
-  background-color: rgb(32, 89, 212);
+  background-color: rgb(83, 148, 228);
 }
 
 select {
