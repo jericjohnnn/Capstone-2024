@@ -122,9 +122,7 @@ const fetchSentRequests = async (page = 1) => {
       `/api/sent-tutor-requests?tab=completed&page=${page}`,
     )
     const { data, current_page, last_page, links } = response.data.sent_requests
-    completedRequests.value = data.sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at),
-    )
+    completedRequests.value = data
     currentPage.value = current_page
     lastPage.value = last_page
     paginationLinks.value = links

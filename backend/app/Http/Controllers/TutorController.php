@@ -349,6 +349,7 @@ class TutorController extends Controller
             $StudentRequests = Booking::with('student')
                 ->where('tutor_id', $tutor->id)
                 ->where('status', 'Pending')
+                ->orderBy('updated_at', 'desc')
                 ->orderBy('created_at', 'desc')
                 ->paginate(6);
         }
@@ -356,6 +357,7 @@ class TutorController extends Controller
             $StudentRequests = Booking::with('student')
                 ->where('tutor_id', $tutor->id)
                 ->where('status', 'Completed')
+                ->orderBy('updated_at', 'desc')
                 ->orderBy('created_at', 'desc')
                 ->paginate(6);
         }

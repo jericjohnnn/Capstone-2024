@@ -55,7 +55,7 @@
             type="button"
             class="py-2 px-4 text-sm w-full md:w-fit font-normal rounded-lg border border-blue-400 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none"
           >
-            Review Request
+            Review request
           </button>
         </div>
       </div>
@@ -99,9 +99,7 @@ const fetchSentRequests = async (page = 1) => {
       `/api/sent-tutor-requests?tab=pending&page=${page}`,
     )
     const { data, current_page, last_page, links } = response.data.sent_requests
-    pendingRequests.value = data.sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at),
-    )
+    pendingRequests.value = data
     currentPage.value = current_page
     lastPage.value = last_page
     paginationLinks.value = links

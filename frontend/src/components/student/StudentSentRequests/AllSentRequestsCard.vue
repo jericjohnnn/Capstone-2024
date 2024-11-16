@@ -65,12 +65,14 @@
           >
             {{ book.status }}
           </p>
-          <button
-            @click="selectTutorMobile(book.tutor_id)"
-            class="block md:hidden h-full w-full md:w-fit py-1.5 px-3 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
-          >
-            View Profile
-          </button>
+          <div class="w-full h-full md:hidden">
+            <button
+              @click="selectTutorMobile(book.tutor_id)"
+              class=" h-full w-full md:w-fit py-1.5 px-3 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
+            >
+              View Profile
+            </button>
+          </div>
           <div class="w-full md:w-3/6">
             <button
               @click="selectTutor(book.tutor_id)"
@@ -84,7 +86,7 @@
               type="button"
               class="w-full py-2 px-4 text-sm md:text-xs font-normal rounded-lg border border-blue-400 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none"
             >
-              View info
+              {{ book.status !== 'Completed' ? 'Review request' : 'View info' }}
             </button>
           </div>
         </div>
@@ -129,9 +131,7 @@ const fetchSentRequests = async (page = 1) => {
       `/api/sent-tutor-requests?tab=all&page=${page}`,
     )
     const { data, current_page, last_page, links } = response.data.sent_requests
-    pendingRequests.value = data.sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at),
-    )
+    pendingRequests.value = data
     currentPage.value = current_page
     lastPage.value = last_page
     paginationLinks.value = links

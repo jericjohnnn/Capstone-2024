@@ -68,7 +68,7 @@ const fetchStudentRequests = async (page = 1) => {
     )
     const { data, current_page, last_page, links } =
       response.data.student_requests
-      pendingRequests.value = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      pendingRequests.value = data
     currentPage.value = current_page
     lastPage.value = last_page
     paginationLinks.value = links

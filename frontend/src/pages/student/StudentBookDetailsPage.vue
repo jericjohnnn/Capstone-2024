@@ -1,24 +1,27 @@
 <template>
   <main class="bg-blue-50">
     <SideBar>
-      <main class="container flex flex-col justify-center gap-14 min-h-screen">
+      <main class="container grid grid-rows-[auto,auto,1fr] grid-cols-1 md:grid-rows-[auto,1fr] md:grid-cols-5 py-5 gap-4 min-h-screen">
         <!-- Breadcrumb -->
-        <BreadCrumb
-          :breadcrumbs="[
-            { label: 'Requests', route: '/student/requests' },
-            { label: 'Book Details', route: '/student/book-details' },
-          ]"
-        />
+        <div class="col-span-1 md:col-span-5">
+          <BreadCrumb
+            :breadcrumbs="[
+              { label: 'Requests', route: '/student/requests' },
+              { label: 'Book Details', route: '/student/book-details' },
+            ]"
+          />
+        </div>
 
-        <div v-if="!bookDetails">LOADING</div>
+        <div v-if="!bookDetails" class="flex min-h-40 justify-center items-center md:h-full">
+          <LoaderSpinner />
+        </div>
         <div v-else>
-          <div class="h-[calc(100vh-150px)] flex gap-10">
-            <!-- Overview Section -->
-            <div class="w-2/5 bg-blue-200 rounded-lg p-6 shadow-sm">
-              <h2 class="text-lg mb-6">Overview</h2>
-
+          <!-- Overview Section -->
+          <div class="md:row-span-1 md:col-span-2 bg-white rounded-lg py-3 md:overflow-scroll shadow-sm">
+            <h2 class="text-xl font-medium text-center">Overview</h2>
+            <div class="flex flex-col gap-4 px-2 md:px-5 py-4">
               <!-- Profile Section -->
-              <div class="flex gap-4 mb-6">
+              <div class="flex items-center gap-2">
                 <div class="shrink-0">
                   <img
                     class="h-14 w-14 rounded-full"
@@ -26,15 +29,13 @@
                     alt="profile image"
                   />
                 </div>
-                <div class="w-full flex items-center">
-                  <div class="flex flex-row justify-between w-full">
-                    <p class="font-medium capitalize">
+                <div class="w-full">
+                  <div class="flex justify-between rounded">
+                    <p class="font-medium text-lg capitalize">
                       {{ bookDetails.tutor.first_name }}
                       {{ bookDetails.tutor.last_name }}
                     </p>
-                    <button
-                      class="text-red-600 border font-medium rounded-md border-red-600 px-4 py-1 hover:text-red-400 text-sm"
-                    >
+                    <button class="border-2 border-blue-600 text-blue-600 rounded-md px-2 py-1 text-sm">
                       Report
                     </button>
                   </div>
@@ -42,54 +43,56 @@
               </div>
 
               <!-- Details -->
-              <div class="space-y-4">
-                <div class="flex items-center">
-                  <span class="text-sm">Status:</span>
-                  <span
-                    class="text-green-500 px-3 font-medium rounded-full text-md"
-                  >
+              <div class="flex flex-col gap-3">
+                <!-- Status -->
+                <div class="flex items-center gap-2">
+                  <h2 class="font-medium w-full">Status:</h2>
+                  <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm text-center w-full">
                     {{ bookDetails.status || 'pending' }}
                   </span>
                 </div>
 
+                <!-- Subject -->
                 <div class="flex items-center gap-2">
-                  <span class="text-sm">Subject:</span>
-                  <span
-                    class="flex justify-center py-1 px-3 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300"
-                  >
+                  <h2 class="font-medium w-full">Subject:</h2>
+                  <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm w-full text-center">
                     {{ bookDetails.subject }}
                   </span>
                 </div>
 
-                <p>
-                  <span class="text-sm">Mode of tutor:</span>
-                  {{ bookDetails.learning_mode || 'online' }}
-                </p>
-                <p>
-                  <span v-if="bookDetails.learning_mode === 'Online'">
-                    Online Meeting Platform:
-                    {{ bookDetails.online_meeting_platform }}
+                <!-- Learning Mode -->
+                <div class="flex items-center gap-2">
+                  <h2 class="font-medium w-full">Learning Preference:</h2>
+                  <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm w-full text-center">
+                    {{ bookDetails.learning_mode || 'online' }}
                   </span>
-                  <span v-else>
-                    <span class="text-sm">Location:</span>
-                    {{ bookDetails.location }}
-                  </span>
-                </p>
+                </div>
 
-                <p>
-                  <span class="text-sm">Contact info:</span>
-                  {{ bookDetails.contact_number }}
-                </p>
+                <!-- Platform/Location -->
+                <div class="flex items-center gap-2">
+                  <h2 class="font-medium w-full shrink">
+                    {{ bookDetails.learning_mode === 'Online' ? 'Online Meeting Platform:' : 'Location:' }}
+                  </h2>
+                  <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full w-full text-sm text-center">
+                    {{ bookDetails.learning_mode === 'Online' ? bookDetails.online_meeting_platform : bookDetails.location }}
+                  </span>
+                </div>
+
+                <!-- Contact -->
+                <div class="flex items-center gap-2">
+                  <h2 class="font-medium w-full">Contact Info:</h2>
+                  <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm w-full text-center">
+                    {{ bookDetails.contact_number }}
+                  </span>
+                </div>
 
                 <!-- Date and Time -->
                 <div v-if="bookDetails.messages?.length">
-                  <p class="text-sm mb-2">Date & Time:</p>
+                  <h2 class="font-medium w-full mb-2">Date & Time:</h2>
                   <div
-                    v-for="dateTime in bookDetails.messages[
-                      bookDetails.messages.length - 1
-                    ].dates"
+                    v-for="dateTime in bookDetails.messages[bookDetails.messages.length - 1].dates"
                     :key="dateTime.id"
-                    class=""
+                    class="text-blue-600 w-full"
                   >
                     {{ formatDate(dateTime.start_time) }}
                     {{ formatTo12Hour(extractTimeFromISO(dateTime.start_time)) }} -
@@ -98,15 +101,16 @@
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Messages Section -->
+          <!-- Messages Section -->
+          <div class="md:row-span-1 md:col-span-3 md:max-h-[calc(100vh-4.8rem)] md:overflow-scroll bg-white rounded-lg p-3 shadow-sm">
             <StudentBookMessages
               :bookDetailsProps="bookDetails"
               :tutorBookings="fetchedTutorBookings"
               :tutorWorkDays="tutorWorkDays"
               :studentBookings="fetchedStudentBookings"
             />
-            <!-- BUTTONS -->
           </div>
         </div>
       </main>
