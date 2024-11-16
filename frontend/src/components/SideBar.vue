@@ -98,7 +98,7 @@
                   />
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-sm font-medium text-white">{{ userFullName }}</span>
+                  <span class="text-sm font-medium text-white">{{ userData?.first_name }} {{ userData?.last_name }}</span>
                   <span class="text-xs text-white/70">{{ userEmail }}</span>
                 </div>
               </div>
