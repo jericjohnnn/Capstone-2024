@@ -53,7 +53,7 @@
           <button
             @click="goToBookDetails(book.id)"
             type="button"
-            class="py-2 px-4 text-sm w-full md:w-fit font-medium rounded-lg border border-blue-400 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none"
+            class="py-2 px-4 text-sm w-full md:w-fit font-normal rounded-lg border border-blue-400 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none"
           >
             Review Request
           </button>

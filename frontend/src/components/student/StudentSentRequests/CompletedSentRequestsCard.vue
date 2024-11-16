@@ -13,24 +13,29 @@
               alt="profile image"
             />
           </div>
-          <div class="flex justify-between w-full md:flex-col  items-center md:items-start">
+          <div
+            class="flex justify-between w-full md:flex-col items-center md:items-start"
+          >
             <h1 class="text-base md:text-lg font-medium text-gray-800">
               {{ book.tutor.first_name }} {{ book.tutor.last_name }}
             </h1>
             <button
               @click="selectTutor(book.tutor_id)"
-              class="hidden md:block w-3/6 py-1.5 px-3 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
+              class="hidden w-3/6 md:block py-1.5 px-3 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
             >
               View Profile
             </button>
+
             <div>
-              <p class="md:hidden block font-semibold">{{ book.status }}</p>
+              <p class="md:hidden block font-semibold text-green-600">
+                {{ book.status }}
+              </p>
               <button
-              @click="selectTutor(book.tutor_id)"
-              class="block md:hidden w-full py-1.5 px-3 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
-            >
-              Rate tutor
-            </button>
+                @click="selectTutor(book.tutor_id)"
+                class="block md:hidden w-full py-1.5 px-3 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
+              >
+                Rate tutor
+              </button>
             </div>
           </div>
         </div>
@@ -51,20 +56,30 @@
         <div
           class="flex justify-between md:justify-end gap-3 w-full items-center md:col-span-1"
         >
-          <p class="hidden md:block font-semibold">{{ book.status }}</p>
+          <p class="hidden md:block font-semibold text-green-600">
+            {{ book.status }}
+          </p>
           <button
             @click="selectTutorMobile(book.tutor_id)"
             class="block md:hidden h-full w-full md:w-fit py-1.5 px-3 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
           >
             View Profile
           </button>
-          <button
-            @click="goToBookDetails(book.id)"
-            type="button"
-            class="py-2 px-4 text-sm w-full md:w-fit font-medium rounded-lg border border-blue-400 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none"
-          >
-            View info
-          </button>
+          <div class="w-full md:w-3/6">
+            <button
+              @click="selectTutor(book.tutor_id)"
+              class="hidden md:block w-full py-1.5 px-3 text-xs font-medium rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
+            >
+              Rate tutor
+            </button>
+            <button
+              @click="goToBookDetails(book.id)"
+              type="button"
+              class="w-full py-2 px-4 text-sm md:text-xs font-normal rounded-lg border border-blue-400 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none"
+            >
+              View info
+            </button>
+          </div>
         </div>
       </div>
     </div>
