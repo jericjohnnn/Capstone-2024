@@ -19,6 +19,8 @@ class BookingDate extends Model
         'end_time' => 'datetime'
     ];
 
+    protected $touches = ['BookingMessage'];
+
     public function bookingMessage()
     {
         return $this->belongsTo(BookingMessage::class);

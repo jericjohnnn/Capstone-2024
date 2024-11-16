@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Mobile Breadcrumb -->
-    <div class="sticky top-0 inset-x-0 z-20 bg-white border-y px-4 sm:px-6 lg:px-8 lg:hidden dark:bg-neutral-800 dark:border-neutral-700">
+    <div class="sticky top-0 inset-x-0 z-40 bg-white border-y px-4 sm:px-6 lg:px-8 lg:hidden dark:bg-neutral-800 dark:border-neutral-700">
       <div class="flex items-center py-2">
         <!-- Mobile Navigation Toggle -->
         <button
@@ -39,7 +39,7 @@
     <!-- Sidebar -->
     <div
       :class="[
-        'fixed inset-y-0 start-0 z-20 w-[260px] bg-blue-600 transition-transform duration-300 lg:translate-x-0 lg:block dark:bg-neutral-800 dark:border-neutral-700',
+        'fixed inset-y-0 start-0 z-50 w-[260px] bg-blue-600 transition-transform duration-300 lg:translate-x-0 lg:block dark:bg-neutral-800 dark:border-neutral-700',
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       ]"
     >
@@ -116,14 +116,14 @@
     </div>
 
     <!-- Main Content -->
-    <div class="w-full min-h-screen px-4 sm:px-6 md:px-8 lg:ps-72">
+    <div class="w-full md:min-h-screen px-4 sm:px-6 md:px-8 lg:ps-72">
       <slot></slot>
     </div>
 
     <!-- Backdrop -->
     <div
       v-if="isSidebarOpen"
-      class="fixed inset-0 z-10 bg-black/50 lg:hidden"
+      class="fixed inset-0 z-40 bg-black/50 lg:hidden"
       @click="isSidebarOpen = false"
     ></div>
   </div>
@@ -153,12 +153,14 @@ const userData = JSON.parse(localStorage.getItem('user_data') || '{}')
 const userProfileImage = userData?.profile_image
 
 // Default profile image as base64 SVG
-const defaultProfileImage = `data:image/svg+xml;base64,${btoa(`
+  const defaultProfileImage =
+  'data:image/svg+xml;base64,' +
+  btoa(`
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="11" fill="white" stroke="#E5E7EB" stroke-width="2"/>
     <circle cx="12" cy="8" r="3.5" fill="#9CA3AF"/>
     <path d="M12 12.5c-3 0-5.5 1.5-7 3.5 1.5 3 4 5 7 5s5.5-2 7-5c-1.5-2-4-3.5-7-3.5z" fill="#9CA3AF"/>
-  </svg>`)}`
+  </svg>`)
 
 // Navigation items
 const tutorNavItems = [

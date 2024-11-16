@@ -1,18 +1,20 @@
 <template>
-  <main>
+  <main class="min-h-screen bg-blue-100">
     <SideBar>
-      <main class="container mx-auto">
-        <BreadCrumb
-          :breadcrumbs="[
-            { label: 'Home', route: '/student/home' },
-            { label: 'Book', route: '/student/book/:tutorId' },
-          ]"
-        />
-        <div class="flex gap-8 mt-6">
-          <!-- Left Column - Calendar -->
-          <div class="w-1/2">
-            <!-- Availability Info -->
-            <div class="mb-4">
+      <div class="grid grid-cols-1 gap-4 min-h-screen py-5 ">
+        <div class="hidden md:block ">
+          <BreadCrumb
+            :breadcrumbs="[
+              { label: 'Home', route: '/student/home' },
+              { label: 'Book', route: '/student/book/:tutorId' },
+            ]"
+          />
+        </div>
+        <div
+          class="grid grid-cols-1 md:grid-rows-[auto,auto,1fr] md:grid-cols-2 gap-7 md:gap-4"
+        >
+          <div class=" md:row-span-3  ">
+            <div>
               <TutorAvailability :tutor="tutorDetails" />
             </div>
             <div v-if="!tutorDetails">
@@ -20,6 +22,7 @@
             </div>
             <div v-else>
               <BookCalendar
+                :idToRemove="idToRemove"
                 :tutorBookings="tutorBookings"
                 :tutorWorkDays="tutorWorkDays"
                 :studentBookings="studentBookings"
@@ -27,89 +30,104 @@
               />
             </div>
           </div>
-
-          <!-- Right Column - Tutor Info & Form -->
-          <div class="w-1/2">
-            <!-- Tutor Info and Booking Form -->
-            <div>
+          <div class=" order-first md:-order-none ">
+            <TutorInfo :tutor="tutorDetails" class="" />
+          </div>
+          <div class="md:row-span-2 md:col-span-1 ">
+            <form @submit.prevent="submitBookingRequest" class="space-y-4">
               <div>
-                <TutorInfo :tutor="tutorDetails" />
+                <SelectedDates
+                  :dates="bookingState.selectedDateTimes"
+                  @remove-date="removeDate"
+                />
               </div>
-
-              <hr class="my-4" />
-
-              <!-- Booking Form -->
-              <form @submit.prevent="submitBookingRequest" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                  <!-- Subject Selection -->
-                  <div>
-                    <SelectSubject
-                      :tutor="tutorDetails"
-                      @update:selectedSubject="updateSelectedSubject"
-                    />
-                  </div>
-
-                  <!-- Mode of Tutoring -->
-                  <div>
-                    <SelectLearningPreference
-                      @update:learningPreference="updateLearningPreference"
-                    />
-                  </div>
-                </div>
-
-                <!-- Location/Platform -->
+              <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4 ">
                 <div>
-                  <SelectLocationOrPlatform
-                    :learningPreference="bookingState.learningPreference"
-                    :inSchoolAddress="bookingState.location"
-                    @update:videoPlatform="updateVideoPlatform"
-                    @update:location="updateLocation"
+                  <SelectSubject
+                    :tutor="tutorDetails"
+                    @update:selectedSubject="updateSelectedSubject"
                   />
                 </div>
-
-                <!-- Message -->
                 <div>
-                  <InputMessage
-                    @update:tutorTopic="updateTutorTopic"
-                    @update:tutorMessage="updateTutorMessage"
+                  <SelectLearningPreference
+                    @update:learningPreference="updateLearningPreference"
                   />
                 </div>
-
-                <!-- Contact Number -->
-                <div>
-                  <ChangeContactNumber
-                    :contactNumber="bookingState.contactNumber"
-                    @update:contactNumber="updateContactNumber"
-                  />
-                </div>
-
-                <!-- Form Buttons -->
-                <div class="flex justify-end gap-4 pt-4">
-                  <router-link :to="{ name: 'StudentHome' }">
-                    <button
-                      type="button"
-                      class="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                    >
-                      Cancel
-                    </button>
-                  </router-link>
+              </div>
+              <div>
+                <SelectLocationOrPlatform
+                  :learningPreference="bookingState.learningPreference"
+                  :inSchoolAddress="bookingState.location"
+                  @update:videoPlatform="updateVideoPlatform"
+                  @update:location="updateLocation"
+                />
+              </div>
+              <div>
+                <ChangeContactNumber
+                  :contactNumber="bookingState.contactNumber"
+                  @update:contactNumber="updateContactNumber"
+                />
+              </div>
+              <div>
+                <InputMessage
+                  @update:tutorTopic="updateTutorTopic"
+                  @update:tutorMessage="updateTutorMessage"
+                />
+              </div>
+              
+              <div class="hidden md:flex gap-5 ">
+                <router-link :to="{ name: 'StudentHome' }" class=" w-3/6 ">
                   <button
-                    type="submit"
-                    class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                    type="button"
+                    class="w-full px-4 py-3 text-blue-600 border border-blue-600 rounded-md hover:border-blue-400 hover:text-blue-400 transition"
                   >
-                    BOOK
+                    Cancel
                   </button>
-                </div>
-              </form>
+                </router-link>
+                <button
+                  type="submit"
+                  class="w-full px-4 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                >
+                  BOOK
+                </button>
+              </div>
+            </form>
+          </div>
+          <!-- STICKY BUTTON -->
+          <div
+            :class="[
+              'z-30 md:hidden rounded-xl bottom-0 w-full bg-blue-50 border border-white dark:bg-neutral-900 px-4 py-3 border-t dark:border-neutral-700',
+              { sticky: !isKeyboardVisible },
+            ]"
+          >
+            <div class="flex flex-col justify-center items-center gap-2">
+              <div>Rate: ₱{{ tutorDetails.tutor_rate }}/Hour</div>
+              <button
+                @click="submitBookingRequest"
+                class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Book
+              </button>
+
+              <!-- Report Button -->
+              <button
+              @click="router.back()"
+                class="w-full underline text-gray-500 dark:text-neutral-400 py-2 text-sm font-medium hover:text-gray-700 dark:hover:text-neutral-200 transition-colors duration-200 flex items-center justify-center gap-1"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </SideBar>
+    <FooterSection class="block md:hidden" />
   </main>
 </template>
 
 <script setup>
+import SelectedDates from '@/components/student/StudentBookTutor/form/selectedDates.vue'
+import FooterSection from '@/sections/FooterSection.vue'
 import TutorAvailability from '@/components/student/StudentBookTutor/TutorAvailability.vue'
 import ChangeContactNumber from '@/components/student/StudentBookTutor/form/changeContactNumber.vue'
 import InputMessage from '@/components/student/StudentBookTutor/form/InputMessage.vue'
@@ -118,8 +136,8 @@ import SelectSubject from '@/components/student/StudentBookTutor/form/SelectSubj
 import SelectLearningPreference from '@/components/student/StudentBookTutor/form/SelectLearningPreference.vue'
 import TutorInfo from '@/components/student/StudentBookTutor/TutorInfo.vue'
 import BreadCrumb from '@/components/BreadCrumb.vue'
-import { ref, reactive, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, reactive, onMounted, watch, onBeforeUnmount } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
 import BookCalendar from '@/components/shared/calendar/BookCalendar.vue'
 import SideBar from '@/components/SideBar.vue'
@@ -132,6 +150,7 @@ const tutorBookings = ref([])
 const studentBookings = ref([])
 const tutorWorkDays = ref({})
 
+const router = useRouter()
 const route = useRoute()
 const tutorDetails = ref({})
 
@@ -165,6 +184,11 @@ const updateContactNumber = newContactNumber => {
 
 const storePendingBookingDates = bookingDates => {
   bookingState.selectedDateTimes = bookingDates
+}
+
+const idToRemove = ref('')
+const removeDate = dateId => {
+  idToRemove.value = dateId
 }
 
 const initialBookingState = {
@@ -204,7 +228,8 @@ const submitBookingRequest = async () => {
   try {
     await axiosInstance.post('api/create-booking', bookRequest)
 
-    Object.assign(bookingState, initialBookingState)
+    // Object.assign(bookingState, initialBookingState)
+    router.push({ name: 'StudentRequests' })
   } catch (error) {
     console.error('Error submitting form:', error)
 
@@ -247,11 +272,24 @@ watch(
   },
 )
 
+const isKeyboardVisible = ref(false)
+
+const handleResize = () => {
+  // Check if the viewport height is significantly reduced, indicating the keyboard is visible
+  isKeyboardVisible.value = window.innerHeight < window.outerHeight - 100
+}
+
 onMounted(() => {
+  window.addEventListener('resize', handleResize)
+  handleResize() // Initial check
   const initialTutorId = route.params.tutorId
   if (initialTutorId) {
     fetchTutorDetails(initialTutorId)
     fetchTutorSchedules(initialTutorId)
   }
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
 })
 </script>

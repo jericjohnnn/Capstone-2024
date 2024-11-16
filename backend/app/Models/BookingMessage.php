@@ -14,6 +14,8 @@ class BookingMessage extends Model
         'message'
     ];
 
+    protected $touches = ['Booking'];
+
     public function booking()
     {
         return $this->belongsTo(Booking::class);

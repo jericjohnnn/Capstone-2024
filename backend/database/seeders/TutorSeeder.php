@@ -60,7 +60,7 @@ class TutorSeeder extends Seeder
 
 
         // this is an email verified seeder account. for unverified, you have to remove email_verified_at in factory
-        Tutor::factory(20)->create()->each(function ($tutor) {
+        Tutor::factory(50)->create()->each(function ($tutor) {
             // Create 2 certificates for each tutor
             TutorCertificate::factory(2)->create([
                 'tutor_id' => $tutor->id

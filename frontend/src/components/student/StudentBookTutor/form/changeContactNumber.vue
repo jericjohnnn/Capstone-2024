@@ -1,30 +1,41 @@
 <template>
-  <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1"
-      >Contact number:</label
-    >
-    <div class="flex gap-2">
-      <input
-        v-model="contactNumber"
-        type="text"
-        :readonly="isReadonly"
-        class="flex-1 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-      />
-      <button
-        type="button"
-        @click="toggleEditing"
-        class="px-3 py-1 text-sm text-blue-600 hover:text-blue-700"
-      >
-        {{ isReadonly ? 'Change number' : 'Apply' }}
-      </button>
-      <button
-        v-if="!isReadonly"
-        type="button"
-        @click="cancelChanges"
-        class="px-3 py-1 text-sm text-gray-600 hover:text-gray-700"
-      >
-        Cancel
-      </button>
+  <div class="">
+    <div class="flex justify-between">
+      <label class="text-base ">Contact number:</label>
+      <div class="flex flex-wrap gap-4 ">
+        <button
+          type="button"
+          @click="toggleEditing"
+          class="text-sm text-blue-600 hover:text-blue-700"
+        >
+          {{ isReadonly ? 'Change number' : 'Apply' }}
+        </button>
+        <button
+          v-if="!isReadonly"
+          type="button"
+          @click="cancelChanges"
+          class="text-sm text-gray-600 hover:text-gray-700"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+    <div class="mt-2">
+      <div class="">
+        <div v-if="isReadonly">
+          <p class="py-2.5 px-3.5 rounded-lg bg-slate-100 text-base text-gray-700">
+            {{ contactNumber }}
+          </p>
+        </div>
+        <div v-else>
+          <input
+            v-model="contactNumber"
+            type="text"
+            :readonly="isReadonly"
+            class="w-full text-base rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -35,8 +46,8 @@ import { ref, watch } from 'vue'
 const props = defineProps({
   contactNumber: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const modifiedContactNumber = ref('')
@@ -57,7 +68,7 @@ const contactNumber = ref(props.contactNumber)
 
 const emit = defineEmits(['update:contactNumber'])
 
-watch(contactNumber, (newVal) => {
+watch(contactNumber, newVal => {
   emit('update:contactNumber', newVal)
 })
 </script>

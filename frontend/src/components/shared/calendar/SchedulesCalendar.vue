@@ -9,8 +9,8 @@
       :time-to="25 * 60"
       :events="events"
       :on-event-click="goToBookingDetails"
-      class="vuecal--full-height-delete"
-      style="height: 500px"
+      small
+      class="bg-white min-h-[450px] max-h-[450px] md:min-h-[calc(100vh-14rem)] md:max-h-[calc(100vh-14rem)] rounded-lg"
     >
       <!-- <template #title="{ view }">
         <span class="" v-if="view.id === 'month'">{{
@@ -91,7 +91,7 @@ onMounted(() => {
 
 <style>
 .vuecal__event.ongoingBookings {
-  background-color: rgba(250, 190, 61, 0.902);
+  background-color: rgba(88, 180, 255, 0.902);
   border: 1px solid rgba(255, 253, 248, 0.902);
   color: hsla(0, 0%, 100%, 0.902);
   font-size: 0.75em;

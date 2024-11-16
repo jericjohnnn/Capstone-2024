@@ -25,6 +25,10 @@ const router = createRouter({
       component: NotFoundPage,
     },
   ],
+  scrollBehavior() {
+    // Reset scroll to top with smooth scroll behavior
+    return { top: 0, behavior: 'smooth' };
+  },
 })
 
 router.beforeEach((to, from, next) => {

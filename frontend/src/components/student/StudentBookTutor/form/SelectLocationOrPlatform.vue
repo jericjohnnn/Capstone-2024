@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">
+    <label class=" text-base ">
       {{
         learningPreference === 'Online'
           ? 'Video Platform:'
@@ -10,7 +10,7 @@
     <select
       v-if="learningPreference === 'Online'"
       v-model="videoPlatform"
-      class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+      class="w-full mt-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
     >
       <option value="Zoom">Zoom</option>
       <option value="Google Meet">Google Meet</option>
@@ -21,9 +21,9 @@
       v-model="location"
       type="text"
       placeholder="Enter location"
-      class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+      class="w-full mt-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
     />
-    <div v-else class="w-full p-2 bg-gray-50 rounded-md text-gray-700">
+    <div v-else class="w-full mt-2 p-2 bg-gray-50 rounded-md text-gray-700">
       {{ inSchoolAddress }}
     </div>
   </div>

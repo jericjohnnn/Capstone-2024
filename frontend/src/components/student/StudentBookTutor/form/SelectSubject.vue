@@ -1,11 +1,10 @@
 <template>
 <div>
-  <label class="block text-sm font-medium text-gray-700 mb-1">Select subject:</label>
+  <label class=" text-base ">Subject:</label>
   <select
     v-model="selectedSubject"
-    class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+    class="w-full mt-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
   >
-    <option value="">Select Subject</option>
     <option
       v-for="subject in tutor.subjects"
       :key="subject.id"

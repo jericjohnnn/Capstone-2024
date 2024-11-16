@@ -1,11 +1,14 @@
 <template>
-  <main class="bg-blue-50">
+  <main class="bg-blue-100  ">
     <SideBar>
-      <main class="container flex flex-col gap-14 min-h-screen">
+      <main class="container grid grid-rows-[auto,1fr] gap-4 py-5  ">
         <BreadCrumb
           :breadcrumbs="[{ label: 'Requests', route: '/student/requests' }]"
+          class=""
         />
-        <SentRequestsTabs>
+
+        <div class=" ">
+        <SentRequestsTabs >
           <template #all>
             <AllSentRequestsCard />
           </template>
@@ -16,12 +19,15 @@
             <CompletedSentRequestsCard />
           </template>
         </SentRequestsTabs>
+      </div>
       </main>
     </SideBar>
+    <FooterSection class="block md:hidden" />
     <!-- <HelpButton /> -->
   </main>
 </template>
 <script setup>
+import FooterSection from '@/sections/FooterSection.vue'
 import BreadCrumb from '@/components/BreadCrumb.vue'
 import SideBar from '@/components/SideBar.vue'
 import AllSentRequestsCard from '@/components/student/StudentSentRequests/AllSentRequestsCard.vue'

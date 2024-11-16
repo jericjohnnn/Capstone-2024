@@ -1,5 +1,13 @@
 <template>
-  <div>
+  <div class="flex flex-col">
+    <div class="order-last md:order-first">
+      <TimePicker
+        :isDisabled="activeView !== 'day'"
+        @update:start-time="updateStartTime"
+        @update:end-time="updateEndTime"
+        @triggerTimeUpdate="addScheduleRequest"
+      />
+    </div>
     <vue-cal
       :click-to-navigate="activeView !== 'day'"
       v-model:active-view="activeView"
@@ -11,18 +19,16 @@
       :time-to="25 * 60"
       :events="events"
       @cell-click="getCellDate"
-      class="h-[calc(100%-300px)] w-96"
-      style="height: 300px"
+      small
+      class="bg-white min-h-[450px] max-h-[450px] md:min-h-[calc(100vh-14rem)] md:max-h-[calc(100vh-14rem)] rounded-lg"
     >
       <template #title="{ view }">
-        🎉
         <span class="" v-if="view.id === 'month'">{{
           view.startDate.format('MMMM YYYY')
         }}</span>
         <span class="" v-if="view.id === 'day'">{{
           view.endDate.format('dddd | MMMM D')
         }}</span>
-        🎉
       </template>
       <template #event="{ event }">
         <div class="vuecal__event-title" v-html="event.title" />
@@ -30,30 +36,6 @@
         <span>{{ event.end.formatTime('hh:mm{am}') }}</span>
       </template>
     </vue-cal>
-    <div class="">
-      <TimePicker
-        :isDisabled="activeView !== 'day'"
-        @update:start-time="updateStartTime"
-        @update:end-time="updateEndTime"
-        @triggerTimeUpdate="addScheduleRequest"
-      />
-      <div
-        v-for="schedule in addedPendingSchedules"
-        :key="schedule.id"
-        class="mb-2"
-      >
-        <div class="bg-red-500 outline p-2 flex flex-col text-white">
-          <button @click="deleteSchedule(schedule.id)">X</button>
-          <div class="font-semibold">
-            {{ new Date(schedule.start).format('MMMM-DD-YYYY') }}
-          </div>
-          <div>
-            {{ new Date(schedule.start).formatTime('hh:mm{am}') }} to
-            {{ new Date(schedule.end).formatTime('hh:mm{am}') }}
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -94,6 +76,11 @@ const props = defineProps({
     type: Array,
     required: false,
     default: () => [],
+  },
+  idToRemove: {
+    type: String,
+    required: false,
+    default: '',
   },
 })
 
@@ -169,6 +156,13 @@ function deleteSchedule(id) {
 
 //WATCHES
 watch(
+  () => props.idToRemove,
+  id => {
+    deleteSchedule(id)
+  },
+)
+
+watch(
   () => [props.tutorBookings, props.studentBookings],
   ([tutorBookings, studentBookings]) => {
     events.value = [
@@ -214,11 +208,29 @@ watch(
 
 <style>
 .vuecal__event.tutorBookings {
-  background-color: rgba(250, 190, 61, 0.902);
+  background-color: rgba(201, 201, 201, 0.902);
   border: 1px solid rgba(255, 253, 248, 0.902);
   color: hsla(0, 0%, 100%, 0.902);
   font-size: 0.75em;
 }
+
+.vuecal__event.tutorSchedule {
+  background-color: rgba(235, 235, 235, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  color: #8d8d8d;
+  font-size: 0.75em;
+  /* Adjust font size as needed */
+}
+
+.vuecal__event.addedSchedule {
+  background-color: rgba(36, 77, 255, 0.9);
+  border: 1px solid rgba(231, 236, 255, 0.9);
+  color: #fff;
+  font-size: 0.75em;
+  /* Adjust font size as needed */
+}
+
+/*  */
 
 .vuecal__cell--before-min {
   color: #b6d6c7;
@@ -243,19 +255,15 @@ watch(
 
 /*  */
 
-.vuecal__event.tutorSchedule {
-  background-color: rgba(235, 235, 235, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  color: #8d8d8d;
-  font-size: 0.75em;
-  /* Adjust font size as needed */
+.vuecal__title-bar {
+  color: #fff;
+  background-color: rgb(147 197 253);
 }
 
-.vuecal__event.addedSchedule {
-  background-color: rgba(36, 77, 255, 0.9);
-  border: 1px solid rgba(231, 236, 255, 0.9);
+.vuecal__menu,
+.vuecal__cell-events-count {
   color: #fff;
-  font-size: 0.75em;
-  /* Adjust font size as needed */
+  background-color: rgb(37 99 235);
+  border-radius: 0.5rem 0.5rem 0 0;
 }
 </style>
