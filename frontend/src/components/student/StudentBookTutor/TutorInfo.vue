@@ -1,41 +1,47 @@
 <template>
-<div class="h-full flex flex-col md:flex-row items-center gap-4 py-3 rounded-xl bg-blue-50  text-center md:text-left ">
-  <img
-    :src="tutor.profile_image || defaultProfileImage"
-    alt="Tutor"
-    class="w-20 h-20  rounded-full object-cover"
-  />
-  <div class="flex-1 flex flex-col items-center md:items-start ">
-    <StarRating :rating="averageRatings" class="mb-1 " />
-    <h2 class="text-xl font-semibold mb-2">
-      {{ tutor.first_name }} {{ tutor.last_name }}
-    </h2>
-    <div class="flex flex-wrap justify-center md:justify-start gap-2">
-      <span
-        v-for="subject in tutor.subjects"
-        :key="subject.id"
-        class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-      >
-        {{ subject.name }}
-      </span>
+  <div
+    class="flex flex-col items-center py-3 rounded-xl bg-blue-50 "
+  >
+    <div v-if="Object.keys(tutor).length === 0">
+      <LoaderSpinner />
+    </div>
+    <div
+      v-else
+      class="flex flex-col md:flex-row items-center gap-4 text-center md:text-left"
+    >
+      <img
+        :src="tutor.profile_image || defaultProfileImage"
+        alt="Tutor"
+        class="w-20 h-20 rounded-full object-cover"
+      />
+      <div class="flex-1 flex flex-col items-center md:items-start ">
+        <StarRating :rating="averageRatings" class="mb-1" />
+        <h2 class="text-lg font-semibold mb-1">
+          {{ tutor.first_name }} {{ tutor.last_name }}
+        </h2>
+        <div class="flex flex-wrap justify-center md:justify-start gap-2">
+          <span
+            v-for="subject in tutor.subjects"
+            :key="subject.id"
+            class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+          >
+            {{ subject.name }}
+          </span>
+        </div>
+      </div>
     </div>
   </div>
-  <!-- <div class="text-center md:text-right mt-4 md:mt-0">
-    <p class="text-lg font-semibold text-blue-600">
-      ₱{{ tutor.tutor_rate }}/Hour
-    </p>
-  </div> -->
-</div>
 </template>
 <script setup>
-import StarRating from '@/components/StarRating.vue';
+import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
+import StarRating from '@/components/StarRating.vue'
 import { computed } from 'vue'
 
 const props = defineProps({
   tutor: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const defaultProfileImage =

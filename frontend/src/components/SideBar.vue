@@ -116,7 +116,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="w-full min-h-screen px-4 sm:px-6 md:px-8 lg:ps-72">
+    <div class="w-full md:min-h-screen px-4 sm:px-6 md:px-8 lg:ps-72">
       <slot></slot>
     </div>
 

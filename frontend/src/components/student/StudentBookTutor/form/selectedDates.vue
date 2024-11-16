@@ -1,22 +1,25 @@
 <template>
   <div>
-    <p>Selected dates:</p>
+    <p class="text-base  ">Selected dates:</p>
     <div
       v-if="dates.length === 0"
-      class="outline flex justify-center items-center"
+      class=" flex justify-center items-center "
     >
       <p class="text-slate-400">No dates selected</p>
     </div>
-    <div v-else class="flex flex-col items-center justify-center w-full">
-      <div v-for="date in dates" :key="date.id" class="my-2">
-        <div class="bg-blue-500 text-white inline-flex text-sm items-center rounded-full px-3 py-1">
-          <span class="font-semibold mr-2">
+    <div v-else class="flex flex-wrap gap-2 justify-center w-full py-2">
+      <div v-for="date in dates" :key="date.id" class="">
+        <div class="bg-blue-500 text-white text-sm px-3 py-2 grid grid-cols-[auto,1fr] gap-1 rounded-lg">
+
+          <div class="font-semibold  text-sm">
             {{ formatDate(date.start) }}
-          </span>
-          <span class="mr-2">
+          </div>
+          <button @click="removeDate(date.id)" class="font-bold col-span-1 rounded-full bg-red-400">X</button>
+
+          <div class="text-sm col-span-2">
             {{ formatTo12Hour(extractTimeFromDateTimeString(date.start)) }} to
             {{ formatTo12Hour(extractTimeFromDateTimeString(date.end)) }}
-          </span>
+          </div>
         </div>
       </div>
     </div>
@@ -24,6 +27,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import {
   formatDate,
   formatTo12Hour,
@@ -36,4 +40,12 @@ const props = defineProps({
     default: () => [],
   },
 })
+
+const dates = computed(() => (props.dates ? props.dates : []))
+
+const emit = defineEmits(['remove-date'])
+
+const removeDate = id => {
+  emit('remove-date', id)
+}
 </script>

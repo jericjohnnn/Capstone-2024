@@ -1,14 +1,16 @@
 <template>
-  <main class="">
+  <main class="min-h-screen bg-blue-100">
     <SideBar>
-      <main class="container p-5 mx-auto">
+      <main class="container grid grid-rows-[auto,1fr] gap-10 md:min-h-screen py-5 mx-auto ">
         <!-- Breadcrumb -->
-        <BreadCrumb
-          :breadcrumbs="[
-            { label: 'Schedule', route: '/student/schedule' },
-          ]"
-        />
-        <SchedulesCalendar :routePath="'/student/schedule'"></SchedulesCalendar>
+        <div  class="">
+          <BreadCrumb
+            :breadcrumbs="[{ label: 'Schedule', route: '/student/schedule' }]"
+          />
+        </div>
+        <div class=" ">
+          <SchedulesCalendar :routePath="'/student/schedule'" />
+        </div>
       </main>
     </SideBar>
 
@@ -18,18 +20,7 @@
 
 <script setup>
 import BreadCrumb from '@/components/BreadCrumb.vue'
-import SchedulesCalendar from '@/components/shared/calendar/SchedulesCalendar.vue';
+import SchedulesCalendar from '@/components/shared/calendar/SchedulesCalendar.vue'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
-// import { ref, reactive, onMounted, watch } from 'vue'
-// import axiosInstance from '@/axiosInstance'
-
-
-// const route = useRoute()
-
-// const getUserData = localStorage.getItem('user_data')
-// const userData = getUserData ? JSON.parse(getUserData) : null
-// const studentContactNumber = userData ? userData.contact_number : null
-
-
 </script>

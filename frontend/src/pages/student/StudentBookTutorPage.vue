@@ -1,8 +1,8 @@
 <template>
   <main class="min-h-screen bg-blue-100">
     <SideBar>
-      <div class="grid grid-cols-1 gap-4 min-h-screen pt-3 pb-5 outline">
-        <div class="hidden md:block outline">
+      <div class="grid grid-cols-1 gap-4 min-h-screen py-5 ">
+        <div class="hidden md:block ">
           <BreadCrumb
             :breadcrumbs="[
               { label: 'Home', route: '/student/home' },
@@ -11,9 +11,9 @@
           />
         </div>
         <div
-          class="grid grid-cols-1 md:grid-rows-[auto,auto,1fr] md:grid-flow-col gap-7 md:gap-4"
+          class="grid grid-cols-1 md:grid-rows-[auto,auto,1fr] md:grid-cols-2 gap-7 md:gap-4"
         >
-          <div class="md:row-span-3 outline">
+          <div class=" md:row-span-3  ">
             <div>
               <TutorAvailability :tutor="tutorDetails" />
             </div>
@@ -22,6 +22,7 @@
             </div>
             <div v-else>
               <BookCalendar
+                :idToRemove="idToRemove"
                 :tutorBookings="tutorBookings"
                 :tutorWorkDays="tutorWorkDays"
                 :studentBookings="studentBookings"
@@ -29,21 +30,18 @@
               />
             </div>
           </div>
-          <div
-            class=" md:col-span-1 order-first md:-order-none outline"
-          >
-            <TutorInfo :tutor="tutorDetails" class="outline" />
+          <div class=" order-first md:-order-none ">
+            <TutorInfo :tutor="tutorDetails" class="" />
           </div>
-          <div class="md:row-span-2 md:col-span-1 outline">
+          <div class="md:row-span-2 md:col-span-1 ">
             <form @submit.prevent="submitBookingRequest" class="space-y-4">
               <div>
                 <SelectedDates
-                  v-for="date in bookingState.selectedDateTimes"
-                  :key="date.id"
-                  :dates="date"
+                  :dates="bookingState.selectedDateTimes"
+                  @remove-date="removeDate"
                 />
               </div>
-              <div class="space-y-4 md:grid md:grid-cols-2 md:gap-4">
+              <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4 ">
                 <div>
                   <SelectSubject
                     :tutor="tutorDetails"
@@ -65,29 +63,30 @@
                 />
               </div>
               <div>
-                <InputMessage
-                  @update:tutorTopic="updateTutorTopic"
-                  @update:tutorMessage="updateTutorMessage"
-                />
-              </div>
-              <div>
                 <ChangeContactNumber
                   :contactNumber="bookingState.contactNumber"
                   @update:contactNumber="updateContactNumber"
                 />
               </div>
-              <div class="hidden md:flex justify-end gap-4 pt-4">
-                <router-link :to="{ name: 'StudentHome' }">
+              <div>
+                <InputMessage
+                  @update:tutorTopic="updateTutorTopic"
+                  @update:tutorMessage="updateTutorMessage"
+                />
+              </div>
+              
+              <div class="hidden md:flex gap-5 ">
+                <router-link :to="{ name: 'StudentHome' }" class=" w-3/6 ">
                   <button
                     type="button"
-                    class="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                    class="w-full px-4 py-3 text-blue-600 border border-blue-600 rounded-md hover:border-blue-400 hover:text-blue-400 transition"
                   >
                     Cancel
                   </button>
                 </router-link>
                 <button
                   type="submit"
-                  class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                  class="w-full px-4 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700"
                 >
                   BOOK
                 </button>
@@ -98,13 +97,13 @@
           <div
             :class="[
               'z-30 md:hidden rounded-xl bottom-0 w-full bg-blue-50 border border-white dark:bg-neutral-900 px-4 py-3 border-t dark:border-neutral-700',
-              { 'sticky': !isKeyboardVisible }
+              { sticky: !isKeyboardVisible },
             ]"
           >
             <div class="flex flex-col justify-center items-center gap-2">
               <div>Rate: ₱{{ tutorDetails.tutor_rate }}/Hour</div>
               <button
-                @click="goToBook"
+                @click="submitBookingRequest"
                 class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Book
@@ -112,6 +111,7 @@
 
               <!-- Report Button -->
               <button
+              @click="router.back()"
                 class="w-full underline text-gray-500 dark:text-neutral-400 py-2 text-sm font-medium hover:text-gray-700 dark:hover:text-neutral-200 transition-colors duration-200 flex items-center justify-center gap-1"
               >
                 Cancel
@@ -121,8 +121,7 @@
         </div>
       </div>
     </SideBar>
-    <FooterSection />
-
+    <FooterSection class="block md:hidden" />
   </main>
 </template>
 
@@ -138,7 +137,7 @@ import SelectLearningPreference from '@/components/student/StudentBookTutor/form
 import TutorInfo from '@/components/student/StudentBookTutor/TutorInfo.vue'
 import BreadCrumb from '@/components/BreadCrumb.vue'
 import { ref, reactive, onMounted, watch, onBeforeUnmount } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
 import BookCalendar from '@/components/shared/calendar/BookCalendar.vue'
 import SideBar from '@/components/SideBar.vue'
@@ -151,6 +150,7 @@ const tutorBookings = ref([])
 const studentBookings = ref([])
 const tutorWorkDays = ref({})
 
+const router = useRouter()
 const route = useRoute()
 const tutorDetails = ref({})
 
@@ -184,6 +184,11 @@ const updateContactNumber = newContactNumber => {
 
 const storePendingBookingDates = bookingDates => {
   bookingState.selectedDateTimes = bookingDates
+}
+
+const idToRemove = ref('')
+const removeDate = dateId => {
+  idToRemove.value = dateId
 }
 
 const initialBookingState = {
@@ -223,7 +228,8 @@ const submitBookingRequest = async () => {
   try {
     await axiosInstance.post('api/create-booking', bookRequest)
 
-    Object.assign(bookingState, initialBookingState)
+    // Object.assign(bookingState, initialBookingState)
+    router.push({ name: 'StudentRequests' })
   } catch (error) {
     console.error('Error submitting form:', error)
 

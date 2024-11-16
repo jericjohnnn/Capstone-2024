@@ -20,17 +20,15 @@
       :events="events"
       @cell-click="getCellDate"
       small
-      class="min-h-[450px] max-h-[450px] md:min-h-[calc(100vh-14rem)] md:max-h-[calc(100vh-14rem)]"
+      class="bg-white min-h-[450px] max-h-[450px] md:min-h-[calc(100vh-14rem)] md:max-h-[calc(100vh-14rem)] rounded-lg"
     >
       <template #title="{ view }">
-        🎉
         <span class="" v-if="view.id === 'month'">{{
           view.startDate.format('MMMM YYYY')
         }}</span>
         <span class="" v-if="view.id === 'day'">{{
           view.endDate.format('dddd | MMMM D')
         }}</span>
-        🎉
       </template>
       <template #event="{ event }">
         <div class="vuecal__event-title" v-html="event.title" />
@@ -38,7 +36,6 @@
         <span>{{ event.end.formatTime('hh:mm{am}') }}</span>
       </template>
     </vue-cal>
-    
   </div>
 </template>
 
@@ -80,11 +77,11 @@ const props = defineProps({
     required: false,
     default: () => [],
   },
-  // addedSchedules: {
-  //   type: Array,
-  //   required: false,
-  //   default: () => [],
-  // },
+  idToRemove: {
+    type: String,
+    required: false,
+    default: '',
+  },
 })
 
 const hiddenWeekDays = ref([])
@@ -148,22 +145,20 @@ const addScheduleRequest = () => {
 
 //
 
-// function deleteSchedule(id) {
-//   addedPendingSchedules.value = addedPendingSchedules.value.filter(
-//     schedule => schedule.id !== id,
-//   )
-//   events.value = events.value.filter(schedule => schedule.id !== id)
-//   emit('update:added-schedules', addedPendingSchedules.value)
-//   //TODO: make a slide notification that item is deleted
-// }
+function deleteSchedule(id) {
+  addedPendingSchedules.value = addedPendingSchedules.value.filter(
+    schedule => schedule.id !== id,
+  )
+  events.value = events.value.filter(schedule => schedule.id !== id)
+  emit('update:added-schedules', addedPendingSchedules.value)
+  //TODO: make a slide notification that item is deleted
+}
 
 //WATCHES
 watch(
-  () => props.addedSchedules,
-  (newSchedules) => {
-    addedPendingSchedules.value = newSchedules
-    events.value = newSchedules
-    console.log('addedPendingSchedules', addedPendingSchedules.value)
+  () => props.idToRemove,
+  id => {
+    deleteSchedule(id)
   },
 )
 
@@ -219,6 +214,24 @@ watch(
   font-size: 0.75em;
 }
 
+.vuecal__event.tutorSchedule {
+  background-color: rgba(235, 235, 235, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  color: #8d8d8d;
+  font-size: 0.75em;
+  /* Adjust font size as needed */
+}
+
+.vuecal__event.addedSchedule {
+  background-color: rgba(36, 77, 255, 0.9);
+  border: 1px solid rgba(231, 236, 255, 0.9);
+  color: #fff;
+  font-size: 0.75em;
+  /* Adjust font size as needed */
+}
+
+/*  */
+
 .vuecal__cell--before-min {
   color: #b6d6c7;
 }
@@ -242,19 +255,15 @@ watch(
 
 /*  */
 
-.vuecal__event.tutorSchedule {
-  background-color: rgba(235, 235, 235, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  color: #8d8d8d;
-  font-size: 0.75em;
-  /* Adjust font size as needed */
+.vuecal__title-bar {
+  color: #fff;
+  background-color: rgb(147 197 253);
 }
 
-.vuecal__event.addedSchedule {
-  background-color: rgba(36, 77, 255, 0.9);
-  border: 1px solid rgba(231, 236, 255, 0.9);
+.vuecal__menu,
+.vuecal__cell-events-count {
   color: #fff;
-  font-size: 0.75em;
-  /* Adjust font size as needed */
+  background-color: rgb(37 99 235);
+  border-radius: 0.5rem 0.5rem 0 0;
 }
 </style>

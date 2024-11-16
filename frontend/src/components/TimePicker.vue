@@ -2,18 +2,18 @@
   <!-- <div class="outline grid grid-cols-2 gap-3 grid-flow-row py-2"></div> -->
   <div class=" grid grid-rows-3 gap-3 py-2 md:grid-rows-2">
     <div class="flex  items-center text-sm ">
-      <label class="min-w-12">Start:</label>
+      <label class="min-w-12 md:min-w-10 ">Start:</label>
       <div class=" flex w-full gap-1">
-        <select v-model="startHour" class="grow  rounded">
+        <select v-model="startHour" class="grow text-sm rounded">
           <option v-for="hour in 12" :key="hour" :value="hour">
             {{ String(hour).padStart(2, '0') }}
           </option>
         </select>
-        <select v-model="startMinute" class="grow   rounded">
+        <select v-model="startMinute" class="grow text-sm  rounded">
           <option value="00">00</option>
           <option value="30">30</option>
         </select>
-        <select v-model="startPeriod" class="grow   rounded">
+        <select v-model="startPeriod" class="grow  text-sm rounded">
           <option value="AM">AM</option>
           <option value="PM">PM</option>
         </select>
@@ -21,18 +21,18 @@
     </div>
 
     <div class="flex  items-center text-sm ">
-      <label class="min-w-12">End:</label>
+      <label class="min-w-12 md:min-w-10 ">End:</label>
       <div class=" flex w-full gap-1">
-        <select v-model="endHour" class="grow rounded">
+        <select v-model="endHour" class="grow text-sm rounded">
           <option v-for="hour in 12" :key="hour" :value="hour">
             {{ String(hour).padStart(2, '0') }}
           </option>
         </select>
-        <select v-model="endMinute" class="grow rounded">
+        <select v-model="endMinute" class="grow text-sm rounded">
           <option value="00">00</option>
           <option value="30">30</option>
         </select>
-        <select v-model="endPeriod" class="grow rounded">
+        <select v-model="endPeriod" class="grow text-sm rounded">
           <option value="AM">AM</option>
           <option value="PM">PM</option>
         </select>
@@ -41,7 +41,7 @@
     <div class=" md:col-span-2">
       <button
         @click="addTime"
-        class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
+        class="w-full text-white p-2 roundedtransition-colors "
         :disabled="isDisabled"
       >
         <p class="block md:hidden">{{ isDisabled ? 'Select a date above' : 'Add time' }}</p>
@@ -98,7 +98,7 @@ const addTime = () => {
 button {
   display: inline-block;
   width: 100%;
-  background-color: #3182ce;
+  background-color: rgb(37 99 235);
   color: white;
   padding: 0.5rem;
   border-radius: 0.375rem;
@@ -107,7 +107,7 @@ button {
 }
 
 button:hover {
-  background-color: #2b6cb0;
+  background-color: rgb(32, 89, 212);
 }
 
 select {
