@@ -1,14 +1,20 @@
 <template>
   <div class="p-4 bg-white rounded-lg shadow-md">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
+    
     <!-- Profile Display -->
     <div v-if="!isProfileEdit" class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div class="flex flex-col md:flex-row items-center md:items-start gap-4">
+      <div class="flex flex-col md:flex-row items-center md:items-center gap-4">
         <img
           :src="userData.profile_image || defaultProfileImage"
           class="w-24 h-24 md:w-20 md:h-20 rounded-full object-cover bg-gray-200"
           alt="Profile Image"
         />
-        <div class="text-center md:text-left">
+        <div class="text-center  md:text-left">
           <h2 class="text-xl md:text-lg font-semibold">
             {{ userData.first_name }} {{ userData.last_name }}
           </h2>
@@ -32,7 +38,7 @@
     </div>
 
     <!-- Profile Edit Form -->
-    <div v-if="isProfileEdit" class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+    <div v-if="isProfileEdit" class="flex flex-col md:flex-row  justify-between gap-4 md:items-center ">
       <div class="flex flex-col md:flex-row gap-4">
         <!-- Profile Image Upload -->
         <div class="relative w-24 h-24 md:w-20 md:h-20 mx-auto md:mx-0">
@@ -60,8 +66,8 @@
           </div>
         </div>
         <!-- Edit Form -->
-        <div class="flex flex-col w-full md:w-64 gap-2">
-          <div class="flex flex-col md:flex-row gap-2">
+        <div class="flex flex-col w-full md:w-64 gap-2  justify-center">
+          <div class="flex flex-col md:flex-row gap-2 ">
             <input
               v-model="userInfoData.first_name"
               placeholder="First name"
@@ -76,7 +82,7 @@
           <p class="text-center md:text-left text-gray-600">{{ userEmail }}</p>
         </div>
       </div>
-      <div class="flex justify-center md:justify-end gap-4">
+      <div class="flex justify-center md:justify-end gap-4 ">
         <button
           @click="cancelEdit"
           class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
@@ -97,11 +103,13 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import axiosInstance from '@/axiosInstance'
-
 import { getUserData } from '@/utils/user'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const userEmail = localStorage.getItem('user_email')
 const userData = getUserData()
+const { notification, showNotification } = useNotification()
 
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +
@@ -146,16 +154,22 @@ const submitNewDetails = async () => {
     const response = await axiosInstance.post('/api/edit-details', formData)
     userData.value = response.data.tutor
     localStorage.setItem('user_data', JSON.stringify(userData.value))
+    showNotification('Profile updated successfully!')
     isProfileEdit.value = false
   } catch (error) {
     console.error('Update failed:', error)
-    alert('Failed to update profile')
+    showNotification(
+      error.response?.data?.message || 'Failed to update profile',
+      'error'
+    )
   }
 }
 
 const cancelEdit = () => {
   currentProfileImage.value = userData.value.profile_image || defaultProfileImage
   selectedImage.value = null
+  userInfoData.first_name = userData.value.first_name
+  userInfoData.last_name = userData.value.last_name
   isProfileEdit.value = false
 }
 </script>

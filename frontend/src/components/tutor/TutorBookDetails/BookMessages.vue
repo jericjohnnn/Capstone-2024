@@ -1,5 +1,11 @@
 <template>
   <div class="w-full shadow-sm">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
+
     <div class="space-y-6">
       <div
         v-for="(message, index) in bookDetails.messages"
@@ -158,7 +164,7 @@
             negotiate
           </button>
         </div>
-        <div class="space-x-4 flex justify-center  w-full" :class="bookDetails.messages.length === 1 ? 'w-fit' : ''">
+        <div class="space-x-4 flex justify-center md:justify-end w-full" :class="bookDetails.messages.length === 1 ? 'w-fit' : ''">
           <button
             @click="updateBookingStatus('Canceled')"
             class="p-2 border text-blue-600 border-blue-600 rounded-md"
@@ -203,6 +209,8 @@ import axiosInstance from '@/axiosInstance'
 import BookCalendar from '@/components/shared/calendar/BookCalendar.vue'
 import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
 import { formatDate, formatTo12Hour, extractTimeFromDateTimeString } from '@/utils/dateTime'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const props = defineProps({
   bookDetailsProps: {
@@ -263,6 +271,21 @@ const handleCancelNegotiation = () => {
 }
 
 const submitNegotiation = async () => {
+  if (!negotiationTitle.value.trim()) {
+    showNotification('Please enter a title', 'error')
+    return
+  }
+
+  if (!negotiationMessage.value.trim()) {
+    showNotification('Please enter a message', 'error')
+    return
+  }
+
+  if (pendingBookingDatesPlaceholder.value.length === 0) {
+    showNotification('Please select at least one date', 'error')
+    return
+  }
+
   const startAndEndArray = pendingBookingDatesPlaceholder.value.map(item => ({
     start: item.start,
     end: item.end,
@@ -280,10 +303,14 @@ const submitNegotiation = async () => {
       bookRequest,
     )
     bookDetails.value = response.data.book_details
+    showNotification('Negotiation submitted successfully!', 'success')
     isNegotiating.value = false
   } catch (error) {
     console.error('Error submitting form:', error)
-    alert('There was an error submitting the form.')
+    showNotification(
+      error.response?.data?.message || 'Failed to submit negotiation',
+      'error'
+    )
   }
 }
 
@@ -295,13 +322,20 @@ const updateBookingStatus = async status => {
         status: status,
       },
     )
-    if (status === 'Ongoing') {
-      router.push({ path: '/tutor/schedule' })
-    } else {
-      router.push({ path: '/tutor/requests' })
-    }
+    showNotification('Booking status updated successfully!', 'success')
+    setTimeout(() => {
+      if (status === 'Ongoing') {
+        router.push({ path: '/tutor/schedule' })
+      } else {
+        router.push({ path: '/tutor/requests' })
+      }
+    }, 1500)
   } catch (err) {
-    console.error('Error fetching booking details:', err)
+    console.error('Error updating booking status:', err)
+    showNotification(
+      err.response?.data?.message || 'Failed to status updated booking',
+      'error'
+    )
   }
 }
 
@@ -330,6 +364,14 @@ const handleNegotiateClick = () => {
       block: 'center',
     })
   })
+}
+
+const { notification, showNotification } = useNotification()
+
+const removeDate = (dateId) => {
+  pendingBookingDatesPlaceholder.value = pendingBookingDatesPlaceholder.value.filter(
+    date => date.id !== dateId
+  )
 }
 </script>
 

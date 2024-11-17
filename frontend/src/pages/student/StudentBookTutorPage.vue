@@ -1,5 +1,10 @@
 <template>
   <main class="min-h-screen bg-blue-100">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
     <SideBar>
       <div class="grid grid-cols-1 gap-4 min-h-screen py-5 ">
         <div class="hidden md:block ">
@@ -143,6 +148,8 @@ import BookCalendar from '@/components/shared/calendar/BookCalendar.vue'
 import SideBar from '@/components/SideBar.vue'
 // import HelpButton from '@/components/HelpButton.vue'
 import { getUserData } from '@/utils/user'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const userData = getUserData()
 
@@ -204,6 +211,8 @@ const initialBookingState = {
 
 const bookingState = reactive({ ...initialBookingState })
 
+const { notification, showNotification } = useNotification()
+
 const submitBookingRequest = async () => {
   const bookRequest = {
     tutor_id: route.params.tutorId,
@@ -227,13 +236,18 @@ const submitBookingRequest = async () => {
 
   try {
     await axiosInstance.post('api/create-booking', bookRequest)
-
-    // Object.assign(bookingState, initialBookingState)
-    router.push({ name: 'StudentRequests' })
+    showNotification('Booking request submitted successfully!')
+    
+    // Add a delay before redirecting
+    setTimeout(() => {
+      router.push({ name: 'StudentRequests' })
+    }, 1500) // Wait 1.5 seconds before redirecting
   } catch (error) {
     console.error('Error submitting form:', error)
-
-    alert('There was an error submitting the form.')
+    showNotification(
+      error.response?.data?.message || 'There was an error submitting the form.', 
+      'error'
+    )
   }
 }
 

@@ -42,6 +42,7 @@ router.beforeEach((to, from, next) => {
   const authPages = ['Login', 'Register', 'TutorRegister', 'StudentRegister']
   const authRequired = !publicPages.includes(to.name)
   const userType = getUserType()
+  const userData = JSON.parse(localStorage.getItem('user_data') || '{}')
 
   if (authRequired && !isAuthenticated()) {
     return next('/login')
@@ -49,30 +50,41 @@ router.beforeEach((to, from, next) => {
 
   if (isAuthenticated()) {
     if (authPages.includes(to.name)) {
-      if (userType === 'student') {
+      if (userType === 'Student') {
         return next('/student/home')
-      } else if (userType === 'tutor') {
+      } else if (userType === 'Tutor') {
         return next('/tutor/profile')
       }
     }
 
-    if (to.path === '/tutor/' || to.path === '/tutor') {
-      return next('/tutor/profile')
-    }
-    if (to.path === '/student/' || to.path === '/student') {
-      return next('/student/home')
+    // Handle Tutor specific routes
+    if (userType === 'Tutor') {
+      if (userData.approval_status === 'Pending' && 
+          to.name !== 'TutorPendingApproval' && 
+          to.path !== '/') {
+        return next('/tutor/pending-approval')
+      }
+
+      if (to.path.startsWith('/student')) {
+        return next('/tutor/profile')
+      }
+
+      if (to.path === '/tutor/' || to.path === '/tutor') {
+        return next('/tutor/profile')
+      }
     }
 
-    if (userType === 'student' && to.path.startsWith('/tutor')) {
-      return next('/student/home')
-    } else if (userType === 'tutor' && to.path.startsWith('/student')) {
-      return next('/tutor/profile')
+    // Handle Student specific routes
+    if (userType === 'Student') {
+      if (to.path.startsWith('/tutor')) {
+        return next('/student/home')
+      }
+
+      if (to.path === '/student/' || to.path === '/student') {
+        return next('/student/home')
+      }
     }
   }
-
-  // setTimeout(() => {
-  //   if (window.PRELINE) window.PRELINE.init()
-  // }, 0)
 
   next()
 })

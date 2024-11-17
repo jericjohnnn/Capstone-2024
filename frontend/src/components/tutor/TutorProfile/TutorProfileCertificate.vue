@@ -1,5 +1,10 @@
 <template>
   <div class="space-y-4">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
     <!-- Certificate List -->
     <div
       v-for="(certificate, index) in userData.certificates"
@@ -137,8 +142,11 @@ import axiosInstance from '@/axiosInstance'
 import certificateImage from '@/assets/certificate.png'
 import { formatDate } from '@/utils/dateTime'
 import { getUserData } from '@/utils/user'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const userData = getUserData()
+const { notification, showNotification } = useNotification()
 
 const editingIndex = ref([])
 const addingNew = ref(false)
@@ -166,9 +174,14 @@ const saveCertificate = async index => {
     }
     await axiosInstance.put(`/api/edit-certificate/${certificate.id}`, dataToSave)
     localStorage.setItem('user_data', JSON.stringify(userData.value))
+    showNotification('Certificate updated successfully!')
     editingIndex.value = editingIndex.value.filter(i => i !== index)
   } catch (error) {
-    console.error('Failed to update education:', error)
+    console.error('Failed to update certificate:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to update certificate',
+      'error'
+    )
   }
 }
 
@@ -186,6 +199,7 @@ const saveNewCertificate = async () => {
     const response = await axiosInstance.post('/api/add-certificate', dataToSave)
     userData.value.certificates.push(response.data.certificate)
     localStorage.setItem('user_data', JSON.stringify(userData.value))
+    showNotification('New certificate added successfully!')
     addingNew.value = false
     newCertificate.value = {
       title: '',
@@ -193,7 +207,11 @@ const saveNewCertificate = async () => {
       date_issued: '',
     }
   } catch (error) {
-    console.error('Failed to add new education:', error)
+    console.error('Failed to add new certificate:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to add new certificate',
+      'error'
+    )
   }
 }
 
@@ -211,8 +229,13 @@ const deleteCertificate = async (id, index) => {
     await axiosInstance.delete(`/api/delete-certificate/${id}`)
     userData.value.certificates.splice(index, 1)
     localStorage.setItem('user_data', JSON.stringify(userData.value))
+    showNotification('Certificate deleted successfully!', 'error')
   } catch (error) {
     console.error('Failed to delete certificate:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to delete certificate',
+      'error'
+    )
   }
 }
 </script>

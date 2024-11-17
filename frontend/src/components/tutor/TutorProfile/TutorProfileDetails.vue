@@ -1,5 +1,11 @@
 <template>
   <div class="mb-6">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
+
     <div class="flex justify-between items-center mb-3">
       <h3 class="font-medium">Personal Details</h3>
       <button 
@@ -74,22 +80,16 @@ import { ref } from 'vue'
 import axiosInstance from '@/axiosInstance'
 import { formatDate } from '@/utils/dateTime'
 import { getUserData } from '@/utils/user'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const userData = getUserData()
+const { notification, showNotification } = useNotification()
 
 const birthdate = ref(userData.value.birthdate)
 const address = ref(userData.value.address)
 const contactNumber = ref(userData.value.contact_number)
 const isEditing = ref(false)
-
-const toggleEditMode = () => {
-  if (isEditing.value) {
-    birthdate.value = userData.value.birthdate
-    address.value = userData.value.address
-    contactNumber.value = userData.value.contact_number
-  }
-  isEditing.value = !isEditing.value
-}
 
 const saveDetails = async () => {
   try {
@@ -105,10 +105,24 @@ const saveDetails = async () => {
     userData.value.address = data.address
     userData.value.contact_number = data.contact_number
     localStorage.setItem('user_data', JSON.stringify(userData.value))
-
+    
+    showNotification('Personal details updated successfully!')
     isEditing.value = false
   } catch (error) {
     console.error('Error saving personal details:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to update personal details',
+      'error'
+    )
   }
+}
+
+const toggleEditMode = () => {
+  if (isEditing.value) {
+    birthdate.value = userData.value.birthdate
+    address.value = userData.value.address
+    contactNumber.value = userData.value.contact_number
+  }
+  isEditing.value = !isEditing.value
 }
 </script>

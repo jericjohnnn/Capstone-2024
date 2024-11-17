@@ -1,5 +1,11 @@
 <template>
   <div class="w-full shadow-sm">
+    <NotificationToast
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
+
     <div class="space-y-6">
       <div
         v-for="(message, index) in bookDetails.messages"
@@ -51,24 +57,31 @@
     </div>
 
     <!-- IS NEGOTIATING MESSAGE AND CALENDAR -->
-    <div v-if="isNegotiating" class=" pt-4" ref="negotiationForm">
+    <div v-if="isNegotiating" class="pt-4" ref="negotiationForm">
       <div class="flex justify-between items-center">
         <p>Your message:</p>
-        <button @click="toggleCalendar" class="p-2 bg-blue-600 text-white rounded-md">
+        <button
+          @click="toggleCalendar"
+          class="p-2 bg-blue-600 text-white rounded-md"
+        >
           Change dates
         </button>
       </div>
       <div class="flex">
         <div class="flex w-full flex-wrap gap-2">
-        <!-- zz -->
+          <!-- zz -->
           <div
             v-if="pendingBookingDatesPlaceholder.length === 0"
-            class="flex justify-center  w-full"
+            class="flex justify-center w-full"
           >
             <p class="text-slate-400 py-4">No dates selected</p>
           </div>
           <div v-else class="flex flex-wrap gap-2 justify-center w-full py-2">
-            <div v-for="date in pendingBookingDatesPlaceholder" :key="date.id" class="">
+            <div
+              v-for="date in pendingBookingDatesPlaceholder"
+              :key="date.id"
+              class=""
+            >
               <div
                 class="bg-blue-500 text-white text-sm px-3 py-2 grid grid-cols-[auto,1fr] gap-1 rounded-lg"
               >
@@ -92,24 +105,6 @@
               </div>
             </div>
           </div>
-          <!-- zz -->
-
-          <!-- <div
-            v-for="schedule in pendingBookingDatesPlaceholder"
-            :key="schedule.id"
-            class="mb-2"
-          >
-            <div class="bg-red-500 outline p-2 flex flex-col text-white">
-              <div class="font-semibold">
-                {{ new Date(schedule.start).format('MMMM-DD-YYYY') }}
-              </div>
-              <div>
-                {{ new Date(schedule.start).formatTime('hh:mm{am}') }}
-                to
-                {{ new Date(schedule.end).formatTime('hh:mm{am}') }}
-              </div>
-            </div>
-          </div> -->
         </div>
         <PopUpModal
           :toggleModal="showCalendar"
@@ -143,7 +138,7 @@
         </PopUpModal>
       </div>
 
-      <div class="border rounded p-2 ">
+      <div class="border rounded p-2">
         <!-- v-model="bookingState.tutorTopic" -->
         <input
           class="w-full border outline-none mb-1"
@@ -166,7 +161,7 @@
       :class="[
         'flex justify-between rounded-lg backdrop-blur-sm w-full z-30 bg-blue-50 border border-white dark:bg-neutral-900 p-3 border-t dark:border-neutral-700',
         { 'sticky md:relative': !isKeyboardVisible },
-        bookDetails.status === 'Completed' ? 'hidden' : ''
+        bookDetails.status === 'Completed' ? 'hidden' : '',
       ]"
     >
       <!-- NEGOTIATE -->
@@ -206,10 +201,7 @@
         </div>
       </div>
 
-      <div
-        v-if="isNegotiating"
-        class="flex  justify-center w-full gap-4"
-      >
+      <div v-if="isNegotiating" class="flex justify-center w-full gap-4">
         <button
           @click="handleCancelNegotiation"
           class="p-2 border text-slate-600 border-slate-600 rounded-md"
@@ -228,12 +220,18 @@
 </template>
 <script setup>
 import PopUpModal from '@/components/Reusables/PopUpModal.vue'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
 import BookCalendar from '@/components/shared/calendar/BookCalendar.vue'
 import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
-import { formatDate, formatTo12Hour, extractTimeFromDateTimeString } from '@/utils/dateTime'
+import {
+  formatDate,
+  formatTo12Hour,
+  extractTimeFromDateTimeString,
+} from '@/utils/dateTime'
+import { useNotification } from '@/composables/useNotification'
 
 const props = defineProps({
   bookDetailsProps: {
@@ -320,10 +318,14 @@ const submitNegotiation = async () => {
     )
     bookDetails.value = response.data.book_details
     isNegotiating.value = false
-    console.log(response)
+    showNotification('Negotiation submitted successfully!')
   } catch (error) {
     console.error('Error submitting form:', error)
-    alert('There was an error submitting the form.')
+    showNotification(
+      error.response?.data?.message ||
+        'There was an error submitting the negotiation.',
+      'error',
+    )
   }
 }
 
@@ -335,15 +337,23 @@ const updateBookingStatus = async status => {
         status: status,
       },
     )
-    if (status === 'Ongoing') {
-      router.push({ path: '/tutor/schedule' })
-    } else {
-      router.push({ path: '/tutor/requests' })
-    }
 
-    // bookDetails.value = response.data.book_details
+    showNotification(
+      status === 'Ongoing'
+        ? 'Booking accepted successfully!'
+        : 'Booking declined successfully!',
+    )
+
+    setTimeout(() => {
+      if (status === 'Ongoing') {
+        router.push({ path: '/student/schedule' })
+      } else {
+        router.push({ path: '/student/requests' })
+      }
+    }, 1500)
   } catch (err) {
-    console.error('Error fetching booking details:', err)
+    console.error('Error updating booking status:', err)
+    showNotification('There was an error updating the booking status.', 'error')
   }
 }
 
@@ -366,7 +376,6 @@ const negotiationForm = ref(null)
 
 const handleNegotiateClick = () => {
   isNegotiating.value = true
-  // Wait for DOM update before scrolling
   nextTick(() => {
     negotiationForm.value?.scrollIntoView({
       behavior: 'smooth',
@@ -374,6 +383,8 @@ const handleNegotiateClick = () => {
     })
   })
 }
+
+const { notification, showNotification } = useNotification()
 </script>
 
 <style scoped>

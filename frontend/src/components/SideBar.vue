@@ -148,7 +148,7 @@ const router = useRouter()
 // User data from localStorage
 const userType = localStorage.getItem('user_type')
 const userEmail = localStorage.getItem('user_email')
-const userFullName = localStorage.getItem('user_full_name')
+// const userFullName = localStorage.getItem('user_full_name')
 const userData = JSON.parse(localStorage.getItem('user_data') || '{}')
 const userProfileImage = userData?.profile_image
 

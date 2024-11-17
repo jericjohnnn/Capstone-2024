@@ -1,5 +1,10 @@
 <template>
   <div class="space-y-4">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
     <!-- Education List -->
     <div
       v-for="(school, index) in userData.schools"
@@ -153,8 +158,11 @@ import axiosInstance from '@/axiosInstance'
 import schoolImage from '@/assets/school.png'
 import { getUserData } from '@/utils/user'
 import { formatDate } from '@/utils/dateTime'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const userData = getUserData()
+const { notification, showNotification } = useNotification()
 
 const editingIndex = ref([])
 const addingNew = ref(false)
@@ -184,9 +192,14 @@ const saveSchool = async index => {
     }
     await axiosInstance.put(`/api/edit-school/${school.id}`, dataToSave)
     localStorage.setItem('user_data', JSON.stringify(userData.value))
+    showNotification('Education details updated successfully!')
     editingIndex.value = editingIndex.value.filter(i => i !== index)
   } catch (error) {
     console.error('Failed to update education:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to update education details',
+      'error'
+    )
   }
 }
 
@@ -204,6 +217,7 @@ const saveNewSchool = async () => {
     const response = await axiosInstance.post('/api/add-school', dataToSave)
     userData.value.schools.push(response.data.school)
     localStorage.setItem('user_data', JSON.stringify(userData.value))
+    showNotification('New education added successfully!')
     addingNew.value = false
     newSchool.value = {
       name: '',
@@ -213,6 +227,10 @@ const saveNewSchool = async () => {
     }
   } catch (error) {
     console.error('Failed to add new education:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to add new education',
+      'error'
+    )
   }
 }
 
@@ -231,8 +249,13 @@ const deleteSchool = async (id, index) => {
     await axiosInstance.delete(`/api/delete-school/${id}`)
     userData.value.schools.splice(index, 1)
     localStorage.setItem('user_data', JSON.stringify(userData.value))
+    showNotification('Education deleted successfully!', 'error')
   } catch (error) {
     console.error('Failed to delete education:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to delete education',
+      'error'
+    )
   }
 }
 </script>

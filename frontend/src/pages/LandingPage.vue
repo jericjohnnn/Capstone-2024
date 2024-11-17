@@ -1,48 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <!-- Navbar -->
-    <nav class="bg-white shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex-shrink-0 flex items-center">
-            <h1 class="text-2xl font-bold text-gray-800">MyApp</h1>
-          </div>
-          
-          <div class="space-x-4 flex items-center">
-            <button>About</button>
-            <button>Services</button>
-            <button>Become a Tutor</button>
-          </div>
-
-          <div class="flex items-center space-x-4">
-            <!-- Dynamic Navbar Links -->
-            <template v-if="!isAuthenticated">
-              <button
-                @click="goToLogin"
-                class="text-gray-800 hover:text-blue-500"
-              >
-                Login
-              </button>
-              <button
-                @click="goToRegister"
-                class="text-gray-800 hover:text-green-500"
-              >
-                Register
-              </button>
-            </template>
-
-            <template v-else>
-              <button
-                @click="goToUserPage"
-                class="text-gray-800 hover:text-blue-500"
-              >
-                {{ userType === 'tutor' ? 'Go to Profile' : 'Go to Home' }}
-              </button>
-            </template>
-          </div>
-        </div>
-      </div>
-    </nav>
+   <NavBar />
 
     <!-- Main Content -->
     <main class="flex  max-w-7xl mx-auto  sm:px-6 lg:px-8  h-screen relative">
@@ -66,10 +25,13 @@
       
     </div>
   </div>
+  <FooterSection />
   </div>
 </template>
 
 <script setup>
+import NavBar from '../sections/NavBar.vue';
+import FooterSection from '../sections/FooterSection.vue';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 
@@ -90,7 +52,7 @@ function goToRegister() {
 }
 
 function goToUserPage() {
-  if (userType.value === 'tutor') {
+  if (userType.value === 'Tutor') {
     router.push('/tutor/profile'); // Navigate to tutor profile
   } else {
     router.push('/student/home'); // Navigate to student home

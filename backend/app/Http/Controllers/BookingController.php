@@ -158,6 +158,7 @@ class BookingController extends Controller
     public function negotiateBooking(NegotiateBookingRequest $request, $booking_id)
     {
         $validatedData = $request->validated();
+        $user = Auth::user();
 
         $booking = Booking::findOrFail($booking_id);
 
@@ -175,7 +176,12 @@ class BookingController extends Controller
             ]);
         }
 
-        $booking->load(['student', 'messages.dates']);
+        if ($user->tutor) {
+            $booking->load(['student', 'messages.dates']);
+        }
+        if ($user->student) {
+            $booking->load(['tutor', 'messages.dates']);
+        }
 
         return response()->json([
             'message' => 'Booking requested successfully.',

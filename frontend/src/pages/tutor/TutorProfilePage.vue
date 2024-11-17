@@ -46,10 +46,15 @@
             </div>
 
             <div class="p-4 bg-white rounded-lg shadow-md">
-              <RatingsCarousel
+              <div v-if="userData.ratings.length <= 0">
+                <p>No ratings yet</p>
+              </div>
+              <div v-else>
+                <RatingsCarousel
                 class="w-full"
                 :ratingComments="ratingComments"
-              ></RatingsCarousel>
+              />
+            </div>
             </div>
           </section>
         </div>

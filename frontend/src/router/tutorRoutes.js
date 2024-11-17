@@ -5,7 +5,7 @@ import TutorReceivedRequestsPage from "@/pages/tutor/TutorReceivedRequestsPage.v
 import TutorSchedulePage from "@/pages/tutor/TutorSchedulePage.vue";
 import TutorSettingsPage from "@/pages/tutor/TutorSettingsPage.vue";
 import OngoingBookingDetails from "@/components/tutor/TutorSchedule/OngoingBookingDetails.vue";
-
+import TutorPendingApprovalPage from "@/pages/auth/TutorPendingApprovalPage.vue";
 
 const tutorRoutes = [
   {
@@ -42,6 +42,11 @@ const tutorRoutes = [
     path: '/tutor/settings',
     name: 'TutorSettings',
     component: TutorSettingsPage
+  },
+  {
+    path: '/tutor/pending-approval',
+    name: 'TutorPendingApproval',
+    component: TutorPendingApprovalPage
   },
 ];
 

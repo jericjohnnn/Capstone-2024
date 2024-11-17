@@ -1,91 +1,124 @@
 <template>
-  <div class="register-container flex flex-col items-center justify-start mt-10 h-screen text-center p-5 rounded-md">
-    <div class="bg-gray-300 px-4 rounded-xl flex pb-2">
-      <div class="pb-5">
-        <h2 class="py-5 font-bold text-xl">Sign-up as STUDENT</h2>
+  <NavBar />
+  <div class="min-h-[calc(100vh-5rem)] bg-gradient-to-b from-blue-50 to-white py-8 px-4">
+    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg">
+      <div class="p-8">
+        <!-- Header -->
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+          Sign up as <span class="text-blue-600">STUDENT</span>
+        </h2>
 
         <!-- Stepper -->
-        <div class="flex justify-center mb-4">
-          <ul class="flex flex-row gap-x-2 items-center">
-            <li v-for="step in steps" :key="step.id" class="group flex items-center">
+        <div class="mb-8">
+          <ul class="flex justify-center items-center">
+            <li v-for="step in steps" :key="step.id" 
+                class="group flex items-center">
               <div class="flex items-center">
-                <!-- Step circle with dynamic classes -->
                 <span :class="{
-                  'bg-blue-500 text-white': currentStep >= step.id,
-                  'bg-gray-100 text-black': currentStep < step.id,
-                }" class="size-7 flex justify-center items-center shrink-0 font-medium rounded-full">
+                  'bg-blue-600 text-white ring-2 ring-blue-100': currentStep >= step.id,
+                  'bg-gray-100 text-gray-600': currentStep < step.id,
+                }" 
+                class="h-8 w-8 flex justify-center items-center rounded-full font-semibold text-sm transition-all duration-200">
                   {{ step.id }}
                 </span>
-                <div class="ms-2 w-20 h-px bg-gray-200 dark:bg-neutral-700 group-last:hidden"></div>
+                <div class="mx-4 h-0.5 w-20 bg-gray-200 group-last:hidden"></div>
               </div>
             </li>
           </ul>
         </div>
 
-        <div class="flex justify-center">
-          <form @submit.prevent="handleSubmit" class="flex flex-col gap-4 w-[390px] max-w-md">
-            <!-- Step 1: Account Information -->
+        <!-- Form -->
+        <form @submit.prevent="handleSubmit" class="max-w-md mx-auto">
+          <!-- Step 1: Personal Information -->
+          <div v-if="currentStep === 1" class="space-y-4">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Personal Information</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <input type="text" v-model="form.firstName" placeholder="First name" required 
+                     class="col-span-1 h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
+              <input type="text" v-model="form.lastName" placeholder="Last name" required 
+                     class="col-span-1 h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
+            </div>
+            <input type="text" v-model="form.address" placeholder="Address" required 
+                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
+            <input type="date" v-model="form.birthdate" required 
+                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200 text-gray-600" />
+          </div>
+
+          <!-- Step 2: Other Details -->
+          <div v-if="currentStep === 2" class="space-y-4">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Other Details</h3>
+            <input type="text" v-model="form.contactNo" placeholder="Contact Number" required 
+                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
+            <input type="text" v-model="form.schoolIdNo" placeholder="School ID Number" required 
+                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
+            <select 
+              v-model="form.gradeYear" 
+              required 
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200 bg-white text-gray-700"
+            >
+              <option value="" disabled selected>Select Grade Year</option>
+              <option value="Grade 1">Grade 1</option>
+              <option value="Grade 2">Grade 2</option>
+              <option value="Grade 3">Grade 3</option>
+              <option value="Grade 4">Grade 4</option>
+              <option value="Grade 5">Grade 5</option>
+              <option value="Grade 6">Grade 6</option>
+              <option value="Grade 7">Grade 7</option>
+              <option value="Grade 8">Grade 8</option>
+              <option value="Grade 9">Grade 9</option>
+              <option value="Grade 10">Grade 10</option>
+              <option value="Grade 11">Grade 11</option>
+              <option value="Grade 12">Grade 12</option>
+            </select>
+          </div>
+
+          <!-- Step 3: Account Information -->
+          <div v-if="currentStep === 3" class="space-y-4">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Account Information</h3>
+            <input type="email" v-model="form.email" placeholder="Email" required 
+                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
+            <input type="password" v-model="form.password" placeholder="Password" required 
+                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
+            <input type="password" v-model="form.confirmPassword" placeholder="Confirm password" required 
+                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
             
-
-            <!-- Step 2: Personal Information -->
-            <div v-if="currentStep === 1" class="input-group flex flex-wrap gap-4">
-              <div class="font-bold tex-xl">Personal Information</div>
-              <input type="text" v-model="form.firstName" placeholder="First name" required class="input rounded-md w-full h-12 text-sm px-4" />
-              <input type="text" v-model="form.lastName" placeholder="Last name" required class="input rounded-md w-full h-12 text-sm px-4" />
-              <input type="text" v-model="form.address" placeholder="Address" required class="input rounded-md w-full h-12 text-sm px-4" />
-              <input type="date" v-model="form.birthdate" required class="input rounded-md w-full h-12 text-sm px-4 text-gray-600" />
+            <div class="p-4 bg-gray-50 rounded-lg">
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" v-model="form.agreeToTerms" required 
+                       class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                <span class="text-sm text-gray-600">
+                  I agree to <a href="#" class="text-blue-600 hover:text-blue-700">Terms & Conditions</a>
+                </span>
+              </label>
             </div>
+          </div>
 
-            <!-- Step 3: Course and Subjects Selection -->
-            <div v-if="currentStep === 2 " class="input-group flex flex-wrap gap-4">
-              <div class="font-bold tex-xl">Other Details</div>
-              <input type="text" v-model="form.contactNo" placeholder="Contact Number" required class="input rounded-md w-full h-12 text-sm px-4" />
-              <input type="text" v-model="form.schoolIdNo" placeholder="School Id Number" required class="input rounded-md w-full h-12 text-sm px-4" />
-              <select v-model="form.gradeYear" required class="input rounded-md w-full h-12 text-sm px-4">
-                <option value="" disabled>Grade Year</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-              </select>
-            </div>
-
-            <div v-if="currentStep === 3" class="input-group flex flex-wrap gap-4">
-              <div class="font-bold tex-xl">Account Information</div>
-              <input type="email" v-model="form.email" placeholder="Email" required class="input rounded-md w-full h-12 text-sm px-4" />
-              <input type="password" v-model="form.password" placeholder="Password" required class="input rounded-md w-full h-12 text-sm px-4" />
-              <input type="password" v-model="form.confirmPassword" placeholder="Confirm password" required class="input rounded-md w-full h-12 text-sm px-4" />
-              <div class="space-x-3 px-4 py-3 rounded-md bg-gray-100 w-[390px]">
-                <input type="checkbox" v-model="form.agreeToTerms" required class="checkbox rounded-md" />
-                <label>I agree to <a href="#" class="text-blue-500">Terms & Conditions</a></label>
-              </div>
-            </div>
-
-            <!-- Navigation Buttons -->
-            <div class="button-group flex space-x-4">
-              <button type="button" v-if="currentStep > 1" @click="prevStep" class="bg-blue-600 text-white hover:bg-blue-400 rounded-md py-1 justify-center w-20">Back</button>
-              <button type="button" v-if="currentStep < 3" @click="nextStep" class="bg-blue-600 hover:bg-blue-400 text-white rounded-md py-1 justify-center w-20">Next</button>
-              <button v-if="currentStep === 3" type="submit" :disabled="!form.agreeToTerms" class="text-white rounded-md py-1 justify-center w-20 transition-colors" :class="{
-                'bg-blue-600 hover:bg-blue-400 cursor-pointer': form.agreeToTerms,
-                'bg-gray-400 cursor-not-allowed': !form.agreeToTerms
-              }">Sign-up</button>
-            </div>
-          </form>
-        </div>
+          <!-- Navigation Buttons -->
+          <div class="flex justify-end space-x-3 mt-8">
+            <button type="button" v-if="currentStep > 1" @click="prevStep"
+                    class="px-6 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200">
+              Back
+            </button>
+            <button type="button" v-if="currentStep < 3" @click="nextStep"
+                    class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+              Next
+            </button>
+            <button v-if="currentStep === 3" type="submit" :disabled="!form.agreeToTerms"
+                    class="px-6 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200"
+                    :class="form.agreeToTerms ? 'text-white bg-blue-600 hover:bg-blue-700' : 'text-gray-400 bg-gray-100 cursor-not-allowed'">
+              Sign up
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
+  <FooterSection />
 </template>
 
 <script setup>
+import NavBar from '../../sections/NavBar.vue';
+import FooterSection from '../../sections/FooterSection.vue';
 import axiosInstance from '@/axiosInstance';
 import router from '@/router';
 import { reactive, ref } from 'vue'
@@ -106,8 +139,8 @@ const form = reactive({
   lastName: '',
   address: '',
   birthdate: '',
-  contactNumber: '',
-  schoolIdNumber: '',
+  contactNo: '',
+  schoolIdNo: '',
   gradeYear: '',
   agreeToTerms: false,
 })

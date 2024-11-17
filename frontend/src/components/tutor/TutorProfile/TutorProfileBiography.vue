@@ -1,5 +1,11 @@
 <template>
   <div class="space-y-3">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
+
     <div class="flex justify-between items-center">
       <h3 class="font-semibold">Biography</h3>
       <button 
@@ -67,11 +73,14 @@
 import { ref, computed } from 'vue'
 import axiosInstance from '@/axiosInstance'
 import { getUserData } from '@/utils/user'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const userData = getUserData()
 const isEditing = ref(false)
 const editedBiography = ref(userData.value.biography || '')
 const showFullBio = ref(false)
+const { notification, showNotification } = useNotification()
 
 // Compute if biography is long enough to need truncation
 const bioIsLong = computed(() => {
@@ -91,16 +100,21 @@ const saveBiography = async () => {
     })
     userData.value.biography = editedBiography.value
     localStorage.setItem('user_data', JSON.stringify(userData.value))
+    showNotification('Biography updated successfully!')
     isEditing.value = false
   } catch (error) {
     console.error('Failed to update biography:', error)
-    alert('Failed to update biography')
+    showNotification(
+      error.response?.data?.message || 'Failed to update biography',
+      'error'
+    )
   }
 }
 
 const cancelEdit = () => {
   isEditing.value = false
   showFullBio.value = false
+  editedBiography.value = userData.value.biography || ''
 }
 </script>
 

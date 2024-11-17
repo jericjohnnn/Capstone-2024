@@ -1,5 +1,10 @@
 <template>
   <main class="bg-blue-50">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
     <SideBar>
       <main
         class="container grid grid-rows-[auto,auto,1fr] grid-cols-1 md:grid-rows-[auto,1fr] md:grid-cols-5 py-5 gap-4 min-h-screen"
@@ -17,7 +22,7 @@
         <!-- Overview Section -->
         <div
           class="md:row-span-1 md:col-span-2 bg-white rounded-lg py-3 md:overflow-auto shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200"
-           :class="!bookDetails ? 'md:overflow-hidden' : ''"
+          :class="!bookDetails ? 'md:overflow-hidden' : ''"
         >
           <h2 class="text-xl font-medium text-center">Overview</h2>
           <div
@@ -131,8 +136,8 @@
               <div>
                 <button
                   :disabled="isExpired"
-                  @click="goToSchedules"
-                  class="bg-blue-400 w-full p-2 rounded-md"
+                  @click="updateBookingStatus('Completed')"
+                  class="bg-blue-400 w-full p-2 rounded-md text-white hover:bg-blue-500 transition-colors"
                 >
                   Mark as Complete
                 </button>
@@ -175,7 +180,7 @@
                   }}
                 </h3>
                 <p class="pl-2 text-xs">Title:</p>
-                <div class="pb-2 px-2 ">
+                <div class="pb-2 px-2">
                   <div
                     class="p-2 border rounded min-h-20 overflow-auto"
                     :class="
@@ -216,7 +221,7 @@
 import FooterSection from '@/sections/FooterSection.vue'
 import BreadCrumb from '@/components/BreadCrumb.vue'
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
@@ -226,9 +231,11 @@ import {
   formatTo12Hour,
 } from '@/utils/dateTime'
 import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const route = useRoute()
-
+const router = useRouter()
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +
   btoa(`
@@ -256,9 +263,28 @@ const checkIfExpired = () => {
     isExpired.value = !isExpired.value
   }
 }
-//
 
-// const bookMessages = ref(null)
+const updateBookingStatus = async status => {
+  try {
+    await axiosInstance.patch(
+      `/api/update-student-booking/${route.params.bookId}`,
+      {
+        status: status,
+      },
+    )
+    showNotification('Booking marked as completed successfully!')
+    setTimeout(() => {
+      router.push({ path: '/student/requests?tab=completed' })
+    }, 1500)
+  } catch (err) {
+    console.error('Error updating booking status:', err)
+    showNotification(
+      err.response?.data?.message || 'Failed to update booking status',
+      'error'
+    )
+  }
+}
+
 const bookDetails = ref(null)
 
 const fetchBookingDetails = async bookId => {
@@ -268,21 +294,18 @@ const fetchBookingDetails = async bookId => {
     )
     bookDetails.value = response.data.book_details
     checkIfExpired()
-
-    // Assign and sort messages by created_at in descending order
-    // if (bookDetails.value && bookDetails.value.messages) {
-    //   bookMessages.value = [...bookDetails.value.messages].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    // }
   } catch (err) {
     console.error('Error fetching booking details:', err)
   }
 }
 
+const { notification, showNotification } = useNotification()
+
 onMounted(() => {
   const initialBookId = route.params.bookId
   if (initialBookId) {
     fetchBookingDetails(initialBookId)
-  }
+  } 
 })
 </script>
 <style>

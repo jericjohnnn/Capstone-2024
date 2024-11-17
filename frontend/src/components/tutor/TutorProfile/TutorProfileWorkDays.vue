@@ -1,5 +1,11 @@
 <template>
   <div class="mb-6">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
+
     <div class="flex justify-between items-center mb-3">
       <h3 class="font-medium">Days available</h3>
       <button 
@@ -64,8 +70,11 @@
 import { computed, ref } from 'vue';
 import axiosInstance from '@/axiosInstance'
 import { getUserData } from '@/utils/user'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const userData = getUserData()
+const { notification, showNotification } = useNotification()
 
 const daysOfWeek = [
   'monday',
@@ -91,23 +100,29 @@ const toggleEditMode = () => {
   if (isEditing.value) {
     selectedDays.value = [...availableDays.value];
   }
-  isEditing.value = !isEditing.value;
-};
+  isEditing.value = !isEditing.value
+}
 
 const saveDays = async () => {
-  const daysData = {};
+  const daysData = {}
   daysOfWeek.forEach(day => {
-    daysData[day] = selectedDays.value.includes(day) ? 1 : 0;
-  });
+    daysData[day] = selectedDays.value.includes(day) ? 1 : 0
+  })
 
   try {
-    const response = await axiosInstance.put('/api/edit-work-days', daysData);
-    userData.value.work_days = response.data.work_days;
-    localStorage.setItem('user_data', JSON.stringify(userData.value));
-    isEditing.value = false;
+    const response = await axiosInstance.put('/api/edit-work-days', daysData)
+    userData.value.work_days = response.data.work_days
+    localStorage.setItem('user_data', JSON.stringify(userData.value))
+    isEditing.value = false
+    showNotification('Work days updated successfully!')
   } catch (error) {
-    console.error('Error saving days:', error);
-    alert('Failed to save work days');
+    console.error('Error saving days:', error)
+    selectedDays.value = [...availableDays.value]
+    showNotification(
+      error.response?.data?.message || 'Failed to update work days',
+      'error'
+    )
   }
-};
+}
+
 </script>

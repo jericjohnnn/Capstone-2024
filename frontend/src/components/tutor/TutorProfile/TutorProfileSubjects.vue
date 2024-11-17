@@ -1,5 +1,11 @@
 <template>
   <div>
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
+    
     <h2 class="flex justify-between items-center mb-3">
       <span class="font-semibold">Subjects</span>
       <button @click="toggleEditMode" class="text-blue-500 text-sm hover:text-blue-600">
@@ -65,8 +71,11 @@
 import { ref, onMounted } from 'vue';
 import axiosInstance from '@/axiosInstance';
 import { getUserData } from '@/utils/user'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const userData = getUserData()
+const { notification, showNotification } = useNotification()
 const subjects = ref(userData.value.subjects || []);
 const isEditing = ref(false);
 const originalSubjects = ref([]);
@@ -79,6 +88,10 @@ const fetchSubjects = async () => {
     availableSubjects.value = data.subjects;
   } catch (error) {
     console.error('Error fetching subjects:', error);
+    showNotification(
+      'Failed to load available subjects',
+      'error'
+    )
   }
 };
 
@@ -117,11 +130,15 @@ const saveChanges = async () => {
       userData.value.subjects = subjects.value;
       localStorage.setItem('user_data', JSON.stringify(userData.value));
       isEditing.value = false;
+      showNotification('Subjects updated successfully!');
     }
   } catch (error) {
     console.error('Error saving subjects:', error);
     subjects.value = [...originalSubjects.value];
-    alert('There was an error saving subjects.');
+    showNotification(
+      error.response?.data?.message || 'Failed to update subjects',
+      'error'
+    );
   }
 };
 

@@ -1,5 +1,11 @@
 <template>
   <div class="mb-6">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
+
     <div class="flex justify-between items-center mb-3">
       <h3 class="font-medium">Tutor Rate</h3>
       <button 
@@ -51,17 +57,13 @@
 import { ref } from 'vue'
 import axiosInstance from '@/axiosInstance'
 import { getUserData } from '@/utils/user'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const userData = getUserData()
 const tutorRate = ref(userData.value.tutor_rate || 0)
 const isEditing = ref(false)
-
-const toggleEditMode = () => {
-  if (isEditing.value) {
-    tutorRate.value = userData.value.tutor_rate
-  }
-  isEditing.value = !isEditing.value
-}
+const { notification, showNotification } = useNotification()
 
 const saveTutorRate = async () => {
   try {
@@ -73,9 +75,21 @@ const saveTutorRate = async () => {
 
     userData.value.tutor_rate = data.tutor_rate
     localStorage.setItem('user_data', JSON.stringify(userData.value))
+    showNotification('Tutor rate updated successfully!')
     isEditing.value = false
   } catch (error) {
     console.error('Error saving tutor rate:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to update tutor rate',
+      'error'
+    )
   }
+}
+
+const toggleEditMode = () => {
+  if (isEditing.value) {
+    tutorRate.value = userData.value.tutor_rate
+  }
+  isEditing.value = !isEditing.value
 }
 </script>

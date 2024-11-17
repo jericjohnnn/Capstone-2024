@@ -66,3 +66,10 @@ export const formatRawDateTime = (dateString) => {
 export const formatDateAndTimeToTimestamp = (date, time) => {
   return new Date(`${date.format('YYYY-MM-DD')} ${time}`).getTime();
 };
+
+export const convertTo24HourFromObject = ({ hour, minute = '00', period }) => {
+  let hours = parseInt(hour, 10);
+  if (period === 'PM' && hours < 12) hours += 12;
+  if (period === 'AM' && hours === 12) hours = 0;
+  return `${String(hours).padStart(2, '0')}:${minute}:00`;
+};
