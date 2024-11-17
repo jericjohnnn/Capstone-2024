@@ -26,7 +26,6 @@ const router = createRouter({
     },
   ],
   scrollBehavior() {
-    // Reset scroll to top with smooth scroll behavior
     return { top: 0, behavior: 'smooth' };
   },
 })
@@ -63,14 +62,15 @@ router.beforeEach((to, from, next) => {
           to.name !== 'TutorPendingApproval' && 
           to.path !== '/') {
         return next('/tutor/pending-approval')
-      }
+      }else{
 
       if (to.path.startsWith('/student')) {
         return next('/tutor/profile')
       }
 
       if (to.path === '/tutor/' || to.path === '/tutor') {
-        return next('/tutor/profile')
+          return next('/tutor/profile')
+        }
       }
     }
 
