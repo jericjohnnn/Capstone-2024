@@ -1,122 +1,150 @@
 <template>
   <main class="bg-blue-50">
     <SideBar>
-      <main class="container flex flex-col justify-center gap-14 min-h-screen">
+      <main class="container grid grid-rows-[auto,auto,1fr] grid-cols-1 md:grid-rows-[auto,1fr] md:grid-cols-5 py-5 gap-4 min-h-screen">
         <!-- Breadcrumb -->
-        <BreadCrumb
-          :breadcrumbs="[
-            { label: 'Schedule', route: '/tutor/schedule' },
-            { label: 'Booking Details', route: '' }
-          ]"
-        />
+        <div class="col-span-1 md:col-span-5">
+          <BreadCrumb
+            :breadcrumbs="[
+              { label: 'Schedule', route: '/tutor/schedule' },
+              { label: 'Booking Details', route: '' },
+            ]"
+          />
+        </div>
 
-        <div v-if="!bookDetails">LOADING</div>
-        <div v-else>
-          <div class="h-[calc(100vh-150px)] flex gap-10">
-            <!-- Overview Section -->
-            <div class="w-2/5 bg-white rounded-lg p-6 shadow-sm">
-              <h2 class="text-lg mb-6">overview</h2>
-
-              <!-- Profile Section -->
-              <div class="flex gap-4 mb-6">
-                <div class="shrink-0">
-                  <img
-                    class="h-14 w-14 rounded-full"
-                    :src="bookDetails.student.profile_image"
-                    alt="profile image"
-                  />
-                </div>
-                <div class="w-full">
-                  <div class="flex justify-between bg-gray-50 p-2 rounded mb-2">
-                    <p class="font-medium">
-                      {{ bookDetails.student.first_name }}
-                      {{ bookDetails.student.last_name }}, 25
-                    </p>
-                    <button class="text-blue-600 underline text-sm">
-                      report
-                    </button>
-                  </div>
+        <!-- Overview Section -->
+        <div class="md:row-span-1 md:col-span-2 bg-white rounded-lg py-3 md:overflow-auto shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+          <h2 class="text-xl font-medium text-center">Overview</h2>
+          <div v-if="!bookDetails" class="flex min-h-40 justify-center items-center md:h-full">
+            <LoaderSpinner />
+          </div>
+          <div v-if="bookDetails" class="flex flex-col gap-4 px-2 md:px-5 py-4">
+            <!-- Profile Section -->
+            <div class="flex items-center gap-2">
+              <div class="shrink-0">
+                <img
+                  class="h-14 w-14 rounded-full"
+                  :src="bookDetails.student.profile_image || defaultProfileImage"
+                  alt="profile image"
+                />
+              </div>
+              <div class="w-full">
+                <div class="flex justify-between rounded">
+                  <p class="font-medium text-lg">
+                    {{ bookDetails.student.first_name }}
+                    {{ bookDetails.student.last_name }}
+                  </p>
+                  <button class="border-2 border-blue-600 text-blue-600 rounded-md px-2 py-1 text-sm">
+                    Report
+                  </button>
                 </div>
               </div>
+            </div>
 
-              <!-- Details -->
-              <div class="space-y-4">
-                <div class="flex items-center gap-2">
-                  <span>Status:</span>
-                  <span
-                    class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm"
-                  >
-                    {{ bookDetails.status || 'pending' }}
-                  </span>
-                </div>
+            <!-- Details -->
+            <div class="flex flex-col gap-3">
+              <!-- STATUS -->
+              <div class="flex items-center gap-2">
+                <h2 class="font-medium w-full">Status:</h2>
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm text-center w-full">
+                  {{ bookDetails.status || 'pending' }}
+                </span>
+              </div>
 
-                <div class="flex items-center gap-2">
-                  <span>Subject:</span>
-                  <span
-                    class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-                  >
-                    {{ bookDetails.subject }}
-                  </span>
-                </div>
+              <!-- SUBJECT -->
+              <div class="flex items-center gap-2">
+                <h2 class="font-medium w-full">Subject:</h2>
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm w-full text-center">
+                  {{ bookDetails.subject }}
+                </span>
+              </div>
 
-                <p>
-                  mode of tutor: {{ bookDetails.learning_mode || 'online' }}
-                </p>
-                <p>
-                  {{
-                    bookDetails.learning_mode === 'Online'
-                      ? 'Online Meeting Platform: ' +
-                        bookDetails.online_meeting_platform
-                      : 'Location: ' + bookDetails.location
-                  }}
-                </p>
-                <p>Contact info: {{ bookDetails.contact_number }}</p>
+              <!-- LEARNING PREFERENCE -->
+              <div class="flex items-center gap-2">
+                <h2 class="font-medium w-full">Learning Preference:</h2>
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm w-full text-center">
+                  {{ bookDetails.learning_mode || 'online' }}
+                </span>
+              </div>
 
-                <!-- Date and Time -->
-                <div v-if="bookDetails.messages?.length">
-                  <p class="font-medium mb-2">Date & Time:</p>
-                  <div
-                    v-for="dateTime in bookDetails.messages[
-                      bookDetails.messages.length - 1
-                    ].dates"
-                    :key="dateTime.id"
-                    class="text-blue-600"
-                  >
+              <!-- ONLINE MEETING PLATFORM OR LOCATION -->
+              <div class="flex items-center gap-2">
+                <h2 class="font-medium w-full shrink">
+                  {{ bookDetails.learning_mode === 'Online' ? 'Online Meeting Platform:' : 'Location:' }}
+                </h2>
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full w-full text-sm text-center">
+                  {{ bookDetails.learning_mode === 'Online' ? bookDetails.online_meeting_platform : bookDetails.location }}
+                </span>
+              </div>
+
+              <!-- CONTACT INFO -->
+              <div class="flex items-center gap-2">
+                <h2 class="font-medium w-full">Contact Info:</h2>
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm w-full text-center">
+                  {{ bookDetails.contact_number }}
+                </span>
+              </div>
+
+              <!-- Date and Time -->
+              <div v-if="bookDetails.messages?.length">
+                <h2 class="font-medium w-full mb-2">Date & Time:</h2>
+                <div
+                  v-for="dateTime in bookDetails.messages[bookDetails.messages.length - 1].dates"
+                  :key="dateTime.id"
+                  class="text-blue-600 w-full"
+                >
                   {{ formatDate(dateTime.start_time) }}
-                    {{ formatTo12Hour(extractTimeFromISO(dateTime.start_time)) }} -
-                    {{ formatTo12Hour(extractTimeFromISO(dateTime.end_time)) }}
-                  </div>
+                  {{ formatTo12Hour(extractTimeFromISO(dateTime.start_time)) }} -
+                  {{ formatTo12Hour(extractTimeFromISO(dateTime.end_time)) }}
                 </div>
-
               </div>
+
               <div>
                 <button
                   :disabled="isExpired"
                   @click="goToSchedules"
-                  class="bg-blue-400"
+                  class="bg-blue-400 w-full p-2 rounded-md text-white"
                 >
-                  mark as complete
+                  Mark as Complete
                 </button>
               </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Messages Section -->
-            <div class="w-3/5 bg-white rounded-lg p-6 shadow-sm">
-              <h3>your message</h3>
-              <div class="space-y-4 outline">
-                <div v-for="message in bookDetails.messages" :key="message.id">
-                  <div class="mb-2">
-                    <label class="block text-sm font-medium mb-1"
-                      >SUBJECT</label
-                    >
-                    <div class="p-2 bg-gray-50 rounded">
-                      {{ message.title }}
-                    </div>
+        <!-- Messages Section -->
+        <div class="row-span-1 md:col-span-3 md:max-h-[calc(100vh-4.8rem)] md:overflow-scroll bg-white rounded-lg p-3 shadow-sm">
+          <div v-if="!bookDetails" class="flex min-h-40 justify-center items-center md:h-full">
+            <LoaderSpinner />
+          </div>
+          <div v-if="bookDetails" class="md:px-3">
+            <h2 class="text-xl font-medium text-center pb-2">Messages</h2>
+            <div class="space-y-6">
+              <div
+                v-for="(message, index) in bookDetails.messages"
+                :key="message.id"
+                class="py-3 rounded-lg border"
+                :class="index % 2 === 0 ? 'bg-slate-100 border-slate-300' : 'bg-blue-100 border-blue-300'"
+              >
+                <h3 class="text-base text-center font-medium">
+                  {{ index % 2 === 0 ?  bookDetails.student.first_name + ' ' + bookDetails.student.last_name + "'s message" : 'Your message' }}
+                </h3>
+                <p class="pl-2 text-xs">Title:</p>
+                <div class="pb-2 px-2">
+                  <div
+                    class="p-2 border rounded min-h-20 overflow-auto"
+                    :class="index % 2 === 0 ? 'border-slate-400 bg-white/40': 'border-blue-400 bg-white/40'"
+                  >
+                    <p>{{ message.title }}</p>
                   </div>
-                  <div>
-                    <div class="p-2 bg-gray-50 rounded">
-                      {{ message.message }}
-                    </div>
+                </div>
+                <p class="pl-2 text-xs">Message:</p>
+                <div class="pb-2 px-2">
+                  <div
+                    class="p-2 border rounded min-h-40"
+                    :class="index % 2 === 0 ? 'border-slate-400 bg-white/40': 'border-blue-400 bg-white/40'"
+                  >
+                    {{ message.message }}
                   </div>
                 </div>
               </div>
@@ -125,47 +153,49 @@
         </div>
       </main>
     </SideBar>
+    <FooterSection class="md:hidden" />
     <HelpButton />
   </main>
 </template>
 
 <script setup>
+import FooterSection from '@/sections/FooterSection.vue'
 import BreadCrumb from '@/components/BreadCrumb.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import SideBar from '@/components/SideBar.vue'
 import HelpButton from '@/components/HelpButton.vue'
 import axiosInstance from '@/axiosInstance'
+import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
 import { formatDate, extractTimeFromISO, formatTo12Hour } from '@/utils/dateTime'
 
 const route = useRoute()
+const defaultProfileImage = 'data:image/svg+xml;base64,' + btoa(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="11" fill="white" stroke="#E5E7EB" stroke-width="2"/>
+    <circle cx="12" cy="8" r="3.5" fill="#9CA3AF"/>
+    <path d="M12 12.5c-3 0-5.5 1.5-7 3.5 1.5 3 4 5 7 5s5.5-2 7-5c-1.5-2-4-3.5-7-3.5z" fill="#9CA3AF"/>
+  </svg>`)
 
-// check booking if its expired
 const isExpired = ref(true)
+const bookDetails = ref(null)
 
 const checkIfExpired = () => {
   const dates = bookDetails.value.messages[bookDetails.value.messages.length - 1].dates
-
   const latestEndTime = dates.reduce((latest, date) => {
     const currentEndTime = new Date(date.end_time)
     return currentEndTime > latest ? currentEndTime : latest
   }, new Date(dates[0].end_time))
 
   const currentDate = new Date()
-
-  if(latestEndTime < currentDate){
+  if (latestEndTime < currentDate) {
     isExpired.value = !isExpired.value
   }
 }
-//
-
-const bookDetails = ref(null)
 
 const fetchBookingDetails = async bookId => {
   try {
-    const response = await axiosInstance.get(
-      `/api/book-request-details/${bookId}`,
-    )
+    const response = await axiosInstance.get(`/api/book-request-details/${bookId}`)
     bookDetails.value = response.data.book_details
     checkIfExpired()
   } catch (err) {
@@ -180,6 +210,7 @@ onMounted(() => {
   }
 })
 </script>
+
 <style>
 button:disabled {
   background-color: #d3d3d3;
