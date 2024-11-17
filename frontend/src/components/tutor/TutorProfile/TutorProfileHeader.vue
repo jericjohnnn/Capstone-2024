@@ -1,40 +1,41 @@
 <template>
   <div class="p-4 bg-white rounded-lg shadow-md">
     <!-- Profile Display -->
-    <div v-if="!isProfileEdit" class="flex items-center justify-between">
-      <div class="flex items-center gap-4">
+    <div v-if="!isProfileEdit" class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex flex-col md:flex-row items-center md:items-start gap-4">
         <img
           :src="userData.profile_image || defaultProfileImage"
-          class="w-20 h-20 rounded-full object-cover bg-gray-200"
+          class="w-24 h-24 md:w-20 md:h-20 rounded-full object-cover bg-gray-200"
           alt="Profile Image"
         />
-        <div>
-          <h2 class="text-lg font-semibold">
+        <div class="text-center md:text-left">
+          <h2 class="text-xl md:text-lg font-semibold">
             {{ userData.first_name }} {{ userData.last_name }}
           </h2>
-          <p>{{ userEmail }}</p>
+          <p class="text-gray-600">{{ userEmail }}</p>
         </div>
       </div>
-      <div class="flex gap-4">
+      <div class="flex justify-center md:justify-end gap-4">
         <button
           @click="isProfileEdit = true"
-          class="px-2 py-1 text-sm text-white bg-gray-600 rounded hover:bg-gray-700"
+          class="px-4 py-2 text-sm text-white bg-gray-600 rounded hover:bg-gray-700"
         >
           Edit
         </button>
         <router-link
           :to="{ name: 'TutorSettings' }"
           class="px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
-          >Profile settings</router-link
         >
+          Profile settings
+        </router-link>
       </div>
     </div>
 
     <!-- Profile Edit Form -->
-    <div v-if="isProfileEdit" class="flex items-start justify-between">
-      <div class="flex gap-4">
+    <div v-if="isProfileEdit" class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+      <div class="flex flex-col md:flex-row gap-4">
         <!-- Profile Image Upload -->
-        <div class="relative w-20 h-20">
+        <div class="relative w-24 h-24 md:w-20 md:h-20 mx-auto md:mx-0">
           <input
             type="file"
             ref="fileInput"
@@ -54,16 +55,13 @@
             <div
               class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-full"
             >
-              <span
-                class="text-white text-3xl opacity-0 group-hover:opacity-100"
-                >+</span
-              >
+              <span class="text-white text-3xl opacity-0 group-hover:opacity-100">+</span>
             </div>
           </div>
         </div>
         <!-- Edit Form -->
-        <div class="w-64 flex flex-col gap-2">
-          <div class="flex">
+        <div class="flex flex-col w-full md:w-64 gap-2">
+          <div class="flex flex-col md:flex-row gap-2">
             <input
               v-model="userInfoData.first_name"
               placeholder="First name"
@@ -75,19 +73,19 @@
               class="w-full px-2 py-1 border rounded text-sm"
             />
           </div>
-          <p>{{ userEmail }}</p>
+          <p class="text-center md:text-left text-gray-600">{{ userEmail }}</p>
         </div>
       </div>
-      <div class="flex gap-4">
+      <div class="flex justify-center md:justify-end gap-4">
         <button
           @click="cancelEdit"
-          class="px-4 py-1 text-sm text-gray-600 hover:text-gray-800"
+          class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
         >
           Cancel
         </button>
         <button
           @click="submitNewDetails"
-          class="px-4 py-1 text-sm text-green-600 hover:text-green-800"
+          class="px-4 py-2 text-sm text-green-600 hover:text-green-800"
         >
           Save
         </button>

@@ -34,7 +34,7 @@
               >
                 <LoaderSpinner />
               </div>
-              <div v-else class="space-y-4 outline">
+              <div v-else class="space-y-4">
                 <TutorCard
                   v-for="tutor in tutors"
                   :key="tutor.id"

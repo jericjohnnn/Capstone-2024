@@ -1,40 +1,74 @@
 <template>
   <div class="mb-6">
-    <h3 class="font-medium mb-2">
-      Hours available:
-      <button @click="toggleEdit" class="ml-2 text-blue-600">
+    <div class="flex justify-between items-center mb-3">
+      <h3 class="font-medium">Hours available</h3>
+      <button 
+        @click="toggleEdit" 
+        class="text-blue-600 text-sm hover:text-blue-700 transition-colors"
+      >
         {{ isEditing ? 'Cancel' : 'Edit' }}
       </button>
-    </h3>
+    </div>
 
-    <div v-if="!isEditing">
-      <p class="text-blue-600 font-medium">
+    <!-- Display Mode -->
+    <div v-if="!isEditing" class="px-2">
+      <p class="text-blue-600 text-sm font-medium">
         {{ formatTo12Hour(userData.work_days.start_time) }} - {{ formatTo12Hour(userData.work_days.end_time) }}
       </p>
     </div>
 
-    <div v-else class="space-y-2">
-      <div class="flex gap-2">
-        <select v-model="startTime.hour" class="border p-1 rounded">
-          <option v-for="h in 12" :key="h" :value="h">{{ h }}</option>
-        </select>
-        <select v-model="startTime.period" class="border p-1 rounded">
-          <option value="AM">AM</option>
-          <option value="PM">PM</option>
-        </select>
+    <!-- Edit Mode -->
+    <div v-else class="space-y-3">
+      <div class="flex flex-col sm:flex-row gap-3">
+        <!-- Start Time -->
+        <div class="flex-1 space-y-1">
+          <label class="text-sm text-gray-600">Start Time</label>
+          <div class="flex gap-2">
+            <select 
+              v-model="startTime.hour" 
+              class="flex-1 px-3 py-1.5 border rounded text-sm focus:border-blue-500 focus:outline-none"
+            >
+              <option v-for="h in 12" :key="h" :value="h">{{ h }}</option>
+            </select>
+            <select 
+              v-model="startTime.period" 
+              class="w-20 px-3 py-1.5 border rounded text-sm focus:border-blue-500 focus:outline-none"
+            >
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- End Time -->
+        <div class="flex-1 space-y-1">
+          <label class="text-sm text-gray-600">End Time</label>
+          <div class="flex gap-2">
+            <select 
+              v-model="endTime.hour" 
+              class="flex-1 px-3 py-1.5 border rounded text-sm focus:border-blue-500 focus:outline-none"
+            >
+              <option v-for="h in 12" :key="h" :value="h">{{ h }}</option>
+            </select>
+            <select 
+              v-model="endTime.period" 
+              class="w-20 px-3 py-1.5 border rounded text-sm focus:border-blue-500 focus:outline-none"
+            >
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      <div class="flex gap-2">
-        <select v-model="endTime.hour" class="border p-1 rounded">
-          <option v-for="h in 12" :key="h" :value="h">{{ h }}</option>
-        </select>
-        <select v-model="endTime.period" class="border p-1 rounded">
-          <option value="AM">AM</option>
-          <option value="PM">PM</option>
-        </select>
+      <div class="flex justify-end pt-2">
+        <button
+          @click="saveHours"
+          class="w-full sm:w-auto px-6 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+        >
+          Save
+        </button>
       </div>
-
-      <button @click="saveHours" class="text-blue-600">Save</button>
     </div>
   </div>
 </template>
@@ -44,7 +78,6 @@ import { ref } from 'vue'
 import axiosInstance from '@/axiosInstance'
 import { parseTo12Hour, convertTo24Hour, formatTo12Hour } from '@/utils/dateTime'
 import { getUserData } from '@/utils/user'
-
 
 // State management
 const isEditing = ref(false)

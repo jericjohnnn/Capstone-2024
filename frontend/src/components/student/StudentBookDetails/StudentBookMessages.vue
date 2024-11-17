@@ -125,7 +125,7 @@
             <div v-if="!tutorBookings && !studentBookings && !tutorWorkDays">
               <LoaderSpinner />
             </div>
-            <div v-else>
+            <div v-else class="w-full">
               <BookCalendar
                 :tutorBookings="tutorBookings"
                 :tutorWorkDays="tutorWorkDays"
@@ -177,7 +177,6 @@
         class="w-full text-center text-gray-600"
       >
         <p>Waiting for tutor to respond.</p>
-        <div>{{ bookDetails.status }}</div>
       </div>
 
       <!-- NEGOTIATE -->
@@ -228,7 +227,7 @@
   </div>
 </template>
 <script setup>
-import PopUpModal from '@/components/reusables/PopUpModal.vue'
+import PopUpModal from '@/components/Reusables/PopUpModal.vue'
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'

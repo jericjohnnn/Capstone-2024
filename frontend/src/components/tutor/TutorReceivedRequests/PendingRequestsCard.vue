@@ -43,13 +43,13 @@
         </div>
 
         <div
-          class="flex justify-between md:justify-end gap-3 w-full items-center md:col-span-1"
+          class="flex justify-between  md:justify-end gap-3 w-full items-center md:col-span-1"
         >
           <p class="hidden md:block font-semibold">{{ book.status }}</p>
           <button
             @click="goToBookDetails(book.id)"
             type="button"
-            class="py-2 px-4 text-sm w-full font-normal rounded-lg border border-blue-400 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none"
+            class="py-2 px-4 text-sm md:text-xs w-full md:w-3/6   font-normal rounded-lg border border-blue-400 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none"
           >
             Review request
           </button>

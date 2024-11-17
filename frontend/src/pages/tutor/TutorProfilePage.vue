@@ -1,26 +1,32 @@
 <template>
   <main class="bg-blue-50">
     <SideBar>
-      <main class="container p-5 mx-auto">
+      <main class="container pt-3 pb-7 mx-auto">
         <!-- Profile Header -->
         <TutorProfileHeader></TutorProfileHeader>
 
         <!-- Profile Content -->
-        <div class="flex mt-6 space-x-4">
+        <div class="flex flex-col md:flex-row mt-4 space-y-4 md:space-y-0 md:space-x-4">
           <!-- Subjects, Rating, and Availability -->
-          <section class="w-1/3 p-4 bg-white rounded-lg shadow-md">
-            <h3 class="font-semibold">Ratings:</h3>
-            <StarRating :rating="averageRatings ? averageRatings : 0"></StarRating>
+          <section class="w-full md:w-1/3 p-4 bg-white rounded-lg shadow-md">
+            <div class="space-y-4">
+              <div>
+                <h3 class="font-semibold">Ratings:</h3>
+                <StarRating :rating="averageRatings ? averageRatings : 0"></StarRating>
+              </div>
 
-            <TutorProfileSubjects></TutorProfileSubjects>
+              <TutorProfileSubjects></TutorProfileSubjects>
 
-            <h3 class="mt-4 font-semibold">Availability:</h3>
-            <TutorProfileWorkDays />
-            <TutorProfileWorkHours />
+              <div>
+                <h3 class="font-semibold">Availability:</h3>
+                <TutorProfileWorkDays />
+                <TutorProfileWorkHours />
+              </div>
 
-            <TutorProfileRate></TutorProfileRate>
+              <TutorProfileRate></TutorProfileRate>
 
-            <TutorProfileDetails></TutorProfileDetails>
+              <TutorProfileDetails></TutorProfileDetails>
+            </div>
           </section>
 
           <!-- Bio, Education, and Certification -->
@@ -39,7 +45,7 @@
               <TutorProfileCertificate></TutorProfileCertificate>
             </div>
 
-            <div>
+            <div class="p-4 bg-white rounded-lg shadow-md">
               <RatingsCarousel
                 class="w-full"
                 :ratingComments="ratingComments"
@@ -49,12 +55,14 @@
         </div>
       </main>
     </SideBar>
+    <FooterSection class="md:hidden"/>
 
     <HelpButton />
   </main>
 </template>
 
 <script setup>
+import FooterSection from '@/sections/FooterSection.vue'
 import TutorProfileCertificate from '@/components/tutor/TutorProfile/TutorProfileCertificate.vue'
 import TutorProfileEducation from '@/components/tutor/TutorProfile/TutorProfileEducation.vue'
 import TutorProfileBiography from '@/components/tutor/TutorProfile/TutorProfileBiography.vue'

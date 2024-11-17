@@ -1,57 +1,131 @@
 <template>
-  <div class="space-y-4 ">
+  <div class="space-y-4">
+    <!-- Certificate List -->
     <div
       v-for="(certificate, index) in userData.certificates"
       :key="certificate.id"
-      class="flex bg-white p-6 rounded-lg outline"
+      class="p-4 bg-white border rounded-lg transition-all"
+      :class="{'shadow-sm hover:shadow-md': !editingIndex.includes(index)}"
     >
-      <div v-if="!editingIndex.includes(index)" class="flex gap-8 h-20">
-        <div class="">
-          <span class="w-10 h-10  flex items-center justify-center">
+      <!-- Display Mode -->
+      <div v-if="!editingIndex.includes(index)" class="flex flex-col sm:flex-row sm:items-start gap-4">
+        <div class="flex-shrink-0 justify-items-center">
+          <span class="w-12 h-12 flex items-center justify-center">
             <img
               :src="certificateImage"
               alt="Certificate Image"
-              class="w-12 h-12 rounded-lg object-cover mr-4"
+              class="w-12 h-12 object-cover "
             />
           </span>
         </div>
-        <div class="">
+        
+        <div class="flex-grow space-y-1">
           <p class="text-lg font-semibold text-gray-900">{{ certificate.title }}</p>
           <p class="text-sm text-gray-500 italic">{{ certificate.issuer }}</p>
-          <p class="text-sm text-gray-600 mt-2">{{ formatDate(certificate.date_issued) }}</p>
+          <p class="text-sm text-gray-600">{{ formatDate(certificate.date_issued) }}</p>
         </div>
-        <div class="flex gap-4 mt-2">
-          <button @click="editCertificate(index)" class="text-blue-600">Edit</button>
-          <button @click="deleteCertificate(certificate.id, index)" class="text-red-600">Delete</button>
+        
+        <div class="flex sm:flex-col gap-3 mt-2 sm:mt-0">
+          <button 
+            @click="editCertificate(index)" 
+            class="text-blue-600 text-sm hover:text-blue-700 transition-colors"
+          >
+            Edit
+          </button>
+          <button 
+            @click="deleteCertificate(certificate.id, index)" 
+            class="text-red-600 text-sm hover:text-red-700 transition-colors"
+          >
+            Delete
+          </button>
         </div>
       </div>
 
-      <div v-else class="flex gap-7 items-center h-28 ">
-        <div class=" flex items-center justify-center w-12 h-12 rounded-full bg-gray-300">
-          <i class="fas fa-certificate text-gray-500"></i>
+      <!-- Edit Mode -->
+      <div v-else class="space-y-4">
+        <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex-grow space-y-2">
+            <input
+              type="text"
+              v-model="certificate.title"
+              placeholder="Certificate Title"
+              class="w-full px-3 py-1.5 border rounded text-sm focus:border-blue-500 focus:outline-none"
+            />
+            <input
+              type="text"
+              v-model="certificate.issuer"
+              placeholder="Issuer"
+              class="w-full px-3 py-1.5 border rounded text-sm focus:border-blue-500 focus:outline-none"
+            />
+            <input
+              type="date"
+              v-model="certificate.date_issued"
+              class="w-full px-3 py-1.5 border rounded text-sm focus:border-blue-500 focus:outline-none"
+            />
+          </div>
         </div>
 
-        <div class=" flex flex-col gap-1">
-          <input type="text" v-model="certificate.title" placeholder="Certificate Title" class="border rounded p-1 text-sm" />
-          <input type="text" v-model="certificate.issuer" placeholder="Issuer" class="border rounded p-1 text-sm" />
-          <input type="date" v-model="certificate.date_issued" class="border rounded p-1 text-sm" />
-        </div>
-        <div class="">
-          <button @click="saveCertificate(index)" class="text-blue-600">Save</button>
-          <button @click="cancelEdit(index)" class="text-gray-500">Cancel</button>
+        <div class="flex justify-end gap-2">
+          <button 
+            @click="cancelEdit(index)" 
+            class="px-4 py-1.5 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            @click="saveCertificate(index)" 
+            class="px-4 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+          >
+            Save
+          </button>
         </div>
       </div>
     </div>
 
-    <button @click="addNewCertificate" class="p-2 bg-blue-600 text-white rounded">Add New Certificate</button>
+    <!-- Add New Certificate Button -->
+    <button 
+      v-if="!addingNew"
+      @click="addNewCertificate" 
+      class="w-full py-2 px-4 text-sm text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+    >
+      + Add Certificate
+    </button>
 
-    <div v-if="addingNew" class="bg-gray-100 p-4 rounded-lg outline">
-      <input type="text" v-model="newCertificate.title" placeholder="Certificate Title" class="p-1 border rounded w-full mb-2" />
-      <input type="text" v-model="newCertificate.issuer" placeholder="Issuer" class="p-1 border rounded w-full mb-2" />
-      <input type="date" v-model="newCertificate.date_issued" class="p-1 border rounded w-full mb-2" />
-      <div class="flex gap-2">
-        <button @click="saveNewCertificate" class="text-blue-600">Save</button>
-        <button @click="cancelNewCertificate" class="text-gray-500">Cancel</button>
+    <!-- Add New Certificate Form -->
+    <div v-if="addingNew" class="p-4 border rounded-lg space-y-4">
+      <div class="space-y-2">
+        <input
+          type="text"
+          v-model="newCertificate.title"
+          placeholder="Certificate Title"
+          class="w-full px-3 py-1.5 border rounded text-sm focus:border-blue-500 focus:outline-none"
+        />
+        <input
+          type="text"
+          v-model="newCertificate.issuer"
+          placeholder="Issuer"
+          class="w-full px-3 py-1.5 border rounded text-sm focus:border-blue-500 focus:outline-none"
+        />
+        <input
+          type="date"
+          v-model="newCertificate.date_issued"
+          class="w-full px-3 py-1.5 border rounded text-sm focus:border-blue-500 focus:outline-none"
+        />
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <button 
+          @click="cancelNewCertificate" 
+          class="px-4 py-1.5 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+        >
+          Cancel
+        </button>
+        <button 
+          @click="saveNewCertificate" 
+          class="px-4 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+        >
+          Save
+        </button>
       </div>
     </div>
   </div>

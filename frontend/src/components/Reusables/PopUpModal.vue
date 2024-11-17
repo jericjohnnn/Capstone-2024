@@ -33,7 +33,7 @@
             >
               <div class=" bg-white px-4 pb-4  sm:p-6 sm:pb-2">
                 <div class=" justify-center sm:flex sm:items-start">
-                  <div class=" mt-2 text-center sm:mt-0 sm:text-left">
+                  <div class=" mt-2 text-center grow sm:mt-0 sm:text-left">
                     <DialogTitle
                       as="h3"
                       class=" text-base text-center font-semibold text-gray-900"
