@@ -164,8 +164,9 @@
     <!-- BUTTONS -->
     <div
       :class="[
-        'flex justify-between  rounded-lg backdrop-blur-sm w-full z-30 bg-blue-50 border border-white dark:bg-neutral-900 p-3 border-t dark:border-neutral-700',
+        'flex justify-between rounded-lg backdrop-blur-sm w-full z-30 bg-blue-50 border border-white dark:bg-neutral-900 p-3 border-t dark:border-neutral-700',
         { 'sticky md:relative': !isKeyboardVisible },
+        bookDetails.status === 'Completed' ? 'hidden' : ''
       ]"
     >
       <!-- NEGOTIATE -->
@@ -175,7 +176,8 @@
         "
         class="w-full text-center text-gray-600"
       >
-        <p>waiting for tutor to respond</p>
+        <p>Waiting for tutor to respond.</p>
+        <div>{{ bookDetails.status }}</div>
       </div>
 
       <!-- NEGOTIATE -->

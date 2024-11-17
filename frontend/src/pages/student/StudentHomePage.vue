@@ -22,8 +22,9 @@
         <!-- Main Content Area -->
         <div class="grid grid-cols-1  md:grid-cols-9 gap-4   md:row-span-1 ">
           
+          <!-- md:max-h-[calc(100vh-14rem)] -->
           <!-- Left Column - Split into two rows -->
-          <div class="grid grid-rows-[1fr,auto] gap-4 md:col-span-4 md:max-h-[calc(100vh-14rem)] ">
+          <div class="grid grid-rows-[1fr,auto] gap-4 md:col-span-4  ">
             
             <!-- Tutor Cards Section -->
             <div class="w-full min-h-96">
@@ -33,7 +34,7 @@
               >
                 <LoaderSpinner />
               </div>
-              <div v-else class="space-y-4">
+              <div v-else class="space-y-4 outline">
                 <TutorCard
                   v-for="tutor in tutors"
                   :key="tutor.id"
@@ -57,8 +58,9 @@
             </div>
           </div>
 
+          <!-- max-h-[calc(100vh-14rem)] -->
           <!-- Tutor Details Section -->
-          <div class="w-full hidden md:block md:col-span-5  max-h-[calc(100vh-14rem)]"> 
+          <div class="w-full hidden md:block md:col-span-5  max-h-[calc(100vh-14rem)] xl:max-h-[calc(100vh-5rem)]"> 
             <div
               v-if="tutorDetailsLoading"
               class="flex justify-center items-center h-full"

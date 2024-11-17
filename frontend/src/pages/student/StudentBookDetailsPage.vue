@@ -17,6 +17,7 @@
         <!-- Overview Section -->
         <div
           class="md:row-span-1 md:col-span-2 bg-white rounded-lg py-3  md:overflow-auto shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200"
+          :class="!bookDetails ? 'md:overflow-hidden' : ''"
         >
           <h2 class="text-xl font-medium text-center">Overview</h2>
           <div

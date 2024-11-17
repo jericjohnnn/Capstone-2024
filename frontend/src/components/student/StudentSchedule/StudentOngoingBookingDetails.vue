@@ -17,6 +17,7 @@
         <!-- Overview Section -->
         <div
           class="md:row-span-1 md:col-span-2 bg-white rounded-lg py-3 md:overflow-auto shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200"
+           :class="!bookDetails ? 'md:overflow-hidden' : ''"
         >
           <h2 class="text-xl font-medium text-center">Overview</h2>
           <div
@@ -142,7 +143,7 @@
 
         <!-- Messages Section -->
         <div
-          class="row-span-1 md:col-span-3 md:max-h-[calc(100vh-4.8rem)] md:overflow-scroll bg-white rounded-lg p-3 shadow-sm"
+          class="row-span-1 md:col-span-3 md:max-h-[calc(100vh-4.8rem)] md:overflow-auto bg-white rounded-lg p-3 shadow-sm"
         >
           <div
             v-if="!bookDetails"
@@ -174,9 +175,9 @@
                   }}
                 </h3>
                 <p class="pl-2 text-xs">Title:</p>
-                <div class="pb-2 px-2">
+                <div class="pb-2 px-2 ">
                   <div
-                    class="p-2 border rounded min-h-20"
+                    class="p-2 border rounded min-h-20 overflow-auto"
                     :class="
                       index % 2 === 0
                         ? 'border-blue-400 bg-white/40'
