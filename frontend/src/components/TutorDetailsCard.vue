@@ -32,9 +32,49 @@
           >
             Book Now
           </button>
-          <button class="underline text-blue-100 text-sm hover:text-white transition-colors duration-200 flex items-center gap-1">
-            Report tutor
-          </button>
+          <button
+      class="underline text-blue-100 text-sm hover:text-white transition-colors duration-200 flex items-center gap-1"
+      @click="openReportModal"
+    >
+      Report tutor
+    </button>
+
+    <PopUpModal
+      v-model:toggleModal="isReportModalOpen"
+      @openValue="handleModalOpen"
+      @cancelButtonValue="handleModalCancel"
+      @mainButtonValue="handleReportSubmit"
+    >
+      <template #modalTitle>
+        Report Tutor
+      </template>
+      <template #mainContent>
+        <!-- Content of the modal -->
+        <div>
+         
+          <div class="w-[400px] mb-2">
+            <textarea
+            class="w-full p-2 h-10  border border-gray-300 rounded-md"
+            placeholder="Report reason.."
+            v-model="reportReason"
+          ></textarea>
+          </div>
+          <div>
+            <textarea
+            class="w-full p-2 h-52 border border-gray-300 rounded-md"
+            placeholder="Write your report details here..."
+            v-model="reportMessage"
+          ></textarea>
+          </div>
+        </div>
+      </template>
+      <template #mainButton>
+        Submit Report
+      </template>
+      <template #cancelButton>
+        Cancel
+      </template>
+    </PopUpModal>
         </div>
       </div>
     </div>
@@ -231,6 +271,7 @@ import RatingsCarousel from './RatingsCarousel.vue'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatDate, formatTo12Hour } from '@/utils/dateTime'
+import PopUpModal from './reusables/PopUpModal.vue'
 
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +
@@ -301,4 +342,26 @@ const truncatedBio = computed(() => {
     ? props.tutor.biography.slice(0, 150) + '...'
     : props.tutor.biography
 })
+
+const isReportModalOpen = ref(false)
+const reportMessage = ref('')
+const reportReason = ref('')
+// Methods to handle modal events
+const openReportModal = () => {
+  isReportModalOpen.value = true
+}
+
+const handleModalOpen = (value) => {
+  console.log('Modal opened:', value)
+}
+
+const handleModalCancel = () => {
+  isReportModalOpen.value = false
+}
+
+const handleReportSubmit = () => {
+  console.log('Report submitted:', reportMessage.value)
+  // Handle form submission, e.g., sending the report to a server
+  isReportModalOpen.value = false
+}
 </script>
