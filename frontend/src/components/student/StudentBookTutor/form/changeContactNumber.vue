@@ -23,7 +23,7 @@
     <div class="mt-2">
       <div class="">
         <div v-if="isReadonly">
-          <p class="py-2.5 px-3.5 rounded-lg bg-slate-100 text-base text-gray-700">
+          <p class="py-2.5 px-3.5 rounded-lg bg-gray-50 text-base text-gray-700">
             {{ contactNumber }}
           </p>
         </div>

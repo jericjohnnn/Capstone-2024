@@ -7,7 +7,7 @@
     </div>
     <div
       v-else
-      class="flex flex-col md:flex-row items-center gap-4 text-center md:text-left"
+      class="flex  md:px-3 flex-col md:flex-row items-center gap-4 text-center md:text-left"
     >
       <img
         :src="tutor.profile_image || defaultProfileImage"
