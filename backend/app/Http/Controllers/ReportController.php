@@ -3,15 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Report\ReportRequest;
 use App\Http\Requests\Admin\ReportStatusRequest;
 use App\Models\Report;
-use Illuminate\Http\Request;
+use App\Models\Tutor;
+use App\Models\Student;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
     //NORMAL USER METHODS INSERT HERE
+    public function createReport(ReportRequest $request)
+    {
+        $validatedData = $request->validated();
 
+        $validatedData['complainant_id'] = auth()->user()->id;
+
+        if ($request->has('tutor_offender_id')) {
+            $offender = Tutor::findOrFail($request->tutor_offender_id);
+            $validatedData['offender_id'] = $offender->user_id;
+        } elseif ($request->has('student_offender_id')) {
+            $offender = Student::findOrFail($request->student_offender_id);
+            $validatedData['offender_id'] = $offender->user_id;
+        } else {
+            return response()->json([
+                'message' => 'No valid offender ID provided'
+            ], 422);
+        }
+
+        $report = Report::create($validatedData);
+
+        return response()->json([
+            'message' => 'Report submitted successfully',
+            'report' => $report
+        ], 201);
+
+    }
 
 
 
@@ -23,28 +52,28 @@ class ReportController extends Controller
 
     //ADMIN METHODS INSERT HERE
     public function showAllReports()
-{
-    $reports = Report::with('complainant.tutor', 'complainant.student', 'complainant.userType')->get();  // Use get() instead of paginate()
+    {
+        $reports = Report::with('complainant.tutor', 'complainant.student', 'complainant.userType')->get();  // Use get() instead of paginate()
 
-    $reports->transform(function ($report) {
-        $complainant = $report->complainant;
-        $first_name = $complainant->tutor?->first_name ?? $complainant->student?->first_name;
-        $last_name = $complainant->tutor?->last_name ?? $complainant->student?->last_name;
+        $reports->transform(function ($report) {
+            $complainant = $report->complainant;
+            $first_name = $complainant->tutor?->first_name ?? $complainant->student?->first_name;
+            $last_name = $complainant->tutor?->last_name ?? $complainant->student?->last_name;
 
-        return [
-            'id' => $report->id,
-            'complainant_name' => $first_name && $last_name ? "$first_name $last_name" : null,
-            'complainant_profile_image' => $complainant->tutor?->profile_image ?? $complainant->student?->profile_image,
-            'complainant_user_type' => $complainant->userType->type,
-            'report_status' => $report->status,
-        ];
-    });
+            return [
+                'id' => $report->id,
+                'complainant_name' => $first_name && $last_name ? "$first_name $last_name" : null,
+                'complainant_profile_image' => $complainant->tutor?->profile_image ?? $complainant->student?->profile_image,
+                'complainant_user_type' => $complainant->userType->type,
+                'report_status' => $report->status,
+            ];
+        });
 
-    return response()->json([
-        'message' => 'All reports retrieved successfully.',
-        'complainant_report' => $reports,
-    ]);
-}
+        return response()->json([
+            'message' => 'All reports retrieved successfully.',
+            'complainant_report' => $reports,
+        ]);
+    }
 
 
 

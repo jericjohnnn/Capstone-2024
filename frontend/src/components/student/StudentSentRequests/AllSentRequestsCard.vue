@@ -1,5 +1,28 @@
 <template>
   <div class="">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
+    <!-- FOR RATE -->
+    <PopUpModal
+      v-model:toggleModal="isRateModalOpen"
+      @openValue="handleModalOpen"
+      @cancelButtonValue="handleModalCancel"
+      @mainButtonValue="handleRateSubmit"
+    >
+      <template #modalTitle> Rate Tutor </template>
+      <template #mainContent>
+        <RateForm
+          @update:rating="handleRateUpdate"
+          @update:reviewMessage="handleReviewMessageUpdate"
+        />
+      </template>
+      <template #mainButton> Submit feedback </template>
+      <template #cancelButton> Cancel </template>
+    </PopUpModal>
+    <!-- FOR REPORT -->
     <!-- Tutor Cards -->
     <div
       v-if="!pendingRequests"
@@ -46,7 +69,7 @@
                 {{ book.status }}
               </p>
               <button
-                @click="selectTutor(book.tutor_id)"
+                @click="openRateModal(book.tutor_id)"
                 class="block md:hidden w-full py-1.5 px-3 text-xs font-medium rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
                 :class="book.status !== 'Completed' ? 'hidden' : ''"
               >
@@ -88,12 +111,13 @@
           </div>
           <div class="w-full md:w-3/6">
             <button
-              @click="selectTutor(book.tutor_id)"
+              @click="openRateModal(book.tutor_id)"
               class="hidden md:block w-full py-1.5 px-3 text-xs font-medium rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
               :class="book.status !== 'Completed' ? 'md:hidden' : ''"
             >
               Rate tutor
             </button>
+
             <button
               @click="goToBookDetails(book.id)"
               type="button"
@@ -116,11 +140,17 @@
 </template>
 
 <script setup>
+import PopUpModal from '@/components/Reusables/PopUpModal.vue'
+import RateForm from '@/components/Reusables/RateForm.vue'
 import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
 import PaginationLinks from '@/components/PaginationLinks.vue'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
+
+const { notification, showNotification } = useNotification()
 
 const router = useRouter()
 const route = useRoute()
@@ -151,6 +181,7 @@ const fetchSentRequests = async (page = 1) => {
     paginationLinks.value = links
   } catch (err) {
     console.error('Error fetching student requests:', err)
+    showNotification('Failed to load requests. Please try again.', 'error')
   }
 }
 
@@ -190,4 +221,71 @@ onMounted(() => {
   const initialPage = parseInt(route.query.page) || 1
   fetchSentRequests(initialPage)
 })
+
+// FOR RATE
+const isRateModalOpen = ref(false)
+
+const rateNumber = ref(0)
+const handleRateUpdate = value => {
+  rateNumber.value = value
+}
+
+const rateMessage = ref('')
+const handleReviewMessageUpdate = value => {
+  rateMessage.value = value
+}
+
+const selectedTutorId = ref(null)
+
+const openRateModal = (tutorId) => {
+  selectedTutorId.value = tutorId
+  isRateModalOpen.value = true
+}
+
+const handleModalOpen = value => {
+  isRateModalOpen.value = value
+}
+
+const handleModalCancel = () => {
+  isRateModalOpen.value = false
+  selectedTutorId.value = null
+  rateNumber.value = 0
+  rateMessage.value = ''
+}
+
+const handleRateSubmit = async () => {
+  if (rateNumber.value === 0) {
+    showNotification('Please select a rating', 'error')
+    return
+  }
+
+
+  const rateData = {
+    tutor_id: selectedTutorId.value,
+    rate: rateNumber.value,
+    comment: rateMessage.value,
+  }
+
+  try {
+    await axiosInstance.post('api/rate-tutor', rateData)
+    showNotification('Review submitted successfully', 'success')
+    isRateModalOpen.value = false
+
+    // Reset form
+    selectedTutorId.value = null
+    rateNumber.value = 0
+    rateMessage.value = ''
+
+    // Refresh the requests list to show updated status
+    fetchSentRequests(currentPage.value)
+  } catch (error) {
+    console.error('Error submitting review:', error)
+    showNotification(
+      error.response?.data?.message ||
+        'Failed to submit review. Please try again.',
+      'error'
+    )
+  }
+}
+// FOR RATE
 </script>

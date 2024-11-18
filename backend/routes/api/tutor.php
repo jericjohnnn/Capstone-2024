@@ -14,6 +14,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/student-requests', [TutorController::class, 'showStudentRequests']);
     Route::get('/book-request-details/{book_id}', [TutorController::class, 'showBookRequestDetails']);
     //
+    Route::post('/rate-tutor', [TutorController::class, 'rateTutor']);
     Route::post('/edit-details', [TutorController::class, 'editPersonalDetails']);
     Route::post('/add-school', [TutorController::class, 'createSchool']);
     Route::post('/add-certificate', [TutorController::class, 'createCertificate']);

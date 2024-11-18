@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot as="template" :show="open">
-    <Dialog class="relative z-50" @close="open = false">
+    <Dialog class="relative z-50" @close="handleClose">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"
@@ -11,7 +11,7 @@
         leave-to="opacity-0"
       >
         <div
-          class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+          class="fixed  inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
         />
       </TransitionChild>
 
@@ -93,6 +93,11 @@ const props = defineProps({
     required: true,
   }
 })
+
+const handleClose = () => {
+  open.value = false
+  emit('openValue', false)
+}
 
 const emitMainButton = () => {
   console.log("main")

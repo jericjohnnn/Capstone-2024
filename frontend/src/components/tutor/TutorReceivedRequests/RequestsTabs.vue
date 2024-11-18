@@ -1,5 +1,5 @@
 <template>
-  <div class="border-b border-gray-200 dark:border-neutral-700">
+  <div class="border-b border-gray-200 ">
     <nav class="flex gap-x-4 overflow-x-auto scrollbar-hide">
       <button
         class="px-1 py-4 text-sm font-medium transition-colors"

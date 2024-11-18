@@ -1,6 +1,6 @@
 <template>
   <div class="mb-2.5">
-    <div class=" bg-blue-50 border border-white shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+    <div class=" bg-blue-50 border border-white shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-lg transition ">
       <!-- Tutor Info Section -->
       <div class="p-3  flex items-center justify-between">
         <div class="flex items-center gap-x-3">
@@ -13,7 +13,7 @@
           </div>
 
           <div class="flex flex-col gap-1 ">
-            <h1 class="text-sm md:text-base font-bold text-gray-800 dark:text-white line-clamp-1">
+            <h1 class="text-sm md:text-base font-bold text-gray-800  line-clamp-1">
               {{ tutor.tutor_name }}
             </h1>
             <div class="flex items-center gap-2">

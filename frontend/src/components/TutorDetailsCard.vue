@@ -1,7 +1,12 @@
 <template>
   <div
-    class="flex flex-col bg-white border shadow-sm rounded-xl h-full hover:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70"
+    class="flex flex-col bg-white border shadow-sm rounded-xl h-full hover:shadow-lg transition"
   >
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
     <!-- Header Section with Blue Background -->
     <div
       class="bg-gradient-to-r from-blue-600 to-blue-500 p-5 rounded-t-xl flex-none"
@@ -51,7 +56,7 @@
           >
             Book Now
           </button>
-          <!-- FOR MODIFICATION -->
+          <!-- FOR REPORT -->
           <button
             class="underline text-blue-100 text-sm hover:text-white transition-colors duration-200 flex items-center gap-1"
             @click="openReportModal"
@@ -67,46 +72,28 @@
           >
             <template #modalTitle> Report Tutor </template>
             <template #mainContent>
-              <!-- Content of the modal -->
-              <div>
-                <div class="w-[400px] mb-2">
-                  <textarea
-                    class="w-full p-2 h-10 border border-gray-300 rounded-md"
-                    placeholder="Report reason.."
-                    v-model="reportReason"
-                  ></textarea>
-                </div>
-                <div>
-                  <textarea
-                    class="w-full p-2 h-52 border border-gray-300 rounded-md"
-                    placeholder="Write your report details here..."
-                    v-model="reportMessage"
-                  ></textarea>
-                </div>
-              </div>
+              <ReportForm @update:reportReason="handleReportReasonUpdate" @update:reportMessage="handleReportMessageUpdate" />
             </template>
             <template #mainButton> Submit Report </template>
             <template #cancelButton> Cancel </template>
           </PopUpModal>
-          <!-- FOR MODIFICATION -->
+          <!-- FOR REPORT -->
         </div>
       </div>
     </div>
 
     <!-- Scrollable Content -->
-    <div class="flex-1 overflow-y-auto p-6 space-y-8 dark:bg-neutral-900">
+    <div class="flex-1 overflow-y-auto p-6 space-y-8">
       <!-- Bio Section -->
-      <div class="prose prose-sm max-w-none dark:prose-invert">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-          About
-        </h3>
-        <p class="text-gray-600 dark:text-neutral-400 leading-relaxed">
+      <div class="prose prose-sm max-w-none">
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">About</h3>
+        <p class="text-gray-600 leading-relaxed">
           <span v-if="!showFullBio">{{ truncatedBio }}</span>
           <span v-else>{{ tutor.biography }}</span>
           <button
             v-if="tutor.biography?.length > 150"
             @click="showFullBio = !showFullBio"
-            class="text-blue-600 dark:text-blue-400 font-medium ml-1 focus:outline-none hover:underline"
+            class="text-blue-600 font-medium ml-1 focus:outline-none hover:underline"
           >
             {{ showFullBio ? 'See less' : 'See more...' }}
           </button>
@@ -114,19 +101,17 @@
       </div>
 
       <!-- Tutor Information Card -->
-      <div class="prose prose-sm max-w-none dark:prose-invert">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+      <div class="prose prose-sm max-w-none">
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">
           Tutor Information
         </h3>
 
         <!-- Main Grid Container -->
         <div class="grid gap-4">
-          <!-- Subjects Section - Full width -->
-          <div
-            class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg text-center"
-          >
+          <!-- Subjects Section -->
+          <div class="bg-gray-50 p-4 rounded-lg text-center">
             <h4
-              class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2"
+              class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2"
             >
               <svg
                 class="w-5 h-5 text-blue-500"
@@ -147,19 +132,17 @@
               <span
                 v-for="subject in tutor.subjects"
                 :key="subject.id"
-                class="px-3 py-1 bg-blue-100/50 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-md text-sm font-medium"
+                class="px-3 py-1 bg-blue-100/50 text-blue-800 rounded-md text-sm font-medium"
               >
                 {{ subject.name }}
               </span>
             </div>
           </div>
 
-          <!-- Available Days - Full width -->
-          <div
-            class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg text-center"
-          >
+          <!-- Available Days -->
+          <div class="bg-gray-50 p-4 rounded-lg text-center">
             <h4
-              class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2"
+              class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2"
             >
               <svg
                 class="w-5 h-5 text-blue-500"
@@ -180,21 +163,18 @@
               <span
                 v-for="day in availableDays"
                 :key="day"
-                class="px-3 py-1 bg-green-100/50 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-md text-sm font-medium"
+                class="px-3 py-1 bg-green-100/50 text-green-800 rounded-md text-sm font-medium"
               >
                 {{ day }}
               </span>
             </div>
           </div>
 
-          <!-- Bottom Row Grid - Two columns -->
+          <!-- Bottom Row Grid -->
           <div class="grid md:grid-cols-2 gap-4">
-            <!-- Hours Available -->
-            <div
-              class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg text-center"
-            >
+            <div class="bg-gray-50 p-4 rounded-lg text-center">
               <h4
-                class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2"
+                class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2"
               >
                 <svg
                   class="w-5 h-5 text-blue-500"
@@ -211,18 +191,16 @@
                 </svg>
                 Hours Available
               </h4>
-              <p class="text-blue-600 dark:text-blue-400 font-semibold text-lg">
+              <p class="text-blue-600 font-semibold text-lg">
                 {{ formatTo12Hour(tutor.work_days.start_time) }} -
                 {{ formatTo12Hour(tutor.work_days.end_time) }}
               </p>
             </div>
 
             <!-- Rate Section -->
-            <div
-              class="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg text-center"
-            >
+            <div class="bg-gray-50 p-4 rounded-lg text-center">
               <h4
-                class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2"
+                class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2"
               >
                 <svg
                   class="w-5 h-5 text-blue-500"
@@ -239,7 +217,7 @@
                 </svg>
                 Rate
               </h4>
-              <p class="text-blue-600 dark:text-blue-400 font-semibold text-lg">
+              <p class="text-blue-600 font-semibold text-lg">
                 ₱{{ tutor.tutor_rate }}/hr
               </p>
             </div>
@@ -250,7 +228,7 @@
       <!-- Education Section -->
       <div>
         <h3
-          class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2"
+          class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
         >
           <svg
             class="w-5 h-5 text-blue-500"
@@ -274,7 +252,7 @@
 
         <div
           v-if="!tutor.schools || tutor.schools.length === 0"
-          class="text-gray-500 dark:text-neutral-400"
+          class="text-gray-500"
         >
           <p>No education information available.</p>
         </div>
@@ -283,7 +261,7 @@
           <div
             v-for="school in tutor.schools"
             :key="school.id"
-            class="flex items-start p-4 rounded-lg border border-gray-100 dark:border-neutral-700 hover:border-gray-200 dark:hover:border-neutral-600 transition-colors duration-200"
+            class="flex items-start p-4 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors duration-200"
           >
             <img
               :src="schoolImage"
@@ -291,13 +269,13 @@
               class="w-12 h-12 object-cover mr-4"
             />
             <div>
-              <p class="font-medium text-gray-900 dark:text-white">
+              <p class="font-medium text-gray-900">
                 {{ school.name }}
               </p>
-              <p class="text-sm text-gray-600 dark:text-neutral-400 mt-1">
+              <p class="text-sm text-gray-600 mt-1">
                 {{ school.course }}
               </p>
-              <p class="text-sm text-gray-500 dark:text-neutral-500 mt-1">
+              <p class="text-sm text-gray-500 mt-1">
                 {{ formatDate(school.start_date) }} -
                 {{ school.end_date ? formatDate(school.end_date) : 'Present' }}
               </p>
@@ -309,7 +287,7 @@
       <!-- Certificates Section -->
       <div>
         <h3
-          class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2"
+          class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
         >
           <svg
             class="w-5 h-5 text-blue-500"
@@ -329,7 +307,7 @@
 
         <div
           v-if="!tutor.certificates || tutor.certificates.length === 0"
-          class="text-gray-500 dark:text-neutral-400"
+          class="text-gray-500"
         >
           <p>No certificates information available.</p>
         </div>
@@ -338,7 +316,7 @@
           <div
             v-for="certificate in tutor.certificates"
             :key="certificate.id"
-            class="flex items-start p-4 rounded-lg border border-gray-100 dark:border-neutral-700 hover:border-gray-200 dark:hover:border-neutral-600 transition-colors duration-200"
+            class="flex items-start p-4 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors duration-200"
           >
             <img
               :src="certificateImage"
@@ -346,13 +324,13 @@
               class="w-12 h-12 rounded-lg object-cover mr-4"
             />
             <div>
-              <p class="font-medium text-gray-900 dark:text-white">
+              <p class="font-medium text-gray-900">
                 {{ certificate.title }}
               </p>
-              <p class="text-sm text-gray-600 dark:text-neutral-400 mt-1">
+              <p class="text-sm text-gray-600 mt-1">
                 {{ certificate.issuer }}
               </p>
-              <p class="text-sm text-gray-500 dark:text-neutral-500 mt-1">
+              <p class="text-sm text-gray-500 mt-1">
                 {{ formatDate(certificate.date_issued) }}
               </p>
             </div>
@@ -363,15 +341,13 @@
       <!-- Ratings Section -->
       <div>
         <div class="flex items-center gap-3 mb-4">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Ratings
-          </h3>
+          <h3 class="text-lg font-semibold text-gray-900">Ratings</h3>
           <StarRating :rating="averageRatings" class="mt-1"></StarRating>
         </div>
 
         <div
           v-if="!tutor.ratings || tutor.ratings.length === 0"
-          class="text-gray-500 dark:text-neutral-400"
+          class="text-gray-500"
         >
           <p>No ratings information available.</p>
         </div>
@@ -388,6 +364,7 @@
 </template>
 
 <script setup>
+import ReportForm from './Reusables/ReportForm.vue'
 import schoolImage from '@/assets/school.png'
 import certificateImage from '@/assets/certificate.png'
 import StarRating from './StarRating.vue'
@@ -396,6 +373,9 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatDate, formatTo12Hour } from '@/utils/dateTime'
 import PopUpModal from './Reusables/PopUpModal.vue'
+import axiosInstance from '@/axiosInstance'
+import NotificationToast from './Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +
@@ -414,6 +394,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+const { notification, showNotification } = useNotification()
 
 function goToBook() {
   router.push({
@@ -446,6 +428,9 @@ const availableDays = computed(() => {
 })
 
 const averageRatings = computed(() => {
+  if (!props.tutor.ratings || props.tutor.ratings.length === 0) {
+    return 0
+  }
   const ratings = props.tutor.ratings.map(rating => rating.rate)
   const total = ratings.reduce((sum, rate) => sum + rate, 0)
   return total / ratings.length
@@ -467,30 +452,69 @@ const truncatedBio = computed(() => {
     : props.tutor.biography
 })
 
+// 
 
 
 
-// TODO: FOR MODIFICATION
+
+// FOR REPORT
 const isReportModalOpen = ref(false)
+
 const reportMessage = ref('')
 const reportReason = ref('')
-// Methods to handle modal events
+
+const handleReportReasonUpdate = value => {
+  reportReason.value = value
+}
+
+const handleReportMessageUpdate = value => {
+  reportMessage.value = value
+}
+
 const openReportModal = () => {
   isReportModalOpen.value = true
 }
 
 const handleModalOpen = value => {
-  console.log('Modal opened:', value)
+  isReportModalOpen.value = value
 }
 
 const handleModalCancel = () => {
   isReportModalOpen.value = false
 }
 
-const handleReportSubmit = () => {
-  console.log('Report submitted:', reportMessage.value)
-  // Handle form submission, e.g., sending the report to a server
-  isReportModalOpen.value = false
+const handleReportSubmit = async () => {
+  if (!reportReason.value) {
+    showNotification('Please select a reason for reporting', 'error')
+    return
+  }
+
+  if (!reportMessage.value.trim()) {
+    showNotification('Please provide details about your report', 'error')
+    return
+  }
+
+  const reportData = {
+    tutor_offender_id: props.tutor.id,
+    title: reportReason.value,
+    message: reportMessage.value,
+  }
+
+  try {
+    await axiosInstance.post('api/create-report', reportData)
+    showNotification('Report submitted successfully', 'success')
+    isReportModalOpen.value = false
+    
+    // Reset form
+    reportReason.value = ''
+    reportMessage.value = ''
+  } catch (error) {
+    console.error('Error submitting report:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to submit report. Please try again.',
+      'error'
+    )
+  }
 }
-// TODO: FOR MODIFICATION
+// FOR REPORT
 </script>

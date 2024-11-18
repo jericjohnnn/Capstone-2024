@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- Mobile Breadcrumb -->
-    <div class="sticky top-0 inset-x-0 z-40 bg-white border-y px-4 sm:px-6 lg:px-8 lg:hidden dark:bg-neutral-800 dark:border-neutral-700">
+    <div class="sticky top-0 inset-x-0 z-40 bg-white border-y px-4 sm:px-6 lg:px-8 lg:hidden">
       <div class="flex items-center py-2">
         <!-- Mobile Navigation Toggle -->
         <button
           type="button"
-          class="size-8 flex justify-center items-center gap-x-2 border border-gray-200 text-gray-800 hover:text-gray-500 rounded-lg focus:outline-none focus:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
+          class="size-8 flex justify-center items-center gap-x-2 border border-gray-200 text-gray-800 hover:text-gray-500 rounded-lg focus:outline-none focus:text-gray-500 disabled:opacity-50 disabled:pointer-events-none"
           @click="isSidebarOpen = !isSidebarOpen"
         >
           <span class="sr-only">Toggle Navigation</span>
@@ -29,7 +29,7 @@
         </button>
 
         <ol class="ms-3 flex items-center whitespace-nowrap">
-          <li class="flex font-bold justify-center items-center text-sm text-gray-800 dark:text-neutral-400">
+          <li class="flex font-bold justify-center items-center text-sm text-gray-800">
             TUDLO
           </li>
         </ol>
@@ -39,7 +39,7 @@
     <!-- Sidebar -->
     <div
       :class="[
-        'fixed inset-y-0 start-0 z-50 w-[260px] bg-blue-600 transition-transform duration-300 lg:translate-x-0 lg:block dark:bg-neutral-800 dark:border-neutral-700',
+        'fixed inset-y-0 start-0 z-50 w-[260px] bg-blue-600 transition-transform duration-300 lg:translate-x-0 lg:block',
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       ]"
     >
@@ -184,9 +184,10 @@ async function logout() {
   try {
     await axiosInstance.post('/api/logout')
 
-    // Clear local storage
-    const itemsToRemove = ['app_auth_token', 'user_type', 'user_email', 'user_data', 'user_full_name']
-    itemsToRemove.forEach(item => localStorage.removeItem(item))
+    // const itemsToRemove = ['app_auth_token', 'user_type', 'user_email', 'user_data', 'user_full_name']
+    // itemsToRemove.forEach(item => localStorage.removeItem(item))
+
+    localStorage.clear();
 
     // Remove authorization header
     delete axiosInstance.defaults.headers['Authorization']

@@ -101,7 +101,7 @@
           <!-- STICKY BUTTON -->
           <div
             :class="[
-              'z-30 md:hidden rounded-xl bottom-0 w-full bg-blue-50 border border-white dark:bg-neutral-900 px-4 py-3 border-t dark:border-neutral-700',
+              'z-30 md:hidden rounded-xl bottom-0 w-full bg-blue-50 border border-white  px-4 py-3 border-t ',
               { sticky: !isKeyboardVisible },
             ]"
           >
@@ -117,7 +117,7 @@
               <!-- Report Button -->
               <button
               @click="router.back()"
-                class="w-full underline text-gray-500 dark:text-neutral-400 py-2 text-sm font-medium hover:text-gray-700 dark:hover:text-neutral-200 transition-colors duration-200 flex items-center justify-center gap-1"
+                class="w-full underline text-gray-500  py-2 text-sm font-medium hover:text-gray-700  transition-colors duration-200 flex items-center justify-center gap-1"
               >
                 Cancel
               </button>
