@@ -1,5 +1,5 @@
 <template>
-  <main class="bg-blue-50">
+  <main class="bg-blue-100">
     <SideBar>
       <main class="container pt-3 pb-7 mx-auto">
         <!-- Profile Header -->

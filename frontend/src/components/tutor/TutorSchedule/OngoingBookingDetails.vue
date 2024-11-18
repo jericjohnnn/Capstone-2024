@@ -6,6 +6,23 @@
       :type="notification.type"
     />
 
+    <PopUpModal
+      v-model:toggleModal="isReportModalOpen"
+      @openValue="handleModalOpen"
+      @cancelButtonValue="handleModalCancel"
+      @mainButtonValue="handleReportSubmit"
+    >
+      <template #modalTitle> Report Student </template>
+      <template #mainContent>
+        <ReportForm
+          @update:reportReason="handleReportReasonUpdate"
+          @update:reportMessage="handleReportMessageUpdate"
+        />
+      </template>
+      <template #mainButton> Submit Report </template>
+      <template #cancelButton> Cancel </template>
+    </PopUpModal>
+
     <SideBar>
       <main
         class="container grid grid-rows-[auto,auto,1fr] grid-cols-1 md:grid-rows-[auto,1fr] md:grid-cols-5 py-5 gap-4 min-h-screen"
@@ -50,6 +67,7 @@
                     {{ bookDetails.student.last_name }}
                   </p>
                   <button
+                    @click="openReportModal"
                     class="border-2 border-blue-600 text-blue-600 rounded-md px-2 py-1 text-sm"
                   >
                     Report
@@ -64,7 +82,7 @@
               <div class="flex items-center gap-2">
                 <h2 class="font-medium w-full">Status:</h2>
                 <span
-                  class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm text-center w-full"
+                  class="bg-blue-600  text-white px-3 py-1 rounded-full text-sm text-center w-full"
                 >
                   {{ bookDetails.status || 'pending' }}
                 </span>
@@ -236,6 +254,8 @@ import {
 } from '@/utils/dateTime'
 import NotificationToast from '@/components/Reusables/NotificationToast.vue'
 import { useNotification } from '@/composables/useNotification'
+import PopUpModal from '@/components/Reusables/PopUpModal.vue'
+import ReportForm from '@/components/Reusables/ReportForm.vue'
 
 const { notification, showNotification } = useNotification()
 const route = useRoute()
@@ -302,6 +322,67 @@ onMounted(() => {
     fetchBookingDetails(initialBookId)
   }
 })
+
+// FOR REPORT
+const isReportModalOpen = ref(false)
+const reportMessage = ref('')
+const reportReason = ref('')
+
+const handleReportReasonUpdate = value => {
+  reportReason.value = value
+}
+
+const handleReportMessageUpdate = value => {
+  reportMessage.value = value
+}
+
+const openReportModal = () => {
+  isReportModalOpen.value = true
+}
+
+const handleModalOpen = value => {
+  isReportModalOpen.value = value
+}
+
+const handleModalCancel = () => {
+  isReportModalOpen.value = false
+  reportReason.value = ''
+  reportMessage.value = ''
+}
+
+const handleReportSubmit = async () => {
+  if (!reportReason.value) {
+    showNotification('Please select a reason for reporting', 'error')
+    return
+  }
+
+  if (!reportMessage.value.trim()) {
+    showNotification('Please provide details about your report', 'error')
+    return
+  }
+
+  const reportData = {
+    student_offender_id: bookDetails.value.student.id, // Changed from tutor to student
+    title: reportReason.value,
+    message: reportMessage.value,
+  }
+
+  try {
+    await axiosInstance.post('api/create-report', reportData)
+    showNotification('Report submitted successfully', 'success')
+    isReportModalOpen.value = false
+    
+    // Reset form
+    reportReason.value = ''
+    reportMessage.value = ''
+  } catch (error) {
+    console.error('Error submitting report:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to submit report. Please try again.',
+      'error'
+    )
+  }
+}
 </script>
 
 <style>

@@ -60,7 +60,7 @@
 
           <!-- max-h-[calc(100vh-14rem)] -->
           <!-- Tutor Details Section -->
-          <div class="w-full hidden md:block md:col-span-5  max-h-[calc(100vh-14rem)] xl:max-h-[calc(100vh-5rem)]"> 
+          <div class="w-full hidden md:block md:col-span-5  max-h-[calc(100vh-14rem)] xl:max-h-[calc(100vh-10rem)]"> 
             <div
               v-if="tutorDetailsLoading"
               class="flex justify-center items-center h-full"

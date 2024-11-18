@@ -3,7 +3,6 @@ import TutorProfilePage from "@/pages/tutor/TutorProfilePage.vue";
 import TutorBookDetailsPage from "@/pages/tutor/TutorBookDetailsPage.vue";
 import TutorReceivedRequestsPage from "@/pages/tutor/TutorReceivedRequestsPage.vue";
 import TutorSchedulePage from "@/pages/tutor/TutorSchedulePage.vue";
-import TutorSettingsPage from "@/pages/tutor/TutorSettingsPage.vue";
 import OngoingBookingDetails from "@/components/tutor/TutorSchedule/OngoingBookingDetails.vue";
 import TutorPendingApprovalPage from "@/pages/auth/TutorPendingApprovalPage.vue";
 
@@ -37,11 +36,6 @@ const tutorRoutes = [
     path: '/tutor/notifications',
     name: 'TutorNotifications',
     component: TutorNotificationPage
-  },
-  {
-    path: '/tutor/settings',
-    name: 'TutorSettings',
-    component: TutorSettingsPage
   },
   {
     path: '/tutor/pending-approval',

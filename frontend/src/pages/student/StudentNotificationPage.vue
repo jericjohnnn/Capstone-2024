@@ -1,19 +1,58 @@
 <template>
-  <main class="bg-blue-200">
+  <main class="min-h-screen bg-blue-100">
     <SideBar>
-      <div class="container mx-auto">
-        <div class="flex justify-center font-bold text-2xl py-5">
-          Notifications
+      <div class="container mx-auto py-8">
+        <div class="mb-6">
+          <h1 class="text-lg font-bold text-black">Notifications</h1>
         </div>
-        <div class="flex justify-center bg-white rounded-xl h-[500px] overflow-y-scroll">
-          <div class="flex flex-col pt-7">
-            <!-- Loop through the notifications and display them -->
+
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <!-- Empty state when no notifications -->
+          <div v-if="notifications.length === 0" class="flex flex-col items-center justify-center py-12">
+            <div class="text-blue-600 mb-3">
+              <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+              </svg>
+            </div>
+            <p class="text-gray-500 text-lg">No notifications yet</p>
+          </div>
+
+          <!-- Notifications list -->
+          <div v-else class="divide-y divide-gray-200">
             <div
               v-for="notification in notifications"
               :key="notification.id"
-              class="border-2 border-indigo-500 bg-indigo-200 w-full md:w-[800px] lg:w-[1000px] h-[50px] rounded-lg p-4 mb-4 shadow-lg flex"
+              class="p-4 hover:bg-blue-50 transition-colors duration-150"
             >
-              <p class="flex items-center">{{ notification.message }}</p>
+              <div class="flex items-start space-x-4">
+                <!-- Notification icon -->
+                <div class="flex-shrink-0 pt-1">
+                  <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Notification content -->
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900">{{ notification.message }}</p>
+                  <p class="text-xs text-gray-500 mt-1">
+                    {{ new Date(notification.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    }) }}
+                  </p>
+                </div>
+
+                <!-- Optional: Mark as read button or status -->
+                <div class="flex-shrink-0">
+                  <div class="h-2 w-2 rounded-full bg-blue-600"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -23,6 +62,12 @@
     <HelpButton />
   </main>
 </template>
+
+<style scoped>
+.divide-y > div:last-child {
+  border-bottom: none;
+}
+</style>
 
 <script setup>
 import { ref, onMounted } from 'vue';

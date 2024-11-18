@@ -46,8 +46,15 @@
       <div class="relative flex flex-col h-full">
         <!-- Logo Section -->
         <div class="px-8 pt-4">
-          <a href="#" class="flex-none text-xl font-semibold text-white">
-            <!-- Logo content -->
+          <a 
+            @click="router.push('/')" 
+            class="flex-none cursor-pointer flex py-5"
+          >
+            <img 
+              src="@/assets/logo.svg" 
+              alt="Logo"
+              class="h-7" 
+            />
           </a>
         </div>
 
@@ -139,7 +146,6 @@ import ProfileIcon from '@/assets/ProfileIcon.vue'
 import RequestIcon from '@/assets/RequestIcon.vue'
 import ScheduleIcon from '@/assets/ScheduleIcon.vue'
 import LogoutIcon from '@/assets/LogoutIcon.vue'
-import SettingsIcon from '@/assets/SettingsIcon.vue'
 
 // State
 const isSidebarOpen = ref(false)
@@ -168,7 +174,6 @@ const tutorNavItems = [
   { label: 'Schedule', route: 'TutorSchedule', icon: ScheduleIcon },
   { label: 'Student requests', route: 'TutorRequests', icon: RequestIcon },
   { label: 'Notifications', route: 'TutorNotifications', icon: NotificationIcon },
-  { label: 'Settings', route: 'TutorSettings', icon: SettingsIcon }
 ]
 
 const studentNavItems = [

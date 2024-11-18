@@ -9,7 +9,6 @@
         <option value="" disabled selected>Select a reason...</option>
         <option value="Inappropriate Behavior">Inappropriate Behavior</option>
         <option value="No Show">No Show</option>
-        <option value="Poor Teaching Quality">Poor Teaching Quality</option>
         <option value="Harassment">Harassment</option>
         <option value="Other">Other</option>
       </select>

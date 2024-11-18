@@ -28,12 +28,6 @@
         >
           Edit
         </button>
-        <router-link
-          :to="{ name: 'TutorSettings' }"
-          class="px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
-        >
-          Profile settings
-        </router-link>
       </div>
     </div>
 

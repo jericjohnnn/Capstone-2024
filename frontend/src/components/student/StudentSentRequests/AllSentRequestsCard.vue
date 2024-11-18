@@ -86,7 +86,7 @@
         >
           <p class="">You requested for</p>
           <div
-            class="flex justify-center px-6 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 border border-blue-300 mt-1"
+            class="flex justify-center w-fit px-6 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 border border-blue-300 mt-1"
           >
             {{ book.subject }}
           </div>
