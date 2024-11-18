@@ -24,18 +24,18 @@
             <!-- Card Content -->
             <div class="flex h-auto">
               <div
-                class="flex flex-col bg-white rounded-xl dark:bg-neutral-900"
+                class="flex flex-col bg-white rounded-xl "
               >
                 <div class="flex-auto p-4 md:p-6">
                   <p
-                    class="text-base italic md:text-lg text-gray-800 dark:text-neutral-200"
+                    class="text-base italic md:text-lg text-gray-800 "
                   >
                     "{{ rating.comment }}"
                   </p>
                 </div>
 
                 <div
-                  class="p-4 bg-gray-100 rounded-b-xl md:px-7 dark:bg-neutral-800"
+                  class="p-4 bg-gray-100 rounded-b-xl md:px-7 "
                 >
                   <div class="flex items-center gap-x-3">
                     <div class="shrink-0">
@@ -48,7 +48,7 @@
 
                     <div class="grow">
                       <p
-                        class="text-sm sm:text-base font-semibold text-gray-800 dark:text-neutral-200"
+                        class="text-sm sm:text-base font-semibold text-gray-800 "
                       >
                         {{ rating.student.first_name }}
                         {{ rating.student.last_name }}

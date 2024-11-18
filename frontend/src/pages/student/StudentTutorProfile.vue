@@ -1,15 +1,12 @@
 <template>
   <SideBar>
     <!-- Show loader when tutor is empty -->
-    <div
-      v-if="!tutor?.id"
-      class=" min-h-screen flex items-center justify-center"
-    >
+    <div v-if="!tutor?.id" class="min-h-screen flex items-center justify-center">
       <LoaderSpinner />
     </div>
     <!-- Show content only when tutor data exists -->
     <div v-else class="-mx-4 sm:-mx-6 md:-mx-8">
-      <div class="flex flex-col bg-white h-full dark:bg-neutral-900">
+      <div class="flex flex-col bg-white h-full">
         <!-- Header Section with Blue Background -->
         <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-5 flex-none">
           <div
@@ -86,43 +83,30 @@
         </div>
 
         <!-- Scrollable Content -->
-        <div class="flex-1 overflow-y-auto p-6 space-y-8 dark:bg-neutral-900">
+        <div class="flex-1 overflow-y-auto p-6 space-y-8">
           <!-- Bio Section -->
-          <div class="prose prose-sm max-w-none dark:prose-invert">
-            <h3
-              class="text-lg font-semibold text-gray-900 dark:text-white mb-3"
-            >
-              About
-            </h3>
-            <p class="text-gray-600 dark:text-neutral-400 leading-relaxed">
+          <div class="prose prose-sm max-w-none">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">About</h3>
+            <p class="text-gray-600 leading-relaxed">
               <span v-if="!showFullBio">{{ truncatedBio }}</span>
               <span v-else>{{ tutor.biography }}</span>
               <button
                 v-if="tutor.biography?.length > 150"
                 @click="showFullBio = !showFullBio"
-                class="text-blue-600 dark:text-blue-400 font-medium ml-1 focus:outline-none hover:underline"
+                class="text-blue-600 font-medium ml-1 focus:outline-none hover:underline"
               >
                 {{ showFullBio ? 'See less' : 'See more...' }}
               </button>
             </p>
           </div>
 
-          <!-- After About Section and before Education Section -->
           <!-- Combined Info Card -->
-          <div class="prose prose-sm max-w-none dark:prose-invert">
-            <h3
-              class="text-lg font-semibold text-gray-900 dark:text-white mb-3"
-            >
-              Tutor Information
-            </h3>
-            <div
-              class="bg-gray-50 dark:bg-neutral-800 rounded-lg p-6 space-y-6"
-            >
+          <div class="prose prose-sm max-w-none">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Tutor Information</h3>
+            <div class="bg-gray-50 rounded-lg p-6 space-y-6">
               <!-- Subjects Section -->
               <div class="text-center">
-                <h4
-                  class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2"
-                >
+                <h4 class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2">
                   <svg
                     class="w-5 h-5 text-blue-500"
                     fill="none"
@@ -142,20 +126,18 @@
                   <span
                     v-for="subject in tutor.subjects"
                     :key="subject.id"
-                    class="px-3 py-1 bg-blue-100/50 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-md text-sm font-medium"
+                    class="px-3 py-1 bg-blue-100/50 text-blue-800 rounded-md text-sm font-medium"
                   >
                     {{ subject.name }}
                   </span>
                 </div>
               </div>
 
-              <hr class="border-gray-200 dark:border-neutral-700" />
+              <hr class="border-gray-200" />
 
               <!-- Days Available -->
               <div v-if="availableDays" class="text-center">
-                <h4
-                  class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2"
-                >
+                <h4 class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2">
                   <svg
                     class="w-5 h-5 text-blue-500"
                     fill="none"
@@ -175,20 +157,18 @@
                   <span
                     v-for="day in availableDays"
                     :key="day"
-                    class="px-3 py-1 bg-green-100/50 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-md text-sm font-medium"
+                    class="px-3 py-1 bg-green-100/50 text-green-800 rounded-md text-sm font-medium"
                   >
                     {{ day }}
                   </span>
                 </div>
               </div>
 
-              <hr class="border-gray-200 dark:border-neutral-700" />
+              <hr class="border-gray-200" />
 
               <!-- Hours Available -->
               <div v-if="tutor.work_days" class="text-center">
-                <h4
-                  class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2"
-                >
+                <h4 class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2">
                   <svg
                     class="w-5 h-5 text-blue-500"
                     fill="none"
@@ -204,21 +184,17 @@
                   </svg>
                   Hours Available
                 </h4>
-                <p
-                  class="text-blue-600 dark:text-blue-400 font-semibold text-lg"
-                >
+                <p class="text-blue-600 font-semibold text-lg">
                   {{ formatTo12Hour(tutor.work_days.start_time) }} -
                   {{ formatTo12Hour(tutor.work_days.end_time) }}
                 </p>
               </div>
 
-              <hr class="border-gray-200 dark:border-neutral-700" />
+              <hr class="border-gray-200" />
 
               <!-- Rate Section -->
               <div class="text-center">
-                <h4
-                  class="font-medium text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-2"
-                >
+                <h4 class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2">
                   <svg
                     class="w-5 h-5 text-blue-500"
                     fill="none"
@@ -234,9 +210,7 @@
                   </svg>
                   Rate
                 </h4>
-                <p
-                  class="text-blue-600 dark:text-blue-400 font-semibold text-lg"
-                >
+                <p class="text-blue-600 font-semibold text-lg">
                   ₱{{ tutor.tutor_rate }}/hr
                 </p>
               </div>
@@ -245,9 +219,7 @@
 
           <!-- Education Section -->
           <div>
-            <h3
-              class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2"
-            >
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <svg
                 class="w-5 h-5 text-blue-500"
                 fill="none"
@@ -268,10 +240,7 @@
               Education
             </h3>
 
-            <div
-              v-if="!tutor.schools || tutor.schools.length === 0"
-              class="text-gray-500 dark:text-neutral-400"
-            >
+            <div v-if="!tutor.schools || tutor.schools.length === 0" class="text-gray-500">
               <p>No education information available.</p>
             </div>
 
@@ -279,7 +248,7 @@
               <div
                 v-for="school in tutor.schools"
                 :key="school.id"
-                class="flex items-start p-4 rounded-lg border border-gray-100 dark:border-neutral-700 hover:border-gray-200 dark:hover:border-neutral-600 transition-colors duration-200"
+                class="flex items-start p-4 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors duration-200"
               >
                 <img
                   :src="schoolImage"
@@ -287,13 +256,13 @@
                   class="w-12 h-12 object-cover mr-4"
                 />
                 <div>
-                  <p class="font-medium text-gray-900 dark:text-white">
+                  <p class="font-medium text-gray-900">
                     {{ school.name }}
                   </p>
-                  <p class="text-sm text-gray-600 dark:text-neutral-400 mt-1">
+                  <p class="text-sm text-gray-600 mt-1">
                     {{ school.course }}
                   </p>
-                  <p class="text-sm text-gray-500 dark:text-neutral-500 mt-1">
+                  <p class="text-sm text-gray-500 mt-1">
                     {{ formatDate(school.start_date) }} -
                     {{
                       school.end_date ? formatDate(school.end_date) : 'Present'
@@ -306,9 +275,7 @@
 
           <!-- Certificates Section -->
           <div>
-            <h3
-              class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2"
-            >
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <svg
                 class="w-5 h-5 text-blue-500"
                 fill="none"
@@ -325,10 +292,7 @@
               Certifications
             </h3>
 
-            <div
-              v-if="!tutor.certificates || tutor.certificates.length === 0"
-              class="text-gray-500 dark:text-neutral-400"
-            >
+            <div v-if="!tutor.certificates || tutor.certificates.length === 0" class="text-gray-500">
               <p>No certificates information available.</p>
             </div>
 
@@ -336,7 +300,7 @@
               <div
                 v-for="certificate in tutor.certificates"
                 :key="certificate.id"
-                class="flex items-start p-4 rounded-lg border border-gray-100 dark:border-neutral-700 hover:border-gray-200 dark:hover:border-neutral-600 transition-colors duration-200"
+                class="flex items-start p-4 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors duration-200"
               >
                 <img
                   :src="certificateImage"
@@ -344,13 +308,13 @@
                   class="w-12 h-12 rounded-lg object-cover mr-4"
                 />
                 <div>
-                  <p class="font-medium text-gray-900 dark:text-white">
+                  <p class="font-medium text-gray-900">
                     {{ certificate.title }}
                   </p>
-                  <p class="text-sm text-gray-600 dark:text-neutral-400 mt-1">
+                  <p class="text-sm text-gray-600 mt-1">
                     {{ certificate.issuer }}
                   </p>
-                  <p class="text-sm text-gray-500 dark:text-neutral-500 mt-1">
+                  <p class="text-sm text-gray-500 mt-1">
                     {{ formatDate(certificate.date_issued) }}
                   </p>
                 </div>
@@ -361,16 +325,13 @@
           <!-- Ratings Section -->
           <div>
             <div class="flex items-center gap-3 mb-4">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+              <h3 class="text-lg font-semibold text-gray-900">
                 Ratings
               </h3>
               <StarRating :rating="averageRatings" class="mt-1"></StarRating>
             </div>
 
-            <div
-              v-if="!tutor.ratings || tutor.ratings.length === 0"
-              class="text-gray-500 dark:text-neutral-400"
-            >
+            <div v-if="!tutor.ratings || tutor.ratings.length === 0" class="text-gray-500">
               <p>No ratings information available.</p>
             </div>
 
@@ -384,9 +345,7 @@
         </div>
 
         <!-- Mobile Book Now Button -->
-        <div
-          class="md:hidden sticky bottom-0 w-full bg-white dark:bg-neutral-900 px-4 py-3 border-t dark:border-neutral-700"
-        >
+        <div class="md:hidden sticky bottom-0 w-full bg-white px-4 py-3 border-t border-gray-200">
           <div class="flex flex-col gap-2">
             <button
               @click="goToBook"
@@ -411,9 +370,7 @@
             </button>
 
             <!-- Report Button -->
-            <button
-              class="w-full underline text-gray-500 dark:text-neutral-400 py-2 text-sm font-medium hover:text-gray-700 dark:hover:text-neutral-200 transition-colors duration-200 flex items-center justify-center gap-1"
-            >
+            <button class="w-full underline text-gray-500 py-2 text-sm font-medium hover:text-gray-700 transition-colors duration-200 flex items-center justify-center gap-1">
               Report tutor
             </button>
           </div>
