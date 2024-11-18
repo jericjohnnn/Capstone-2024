@@ -1,268 +1,390 @@
 <template>
   <main>
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
     <SideBar>
-      <main class="container p-5 mx-auto">
-        <p class="font-semibold text-xl">Account Information</p>
-        <div class="  h-[850px]  flex flex-col  items-center rounded-xl relative">
-          <!-- Profile Image -->
-        <div class="w-full border font-normal text-gray-600 bg-gray-200 border-neutral-400 rounded">
-  <!-- Personal Information Section -->
-  <div class="px-7 py-4 border-b text-gray-700 border-neutral-400 font-semibold flex justify-between items-center">
-    Personal Information
-  </div>
-  <div class="px-7 py-4 border-b border-neutral-400 text-xs">
-    The information provided below will reflect on your invoices
-  </div>
+      <main class="container mx-auto py-8">
+        <div class="mb-6">
+          <h1 class="text-lg font-bold text-black">Account Information</h1>
+        </div>
 
-  <!-- Grid container for the data rows -->
- 
-  <!-- Grid Row for Name -->
-  <div class="grid grid-cols-2 gap-4 py-4 px-7 border-b border-neutral-400 text-xs   items-center">Name
-    <span class="font-semibold text-black">{{ userData?.first_name }} {{ userData?.last_name }}</span>
-  </div>
-
-  <!-- Grid Row for Address -->
-  <div class="grid grid-cols-2 gap-4 py-4 px-7 border-b border-neutral-400 text-xs items-center">Address
-    <span class="font-semibold text-black">{{ userData?.address }}</span>
-  </div>
-
-  <!-- Grid Row for Contact Number -->
-  <div class="grid grid-cols-2 gap-4 px-7 py-4 border-b border-neutral-400 text-xs items-center">Contact Number
-    <span class="font-semibold text-black">{{ userData?.contact_number }}</span>
-  </div>
-</div>
-
-
-
-<div class="w-full border font-normal bg-gray-200 text-gray-600 border-neutral-400 rounded mt-4">
-  <!-- Profile and Other Data Section -->
-  <div class="px-7 py-4 border-b border-neutral-400 text-gray-700 font-semibold flex justify-between items-center">
-    Profile and Other Data
-  </div>
-  
-  
-
-  <!-- Grid Row for Name -->
-  <div class="grid grid-cols-2 gap-4 py-4 px-7 border-b border-neutral-400 text-xs items-center">Profile Image
-    <img v-if="userData" :src="userData.profile_image" alt="Profile Image" class="w-12 h-12 object-cover rounded-full border border-gray-400 shadow-md" />
-  </div>
-
-  <!-- Grid Row for Address -->
-  <div class="grid grid-cols-2 gap-4 py-4 px-7 border-b border-neutral-400 text-xs items-center">Birthdate
-    <span class="font-semibold text-black">{{ userData?.birthdate }}</span>
-  </div>
-
-  <!-- Grid Row for Contact Number -->
-  <div class="grid grid-cols-2 gap-4 px-7 py-4 border-b border-neutral-400 text-xs items-center">School Id Number
-    <span class="font-semibold text-black">{{ userData?.school_id_number }}</span>
-  </div>
-  <div class="grid grid-cols-2 gap-4 px-7 py-4 border-b border-neutral-400 text-xs items-center">Grade Level
-    <span class="font-semibold text-black">{{ userData?.grade_year }}</span>
-  </div>
-</div>
-
-<div class="w-full border font-normal bg-gray-200  border-neutral-400 rounded mt-4">
-  
-  <div class="px-7 py-4 border-b border-neutral-400 font-semibold text-gray-700 flex justify-between items-center">
-    Account
-  </div>
- 
-  <div class="flex-row flex py-4 px-7 border-b border-neutral-400 justify-between">
-    <div class="flex-col flex  text-sm font-semibold ">Edit Account
-    <span class="font-normal text-xs text-gray-600">This feature allows you to update your personal and account information for accuracy and convenience.</span>
-  </div>
-    <button @click="toggleEditMode" class="px-14 text-xs rounded-md font-normal bg-blue-500 text-white py-2">Edit</button>
-  </div>
-  <div class="flex-row flex py-4 px-7 border-b border-neutral-400 justify-between">
-    <div class="flex-col flex  text-sm font-semibold ">Delete Account
-    <span class="font-normal text-xs text-gray-600">Keep in mind that upon deleting your account all of your account information will be deleted without the possibility of restoration.</span>
-  </div>
-    <button @click="openDeleteModal" class="px-5 text-xs rounded-md font-normal bg-red-500 text-white py-2">Delete Account</button>
-  </div>
-</div>
+        <!-- Render sections using v-for -->
+        <div v-for="(section, index) in sections" :key="index" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-base font-semibold text-black">{{ section.title }}</h2>
           </div>
-      
+
+          <div class="divide-y divide-gray-200">
+            <div 
+              v-for="(field, fieldIndex) in section.fields" 
+              :key="fieldIndex"
+              class="grid grid-cols-1 md:grid-cols-2 px-6 py-4 items-center"
+            >
+              <span class="text-sm text-gray-600">{{ field.label }}</span>
+              
+              <template v-if="field.type === 'image'">
+                <img 
+                  :src="currentProfileImage"
+                  class="w-24 h-24 md:w-20 md:h-20 rounded-full object-cover bg-gray-200"
+                  alt="Profile Image"
+                />
+              </template>
+              <span v-else class="text-sm font-medium text-gray-900">
+                {{ getFieldValue(field) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Actions Section -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-base font-semibold text-black">Account</h2>
+          </div>
+
+          <div v-for="(action, index) in actions" :key="index" class="px-6 py-4 flex justify-between items-center border-b border-gray-200">
+            <div>
+              <h3 class="text-sm font-medium text-gray-900">{{ action.title }}</h3>
+              <p class="text-xs text-gray-600 mt-1">{{ action.description }}</p>
+            </div>
+            <button 
+              @click="action.handler"
+              :class="`px-4 py-2 text-sm font-medium text-white ${action.buttonClass} rounded-md transition-colors`"
+            >
+              {{ action.buttonText }}
+            </button>
+          </div>
+        </div>
       </main>
     </SideBar>
-
-    <HelpButton />
   </main>
 
   <!-- Edit Profile Modal -->
-  <div v-if="isEditModalVisible" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-10">
-  <div class="bg-white p-6 rounded-md shadow-lg w-full max-w-md overflow-hidden">
-    <h3 class="text-xl mb-4 text-center font-medium">Edit Profile</h3>
-    <form @submit.prevent="saveEdits">
-
-         <!-- Profile Image Upload -->
-      <div class="flex flex-row space-x-3  items-center mb-4">
-        <img v-if="editData.profile_image" :src="editData.profile_image" alt="Profile Image Preview" class="w-32 h-32 object-cover rounded-full border border-gray-400 shadow-md mb-3" />
-        <input type="file" @change="onImageChange" accept="image/*" class="text-sm text-gray-600" />
-      </div>
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label for="first_name" class="block text-gray-700">First Name</label>
-          <input v-model="editData.first_name" type="text" id="first_name" class="w-full mt-1 px-3 py-2 border rounded-md text-sm" />
-        </div>
-        <div>
-          <label for="last_name" class="block text-gray-700">Last Name</label>
-          <input v-model="editData.last_name" type="text" id="last_name" class="w-full mt-1 px-3 py-2 border rounded-md text-sm" />
-        </div>
+  <div v-if="isEditModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-black">Edit Profile</h3>
       </div>
 
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label for="address" class="block text-gray-700">Address</label>
-          <input v-model="editData.address" type="text" id="address" class="w-full mt-1 px-3 py-2 border rounded-md text-sm" />
+      <form @submit.prevent="submitNewDetails" class="p-6">
+        <!-- Profile Image -->
+        <div class="flex items-center space-x-4 mb-6">
+          <div class="relative w-20 h-20">
+            <input
+              type="file"
+              ref="fileInput"
+              @change="handleFileUpload"
+              class="hidden"
+              accept="image/*"
+            />
+            <div
+              @click="openFilePicker"
+              class="w-full h-full cursor-pointer relative group"
+            >
+              <img
+                :src="currentProfileImage"
+                class="w-full h-full rounded-full object-cover bg-gray-200"
+                alt="Profile Image"
+              />
+              <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-full">
+                <span class="text-white text-3xl opacity-0 group-hover:opacity-100">+</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <label for="birthdate" class="block text-gray-700">Birthdate</label>
-          <input v-model="editData.birthdate" type="date" id="birthdate" class="w-full mt-1 px-3 py-2 border rounded-md text-sm" />
-        </div>
-      </div>
 
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label for="contact_number" class="block text-gray-700">Contact Number</label>
-          <input v-model="editData.contact_number" type="text" id="contact_number" class="w-full mt-1 px-3 py-2 border rounded-md text-sm" />
-        </div>
-        <div>
-          <label for="school_id_number" class="block text-gray-700">School ID Number</label>
-          <input v-model="editData.school_id_number" type="text" id="school_id_number" class="w-full mt-1 px-3 py-2 border rounded-md text-sm" />
-        </div>
-      </div>
+        <!-- Form Fields -->
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+              <input
+                v-model="editData.first_name"
+                type="text"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+              <input
+                v-model="editData.last_name"
+                type="text"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+              />
+            </div>
+          </div>
 
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label for="grade_year" class="block text-gray-700">Grade Year</label>
-          <input v-model="editData.grade_year" type="text" id="grade_year" class="w-full mt-1 px-3 py-2 border rounded-md text-sm" />
-        </div>
-      </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <input
+              v-model="editData.address"
+              type="text"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+            />
+          </div>
 
-      <div class="flex justify-between space-x-4 mt-6">
-        <button @click="toggleEditMode" type="button" class="bg-gray-400 hover:bg-gray-500  text-white px-6 py-2 rounded-md text-sm">Cancel</button>
-        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md text-sm">Save</button>
-      </div>
-    </form>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+            <input
+              v-model="editData.contact_number"
+              type="text"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">School ID Number</label>
+            <input
+              v-model="editData.school_id_number"
+              type="text"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Grade Level</label>
+            <select 
+              v-model="editData.grade_year"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+            >
+              <option value="">Select Grade Level</option>
+              <option v-for="grade in 12" :key="grade" :value="grade">
+                Grade {{ grade }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Birthdate</label>
+            <input
+              v-model="editData.birthdate"
+              type="date"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+            />
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-6">
+          <button 
+            type="button" 
+            @click="cancelEdit" 
+            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 
-
-  <!-- Confirmation Modal -->
-  <div v-if="isDeleteModalVisible" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-10">
-    <div class="bg-white p-5 rounded-md shadow-lg w-96">
-      <h3 class="text-xl mb-4 text-center">Are you sure you want to delete your account?</h3>
-      <p class="text-center text-gray-600 mb-4">This action is irreversible, and all your data will be lost.</p>
-      <div class="flex justify-center space-x-4">
-        <button @click="deleteAccount" class="bg-red-600 text-white px-6 py-2 rounded-md">Yes, Delete</button>
-        <button @click="closeDeleteModal" class="bg-gray-400 text-white px-6 py-2 rounded-md">Cancel</button>
+  <!-- Delete Confirmation Modal -->
+  <div v-if="isDeleteModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-6">
+      <h3 class="text-lg font-semibold text-black mb-2">Delete Account</h3>
+      <p class="text-sm text-gray-600 mb-6">Are you sure you want to delete your account? This action cannot be undone.</p>
+      
+      <div class="flex justify-end space-x-3">
+        <button 
+          @click="closeDeleteModal" 
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+        >
+          Cancel
+        </button>
+        <button 
+          @click="deleteAccount" 
+          class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+        >
+          Delete Account
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import axiosInstance from '@/axiosInstance' // Adjust based on your Axios configuration
+import axiosInstance from '@/axiosInstance'
 import SideBar from '@/components/SideBar.vue'
-import HelpButton from '@/components/HelpButton.vue'
+import { formatDate } from '@/utils/dateTime'
+import { getUserData } from '@/utils/user'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
-// Reactive variables
-const userData = ref(null)
+const router = useRouter()
+const { notification, showNotification } = useNotification()
+
+// Define defaultProfileImage first
+const defaultProfileImage = 'data:image/svg+xml;base64,' + btoa(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="11" fill="white" stroke="#E5E7EB" stroke-width="2"/>
+    <circle cx="12" cy="8" r="3.5" fill="#9CA3AF"/>
+    <path d="M12 12.5c-3 0-5.5 1.5-7 3.5 1.5 3 4 5 7 5s5.5-2 7-5c-1.5-2-4-3.5-7-3.5z" fill="#9CA3AF"/>
+  </svg>
+`)
+
+const userData = getUserData()
 const isEditModalVisible = ref(false)
 const isDeleteModalVisible = ref(false)
-const editData = ref({
-  first_name: '',
-  last_name: '',
-  birthdate: '',
-  address: '',
-  contact_number: '',
-  school_id_number: '',
-  grade_year: ''
+const fileInput = ref(null)
+const selectedImage = ref(null)
+const currentProfileImage = ref(userData.value.profile_image || defaultProfileImage)
+const editData = reactive({
+  first_name: userData.value.first_name || '',
+  last_name: userData.value.last_name || '',
+  birthdate: userData.value.birthdate || '',
+  address: userData.value.address || '',
+  contact_number: userData.value.contact_number || '',
+  school_id_number: userData.value.school_id_number || '',
+  grade_year: userData.value.grade_year || ''
 })
-const router = useRouter()
 
-// Fetch student data (retrieve from localStorage)
-const fetchStudentData = () => {
-  const storedUserData = localStorage.getItem('user_data')
-  if (storedUserData) {
-    userData.value = JSON.parse(storedUserData)
-    // Set initial edit data with current user data
-    editData.value = { ...userData.value }
-  } else {
-    console.error('No student data found in local storage')
+// Configuration objects
+const sections = [
+  {
+    title: 'Personal Information',
+    fields: [
+      { label: 'Name', value: user => `${user.first_name} ${user.last_name}` },
+      { label: 'Address', value: 'address' },
+      { label: 'Contact Number', value: 'contact_number' }
+    ]
+  },
+  {
+    title: 'Profile and Other Data',
+    fields: [
+      { label: 'Profile Image', value: 'profile_image', type: 'image' },
+      { label: 'Birthdate', value: user => user.birthdate ? formatDate(user.birthdate) : '' },
+      { label: 'School ID Number', value: 'school_id_number' },
+      { label: 'Grade Level', value: 'grade_year' },
+      { label: 'Account Created', value: user => user.created_at ? formatDate(user.created_at) : '' }
+    ]
   }
+]
+
+const actions = [
+  {
+    title: 'Edit Account',
+    description: 'Update your personal and account information for accuracy and convenience.',
+    buttonText: 'Edit',
+    buttonClass: 'bg-blue-600 hover:bg-blue-700',
+    handler: () => toggleEditMode()
+  },
+  {
+    title: 'Delete Account',
+    description: 'All account information will be permanently deleted without the possibility of restoration.',
+    buttonText: 'Delete Account',
+    buttonClass: 'bg-red-600 hover:bg-red-700',
+    handler: () => openDeleteModal()
+  }
+]
+
+// Helper function to get field values
+const getFieldValue = (field) => {
+  if (typeof field.value === 'function') {
+    return field.value(userData.value)
+  }
+  return userData.value?.[field.value]
 }
 
-// Fetch student data when the component is mounted
-onMounted(fetchStudentData)
-
-// Image change handler
-const onImageChange = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    const reader = new FileReader()
-    reader.onload = () => {
-      editData.value.profile_image = reader.result // Set the preview image
-    }
-    reader.readAsDataURL(file) // Convert to base64 for preview
-  }
-}
-
-
-// Open the edit modal
 const toggleEditMode = () => {
+  if (!isEditModalVisible.value) {
+    editData.first_name = userData.value.first_name || ''
+    editData.last_name = userData.value.last_name || ''
+    editData.birthdate = userData.value.birthdate || ''
+    editData.address = userData.value.address || ''
+    editData.contact_number = userData.value.contact_number || ''
+    editData.school_id_number = userData.value.school_id_number || ''
+    editData.grade_year = userData.value.grade_year || ''
+  }
   isEditModalVisible.value = !isEditModalVisible.value
 }
 
-// Save the edited profile data
-const saveEdits = () => {
-  // Update user data with the changes
-  userData.value = { ...editData.value }
-
-  // Save updated user data to localStorage
-  localStorage.setItem('user_data', JSON.stringify(userData.value))
-
-  // Optionally, send the updated data to the backend for saving
-  axiosInstance.put('/api/update-student', userData.value) // Replace with your API endpoint
-
-  // Close the modal
-  toggleEditMode()
+const openFilePicker = () => {
+  fileInput.value.click()
 }
 
-// Open the delete confirmation modal
-const openDeleteModal = () => {
-  isDeleteModalVisible.value = true
-}
-
-// Close the delete confirmation modal
-const closeDeleteModal = () => {
-  isDeleteModalVisible.value = false
-}
-
-// Delete the account, clear localStorage, logout, and redirect
-const deleteAccount = async () => {
-  try {
-    // Optional: Call backend API to delete the user account from the database
-    await axiosInstance.delete('/api/delete-student-account') // Replace with your API endpoint
-
-    // Clear user data from localStorage and sessionStorage
-    localStorage.removeItem('user_data')
-    localStorage.removeItem('student_data') // Removes user profile data
-    localStorage.removeItem('app_auth_token')
-    localStorage.removeItem('user_email')
-    localStorage.removeItem('user_full_name')
-    localStorage.removeItem('user_type') // Removes authentication token
-    sessionStorage.clear() // Clears sessionStorage if used
-
-    // Log out the user by clearing session and redirecting
-    router.push('/') // Redirect to home page or login page
-
-  } catch (error) {
-    console.error("Error deleting account:", error)
+const handleFileUpload = e => {
+  const file = e.target.files[0]
+  if (file) {
+    if (file.size > 5000000) { // 5MB limit
+      showNotification('Image size should be less than 5MB', 'error')
+      return
+    }
+    
+    selectedImage.value = file
+    currentProfileImage.value = URL.createObjectURL(file)
   }
 }
+
+const submitNewDetails = async () => {
+  const formData = new FormData()
+  
+  // Only append fields that have values
+  Object.entries(editData).forEach(([key, value]) => {
+    if (value) formData.append(key, value)
+  })
+
+  if (selectedImage.value) {
+    formData.append('profile_image', selectedImage.value)
+  }
+
+  try {
+    const response = await axiosInstance.post('/api/edit-student-details', formData)
+    userData.value = response.data.student
+    localStorage.setItem('user_data', JSON.stringify(userData.value))
+    isEditModalVisible.value = false
+    showNotification('Profile updated successfully', 'success')
+  } catch (error) {
+    console.error('Update failed:', error)
+    showNotification(error.response?.data?.message || 'Failed to update profile', 'error')
+  }
+}
+
+const cancelEdit = () => {
+  currentProfileImage.value = userData.value.profile_image || defaultProfileImage
+  selectedImage.value = null
+  Object.assign(editData, {
+    first_name: userData.value.first_name || '',
+    last_name: userData.value.last_name || '',
+    birthdate: userData.value.birthdate || '',
+    address: userData.value.address || '',
+    contact_number: userData.value.contact_number || '',
+    school_id_number: userData.value.school_id_number || '',
+    grade_year: userData.value.grade_year || ''
+  })
+  isEditModalVisible.value = false
+}
+
+const deleteAccount = async () => {
+  try {
+    await axiosInstance.delete('/api/delete-student-account')
+    const keysToRemove = [
+      'user_data', 'student_data', 'app_auth_token',
+      'user_email', 'user_full_name', 'user_type'
+    ]
+    keysToRemove.forEach(key => localStorage.removeItem(key))
+    sessionStorage.clear()
+    showNotification('Account deleted successfully', 'success')
+    setTimeout(() => {
+      router.push('/')
+    }, 1500)
+  } catch (error) {
+    console.error("Error deleting account:", error)
+    showNotification(error.response?.data?.message || 'Failed to delete account', 'error')
+  }
+}
+
+const openDeleteModal = () => isDeleteModalVisible.value = true
+const closeDeleteModal = () => isDeleteModalVisible.value = false
 </script>
 
 <style scoped>

@@ -77,10 +77,6 @@ class AuthController extends Controller
             $student = Student::where('user_id', $user->id)->first();
             $userFullName = "{$student->first_name} {$student->last_name}";
             $userType = "Student";
-            if ($student->profile_image) {
-                //$imagePath code
-                $student->profile_image = asset('storage/' .$student->profile_image); // or use Storage::url($tutor->profile_image)
-            }
             $userData = $student;
         }
         if ($user->user_type_id === 2) {

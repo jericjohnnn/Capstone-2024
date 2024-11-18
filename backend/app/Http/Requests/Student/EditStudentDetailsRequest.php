@@ -25,7 +25,6 @@ class EditStudentDetailsRequest extends FormRequest
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'tutor_rate' => 'nullable | integer',
             'address' => 'nullable|string|max:255',
             'birthdate' => 'nullable|date',
             'contact_number' => 'nullable|string|max:255',
