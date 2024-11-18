@@ -1,7 +1,15 @@
 <template>
   <SideBar>
+    <NotificationToast
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
     <!-- Show loader when tutor is empty -->
-    <div v-if="!tutor?.id" class="min-h-screen flex items-center justify-center">
+    <div
+      v-if="!tutor?.id"
+      class="min-h-screen flex items-center justify-center"
+    >
       <LoaderSpinner />
     </div>
     <!-- Show content only when tutor data exists -->
@@ -61,26 +69,32 @@
                 Book Now
               </button>
               <button
+                @click="openReportModal"
                 class="text-blue-100 text-sm hover:text-white transition-colors duration-200 flex items-center gap-1"
               >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-                Report an issue
+                Report tutor
               </button>
             </div>
           </div>
         </div>
+
+        <!-- Add Report Modal -->
+        <PopUpModal
+          v-model:toggleModal="isReportModalOpen"
+          @openValue="handleModalOpen"
+          @cancelButtonValue="handleModalCancel"
+          @mainButtonValue="handleReportSubmit"
+        >
+          <template #modalTitle> Report Tutor </template>
+          <template #mainContent>
+            <ReportForm
+              @update:reportReason="handleReportReasonUpdate"
+              @update:reportMessage="handleReportMessageUpdate"
+            />
+          </template>
+          <template #mainButton> Submit Report </template>
+          <template #cancelButton> Cancel </template>
+        </PopUpModal>
 
         <!-- Scrollable Content -->
         <div class="flex-1 overflow-y-auto p-6 space-y-8">
@@ -102,11 +116,15 @@
 
           <!-- Combined Info Card -->
           <div class="prose prose-sm max-w-none">
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">Tutor Information</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">
+              Tutor Information
+            </h3>
             <div class="bg-gray-50 rounded-lg p-6 space-y-6">
               <!-- Subjects Section -->
               <div class="text-center">
-                <h4 class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2">
+                <h4
+                  class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2"
+                >
                   <svg
                     class="w-5 h-5 text-blue-500"
                     fill="none"
@@ -137,7 +155,9 @@
 
               <!-- Days Available -->
               <div v-if="availableDays" class="text-center">
-                <h4 class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2">
+                <h4
+                  class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2"
+                >
                   <svg
                     class="w-5 h-5 text-blue-500"
                     fill="none"
@@ -168,7 +188,9 @@
 
               <!-- Hours Available -->
               <div v-if="tutor.work_days" class="text-center">
-                <h4 class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2">
+                <h4
+                  class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2"
+                >
                   <svg
                     class="w-5 h-5 text-blue-500"
                     fill="none"
@@ -194,7 +216,9 @@
 
               <!-- Rate Section -->
               <div class="text-center">
-                <h4 class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2">
+                <h4
+                  class="font-medium text-gray-900 mb-3 flex items-center justify-center gap-2"
+                >
                   <svg
                     class="w-5 h-5 text-blue-500"
                     fill="none"
@@ -219,7 +243,9 @@
 
           <!-- Education Section -->
           <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3
+              class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
+            >
               <svg
                 class="w-5 h-5 text-blue-500"
                 fill="none"
@@ -240,7 +266,10 @@
               Education
             </h3>
 
-            <div v-if="!tutor.schools || tutor.schools.length === 0" class="text-gray-500">
+            <div
+              v-if="!tutor.schools || tutor.schools.length === 0"
+              class="text-gray-500"
+            >
               <p>No education information available.</p>
             </div>
 
@@ -275,7 +304,9 @@
 
           <!-- Certificates Section -->
           <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3
+              class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
+            >
               <svg
                 class="w-5 h-5 text-blue-500"
                 fill="none"
@@ -292,7 +323,10 @@
               Certifications
             </h3>
 
-            <div v-if="!tutor.certificates || tutor.certificates.length === 0" class="text-gray-500">
+            <div
+              v-if="!tutor.certificates || tutor.certificates.length === 0"
+              class="text-gray-500"
+            >
               <p>No certificates information available.</p>
             </div>
 
@@ -325,13 +359,14 @@
           <!-- Ratings Section -->
           <div>
             <div class="flex items-center gap-3 mb-4">
-              <h3 class="text-lg font-semibold text-gray-900">
-                Ratings
-              </h3>
+              <h3 class="text-lg font-semibold text-gray-900">Ratings</h3>
               <StarRating :rating="averageRatings" class="mt-1"></StarRating>
             </div>
 
-            <div v-if="!tutor.ratings || tutor.ratings.length === 0" class="text-gray-500">
+            <div
+              v-if="!tutor.ratings || tutor.ratings.length === 0"
+              class="text-gray-500"
+            >
               <p>No ratings information available.</p>
             </div>
 
@@ -345,7 +380,9 @@
         </div>
 
         <!-- Mobile Book Now Button -->
-        <div class="md:hidden sticky bottom-0 w-full bg-white px-4 py-3 border-t border-gray-200">
+        <div
+          class="md:hidden sticky bottom-0 w-full bg-white px-4 py-3 border-t border-gray-200"
+        >
           <div class="flex flex-col gap-2">
             <button
               @click="goToBook"
@@ -370,7 +407,10 @@
             </button>
 
             <!-- Report Button -->
-            <button class="w-full underline text-gray-500 py-2 text-sm font-medium hover:text-gray-700 transition-colors duration-200 flex items-center justify-center gap-1">
+            <button
+              @click="openReportModal"
+              class="w-full underline text-gray-500 py-2 text-sm font-medium hover:text-gray-700 transition-colors duration-200 flex items-center justify-center gap-1"
+            >
               Report tutor
             </button>
           </div>
@@ -395,6 +435,10 @@ import { formatDate, formatTo12Hour } from '@/utils/dateTime'
 import { onMounted, ref } from 'vue'
 import StarRating from '@/components/StarRating.vue'
 import axiosInstance from '@/axiosInstance'
+import PopUpModal from '@/components/Reusables/PopUpModal.vue'
+import ReportForm from '@/components/Reusables/ReportForm.vue'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +
@@ -466,7 +510,7 @@ const fetchTutorDetails = async tutorId => {
     tutor.value = response.data.tutor
   } catch (err) {
     console.error('Error fetching tutor details:', err)
-  } 
+  }
 }
 
 onMounted(() => {
@@ -484,6 +528,70 @@ const truncatedBio = computed(() => {
     ? tutor.value.biography.slice(0, 150) + '...'
     : tutor.value.biography
 })
+
+const { notification, showNotification } = useNotification()
+
+// FOR REPORT
+const isReportModalOpen = ref(false)
+const reportMessage = ref('')
+const reportReason = ref('')
+
+const handleReportReasonUpdate = value => {
+  reportReason.value = value
+}
+
+const handleReportMessageUpdate = value => {
+  reportMessage.value = value
+}
+
+const openReportModal = () => {
+  isReportModalOpen.value = true
+}
+
+const handleModalOpen = value => {
+  isReportModalOpen.value = value
+}
+
+const handleModalCancel = () => {
+  isReportModalOpen.value = false
+  reportReason.value = ''
+  reportMessage.value = ''
+}
+
+const handleReportSubmit = async () => {
+  if (!reportReason.value) {
+    showNotification('Please select a reason for reporting', 'error')
+    return
+  }
+
+  if (!reportMessage.value.trim()) {
+    showNotification('Please provide details about your report', 'error')
+    return
+  }
+
+  const reportData = {
+    tutor_offender_id: tutor.value.id,
+    title: reportReason.value,
+    message: reportMessage.value,
+  }
+
+  try {
+    await axiosInstance.post('api/create-report', reportData)
+    showNotification('Report submitted successfully', 'success')
+    isReportModalOpen.value = false
+
+    // Reset form
+    reportReason.value = ''
+    reportMessage.value = ''
+  } catch (error) {
+    console.error('Error submitting report:', error)
+    showNotification(
+      error.response?.data?.message ||
+        'Failed to submit report. Please try again.',
+      'error',
+    )
+  }
+}
 
 // Add loading state
 </script>

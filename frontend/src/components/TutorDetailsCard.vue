@@ -2,6 +2,11 @@
   <div
     class="flex flex-col bg-white border shadow-sm rounded-xl h-full hover:shadow-lg transition"
   >
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
     <!-- Header Section with Blue Background -->
     <div
       class="bg-gradient-to-r from-blue-600 to-blue-500 p-5 rounded-t-xl flex-none"
@@ -51,7 +56,7 @@
           >
             Book Now
           </button>
-          <!-- FOR MODIFICATION -->
+          <!-- FOR REPORT -->
           <button
             class="underline text-blue-100 text-sm hover:text-white transition-colors duration-200 flex items-center gap-1"
             @click="openReportModal"
@@ -67,28 +72,12 @@
           >
             <template #modalTitle> Report Tutor </template>
             <template #mainContent>
-              <!-- Content of the modal -->
-              <div>
-                <div class="w-[400px] mb-2">
-                  <textarea
-                    class="w-full p-2 h-10 border border-gray-300 rounded-md"
-                    placeholder="Report reason.."
-                    v-model="reportReason"
-                  ></textarea>
-                </div>
-                <div>
-                  <textarea
-                    class="w-full p-2 h-52 border border-gray-300 rounded-md"
-                    placeholder="Write your report details here..."
-                    v-model="reportMessage"
-                  ></textarea>
-                </div>
-              </div>
+              <ReportForm @update:reportReason="handleReportReasonUpdate" @update:reportMessage="handleReportMessageUpdate" />
             </template>
             <template #mainButton> Submit Report </template>
             <template #cancelButton> Cancel </template>
           </PopUpModal>
-          <!-- FOR MODIFICATION -->
+          <!-- FOR REPORT -->
         </div>
       </div>
     </div>
@@ -97,9 +86,7 @@
     <div class="flex-1 overflow-y-auto p-6 space-y-8">
       <!-- Bio Section -->
       <div class="prose prose-sm max-w-none">
-        <h3 class="text-lg font-semibold text-gray-900 mb-3">
-          About
-        </h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">About</h3>
         <p class="text-gray-600 leading-relaxed">
           <span v-if="!showFullBio">{{ truncatedBio }}</span>
           <span v-else>{{ tutor.biography }}</span>
@@ -354,9 +341,7 @@
       <!-- Ratings Section -->
       <div>
         <div class="flex items-center gap-3 mb-4">
-          <h3 class="text-lg font-semibold text-gray-900">
-            Ratings
-          </h3>
+          <h3 class="text-lg font-semibold text-gray-900">Ratings</h3>
           <StarRating :rating="averageRatings" class="mt-1"></StarRating>
         </div>
 
@@ -379,6 +364,7 @@
 </template>
 
 <script setup>
+import ReportForm from './Reusables/ReportForm.vue'
 import schoolImage from '@/assets/school.png'
 import certificateImage from '@/assets/certificate.png'
 import StarRating from './StarRating.vue'
@@ -387,6 +373,9 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatDate, formatTo12Hour } from '@/utils/dateTime'
 import PopUpModal from './Reusables/PopUpModal.vue'
+import axiosInstance from '@/axiosInstance'
+import NotificationToast from './Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const defaultProfileImage =
   'data:image/svg+xml;base64,' +
@@ -405,6 +394,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+const { notification, showNotification } = useNotification()
 
 function goToBook() {
   router.push({
@@ -437,6 +428,9 @@ const availableDays = computed(() => {
 })
 
 const averageRatings = computed(() => {
+  if (!props.tutor.ratings || props.tutor.ratings.length === 0) {
+    return 0
+  }
   const ratings = props.tutor.ratings.map(rating => rating.rate)
   const total = ratings.reduce((sum, rate) => sum + rate, 0)
   return total / ratings.length
@@ -458,30 +452,69 @@ const truncatedBio = computed(() => {
     : props.tutor.biography
 })
 
+// 
 
 
 
-// TODO: FOR MODIFICATION
+
+// FOR REPORT
 const isReportModalOpen = ref(false)
+
 const reportMessage = ref('')
 const reportReason = ref('')
-// Methods to handle modal events
+
+const handleReportReasonUpdate = value => {
+  reportReason.value = value
+}
+
+const handleReportMessageUpdate = value => {
+  reportMessage.value = value
+}
+
 const openReportModal = () => {
   isReportModalOpen.value = true
 }
 
 const handleModalOpen = value => {
-  console.log('Modal opened:', value)
+  isReportModalOpen.value = value
 }
 
 const handleModalCancel = () => {
   isReportModalOpen.value = false
 }
 
-const handleReportSubmit = () => {
-  console.log('Report submitted:', reportMessage.value)
-  // Handle form submission, e.g., sending the report to a server
-  isReportModalOpen.value = false
+const handleReportSubmit = async () => {
+  if (!reportReason.value) {
+    showNotification('Please select a reason for reporting', 'error')
+    return
+  }
+
+  if (!reportMessage.value.trim()) {
+    showNotification('Please provide details about your report', 'error')
+    return
+  }
+
+  const reportData = {
+    tutor_offender_id: props.tutor.id,
+    title: reportReason.value,
+    message: reportMessage.value,
+  }
+
+  try {
+    await axiosInstance.post('api/create-report', reportData)
+    showNotification('Report submitted successfully', 'success')
+    isReportModalOpen.value = false
+    
+    // Reset form
+    reportReason.value = ''
+    reportMessage.value = ''
+  } catch (error) {
+    console.error('Error submitting report:', error)
+    showNotification(
+      error.response?.data?.message || 'Failed to submit report. Please try again.',
+      'error'
+    )
+  }
 }
-// TODO: FOR MODIFICATION
+// FOR REPORT
 </script>

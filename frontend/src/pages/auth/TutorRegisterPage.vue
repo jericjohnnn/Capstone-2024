@@ -1,6 +1,11 @@
 <template>
   <NavBar />
-  <div class="min-h-[calc(100vh-5rem)] bg-gradient-to-b from-blue-50 to-white py-8 px-4">
+  <div class="min-h-[calc(100vh-5rem)] flex justify-center items-center bg-gray-50">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
     <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg">
       <div class="p-8">
         <!-- Header -->
@@ -168,6 +173,10 @@ import FooterSection from '../../sections/FooterSection.vue';
 import { reactive, ref, onMounted } from 'vue'
 import axiosInstance from '@/axiosInstance'
 import router from '@/router'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
+
+const { notification, showNotification } = useNotification()
 
 const currentStep = ref(1)
 
@@ -205,7 +214,9 @@ const getSubjectName = (id) => {
 
 const nextStep = () => {
   if (currentStep.value < steps.value.length) {
-    currentStep.value++
+    if (validateCurrentStep()) {
+      currentStep.value++
+    }
   }
 }
 
@@ -215,12 +226,33 @@ const prevStep = () => {
   }
 }
 
+const validateCurrentStep = () => {
+  if (currentStep.value === 1) {
+    if (!form.firstName.trim() || !form.lastName.trim() || !form.address.trim() || 
+        !form.birthdate || !form.gender || !form.contactNo.trim()) {
+      showNotification('Please fill in all personal information fields', 'error')
+      return false
+    }
+  } else if (currentStep.value === 2) {
+    if (!form.schoolIdNumber.trim() || !form.course || !form.year || form.subjects.length === 0) {
+      showNotification('Please fill in all education information fields and select at least one subject', 'error')
+      return false
+    }
+  }
+  return true
+}
+
 const addSubject = () => {
-  if (!selectedSubject.value) return
+  if (!selectedSubject.value) {
+    showNotification('Please select a subject first', 'error')
+    return
+  }
   
   if (!form.subjects.includes(selectedSubject.value)) {
     form.subjects.push(selectedSubject.value)
     selectedSubject.value = ''
+  } else {
+    showNotification('This subject is already selected', 'error')
   }
 }
 
@@ -234,12 +266,18 @@ const fetchSubjects = async () => {
     subjects.value = response.data.subjects
   } catch (err) {
     console.error('Error fetching subjects:', err)
+    showNotification('Failed to load subjects. Please refresh the page.', 'error')
   }
 }
 
 const handleSubmit = async () => {
   if (form.password !== form.confirmPassword) {
-    alert('Passwords do not match!')
+    showNotification('Passwords do not match!', 'error')
+    return
+  }
+
+  if (!form.agreeToTerms) {
+    showNotification('Please agree to the Terms & Conditions', 'error')
     return
   }
 
@@ -262,18 +300,26 @@ const handleSubmit = async () => {
 
   try {
     const response = await axiosInstance.post('api/register', payload)
-    const { message, user_email, user_full_name, user_type, user_data, token } = response.data
+    const { user_email, user_full_name, user_type, user_data, token } = response.data
     
-    alert(message)
+    showNotification('Registration submitted!', 'success')
+    
     localStorage.setItem('app_auth_token', token)
+    localStorage.setItem('newTutor', true)
     localStorage.setItem('user_type', user_type)
     localStorage.setItem('user_email', user_email)
     localStorage.setItem('user_full_name', user_full_name)
     localStorage.setItem('user_data', JSON.stringify(user_data))
     
-    router.push('/tutor/pending-approval')
+    setTimeout(() => {
+      router.push('/tutor/pending-approval')
+    }, 1500)
   } catch (error) {
-    alert('Registration failed: ' + (error.response?.data?.message || error.message))
+    console.error('Registration error:', error)
+    showNotification(
+      error.response?.data?.message || 'Registration failed. Please try again.',
+      'error'
+    )
   }
 }
 

@@ -1,9 +1,14 @@
 <template>
   <NavBar />
-  <div class=" bg-white">
-    <div class="flex min-h-[calc(100vh-5rem)]  flex-col justify-center items-center px-6 pb-24 lg:px-8">
+  <div class="min-h-[calc(100vh-5rem)] flex justify-center items-center bg-gray-50">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
+    <div class="flex bg-white min-h-[calc(100vh-5rem)] w-full shadow-md md:rounded-lg flex-col justify-center items-center md:w-5/12 md:min-h-0 md:p-24   ">
       <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 class="mt-10 text-center text-2xl font-bold text-gray-900">
+        <h2 class=" text-center text-2xl font-bold text-gray-900">
           Sign in to your account
         </h2>
       </div>
@@ -51,19 +56,6 @@
             </div>
           </div>
 
-          <!-- Error Message with transition -->
-          <Transition
-            enter-active-class="transition duration-200 ease-out"
-            enter-from-class="transform -translate-y-1 opacity-0"
-            enter-to-class="transform translate-y-0 opacity-100"
-            leave-active-class="transition duration-150 ease-in"
-            leave-from-class="transform translate-y-0 opacity-100"
-            leave-to-class="transform -translate-y-1 opacity-0"
-          >
-            <div v-if="errorMessage" class="text-red-500 text-sm text-center bg-red-50 p-2 rounded-lg">
-              {{ errorMessage }}
-            </div>
-          </Transition>
 
           <div class="space-y-4">
             <button
@@ -93,22 +85,14 @@ import NavBar from '@/sections/NavBar.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axiosInstance from '@/axiosInstance'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
-// State for form inputs and error handling
+// State for form inputs and notification
 const email = ref('')
 const password = ref('')
-const errorMessage = ref('')
-
-// Vue Router instance for navigation
 const router = useRouter()
-
-// Add timer function
-const showErrorWithTimer = (message) => {
-  errorMessage.value = message
-  setTimeout(() => {
-    errorMessage.value = ''
-  }, 3000) // Error will disappear after 3 seconds
-}
+const { notification, showNotification } = useNotification()
 
 // Login handler function
 const handleLogin = async () => {
@@ -118,8 +102,7 @@ const handleLogin = async () => {
       password: password.value,
     })
 
-    const { user_email, user_full_name, user_type, user_data, token } =
-      response.data
+    const { user_email, user_full_name, user_type, user_data, token } = response.data
 
     // Store token in localStorage
     localStorage.setItem('app_auth_token', token)
@@ -128,21 +111,28 @@ const handleLogin = async () => {
     localStorage.setItem('user_full_name', user_full_name)
     localStorage.setItem('user_data', JSON.stringify(user_data))
 
-    if (user_type === 'Tutor') {
-      // Check approval status for tutors
-      if (user_data.approval_status === 'Pending') {
-        router.push('/tutor/pending-approval')
-      } else {
-        router.push('/tutor/profile')
+    showNotification('Login successful!', 'success')
+
+    // Add setTimeout before routing
+    setTimeout(() => {
+      // Redirect based on user type
+      if (user_type === 'Tutor') {
+        if (user_data.approval_status === 'Pending') {
+          router.push('/tutor/pending-approval')
+        } else {
+          router.push('/tutor/profile')
+        }
       }
-    }
-    if (user_type === 'Student') {
-      router.push('/student/home')
-    }
+      if (user_type === 'Student') {
+        router.push('/student/home')
+      }
+    }, 1500) // 1.5 seconds delay to show the success notification
+
   } catch (error) {
-    // Use the timer function instead of direct assignment
-    showErrorWithTimer(
-      error.response?.data?.message || 'An error occurred. Please try again.'
+    console.error('Login error:', error)
+    showNotification(
+      error.response?.data?.message || 'Invalid email or password',
+      'error'
     )
   }
 }

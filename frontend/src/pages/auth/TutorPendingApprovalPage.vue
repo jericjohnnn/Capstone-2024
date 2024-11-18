@@ -1,21 +1,10 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50">
+  <NavBar />
+  <div class="min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50">
     <div class="max-w-md w-full p-6 bg-white rounded-lg shadow-lg text-center">
-      <div class="mb-8">
+      <div class="mb-4 size-20  w-full flex justify-center">
         <!-- You can add an icon here -->
-        <svg 
-          class="mx-auto h-16 w-16 text-yellow-400"
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path 
-            stroke-linecap="round" 
-            stroke-linejoin="round" 
-            stroke-width="2" 
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-          />
-        </svg>
+        <img :src="pendingApprovalIcon" alt="pending approval">
       </div>
 
       <h2 class="text-2xl font-bold text-gray-900 mb-4">
@@ -31,21 +20,25 @@
           @click="goHome" 
           class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
         >
-          Go Home
+          Home
         </button>
         
         <button 
           @click="logout" 
-          class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
         >
           Logout
         </button>
       </div>
     </div>
   </div>
+  <FooterSection />
 </template>
 
 <script setup>
+import pendingApprovalIcon from '@/assets/approval.png'
+import NavBar from '@/sections/NavBar.vue'
+import FooterSection from '@/sections/FooterSection.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -55,14 +48,7 @@ const goHome = () => {
 }
 
 const logout = () => {
-  // Clear all localStorage items
-  localStorage.removeItem('app_auth_token')
-  localStorage.removeItem('user_type')
-  localStorage.removeItem('user_email')
-  localStorage.removeItem('user_full_name')
-  localStorage.removeItem('user_data')
-  
-  // Redirect to login page
+  localStorage.clear()
   router.push('/login')
 }
 </script>

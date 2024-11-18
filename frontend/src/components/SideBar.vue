@@ -184,9 +184,10 @@ async function logout() {
   try {
     await axiosInstance.post('/api/logout')
 
-    // Clear local storage
-    const itemsToRemove = ['app_auth_token', 'user_type', 'user_email', 'user_data', 'user_full_name']
-    itemsToRemove.forEach(item => localStorage.removeItem(item))
+    // const itemsToRemove = ['app_auth_token', 'user_type', 'user_email', 'user_data', 'user_full_name']
+    // itemsToRemove.forEach(item => localStorage.removeItem(item))
+
+    localStorage.clear();
 
     // Remove authorization header
     delete axiosInstance.defaults.headers['Authorization']

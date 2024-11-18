@@ -13,12 +13,14 @@ use App\Models\Booking;
 use App\Models\BookingDate;
 use App\Models\BookingMessage;
 use App\Models\Notification;
+use App\Models\Rating;
 use App\Models\Subject;
 use App\Models\Tutor;
 use App\Models\TutorCertificate;
 use App\Models\TutorSchool;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\Tutor\RateRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -390,6 +392,20 @@ class TutorController extends Controller
     }
 
 
+    public function rateTutor(RateRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        $validatedData['student_id'] = auth()->user()->id;
+        $validatedData['tutor_id'] = $request->tutor_id;
+
+        $rating = Rating::create($validatedData);
+
+        return response()->json([
+            'message' => 'Rating created successfully.',
+            'rating' => $rating,
+        ]);
+    }
 
 
 
@@ -406,13 +422,14 @@ class TutorController extends Controller
     //ADMIN METHODS INSERT HERE
     public function showAllTutors(Request $request)
     {
-        // Get the search query from the request
         $search = $request->input('search', '');
 
-        // If search query exists, filter tutors
         $tutors = Tutor::when($search, function ($query) use ($search) {
             return $query->where('name', 'like', '%' . $search . '%');
-        })->get(); // Instead of paginate(8), we use get() to fetch all matching tutors
+        })
+        ->orderBy('updated_at', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->get(); 
 
         return response()->json([
             'message' => 'Tutors retrieved successfully.',
