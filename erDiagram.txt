@@ -1,0 +1,95 @@
+erDiagram
+    USER_TYPE ||--o{ USER : has
+    USER ||--o| STUDENT : has
+    USER ||--o| TUTOR : has
+    USER ||--o{ NOTIFICATION : has
+    USER ||--o{ REPORT : "complains as"
+    USER ||--o{ REPORT : "reported as"
+
+    ADMIN_ROLE ||--o{ ADMIN : has
+
+    TUTOR ||--o{ BOOKING : has
+    TUTOR ||--o{ RATING : receives
+    TUTOR ||--o{ TUTOR_SCHOOL : has
+    TUTOR ||--o{ TUTOR_CERTIFICATE : has
+    TUTOR ||--o| TUTOR_WORK_DAY : has
+    TUTOR ||--o{ TUTOR_SUBJECT : has
+    TUTOR_SUBJECT }o--|| SUBJECT : references
+
+    STUDENT ||--o{ BOOKING : makes
+    STUDENT ||--o{ RATING : gives
+
+    BOOKING ||--o{ BOOKING_MESSAGE : has
+    BOOKING_MESSAGE ||--o{ BOOKING_DATE : has
+
+    USER {
+        int id
+        int user_type_id
+        string email
+        timestamp email_verified_at
+        string password
+        string remember_token
+    }
+
+    STUDENT {
+        int id
+        int user_id
+        string first_name
+        string last_name
+        string address
+        date birthdate
+        string contact_number
+        string profile_image
+        string school_id_number
+        string grade_year
+        string offense_status
+    }
+
+    TUTOR {
+        int id
+        int user_id
+        string first_name
+        string last_name
+        string address
+        date birthdate
+        string gender
+        string contact_number
+        string profile_image
+        int tutor_rate
+        string biography
+        string school_id_number
+        string course
+        string year
+        boolean contacted_status
+        string offense_status
+        string approval_status
+    }
+
+    BOOKING {
+        int id
+        int tutor_id
+        int student_id
+        string learning_mode
+        string subject
+        string location
+        string online_meeting_platform
+        string contact_number
+        string status
+    }
+
+    RATING {
+        int id
+        int tutor_id
+        int student_id
+        string comment
+        int rate
+    }
+
+    REPORT {
+        int id
+        int complainant_id
+        int offender_id
+        string title
+        string message
+        string status
+    }
