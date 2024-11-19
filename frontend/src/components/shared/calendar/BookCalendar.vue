@@ -1,5 +1,10 @@
 <template>
   <div class="flex flex-col">
+    <NotificationToast 
+      :show="notification.show"
+      :message="notification.message"
+      :type="notification.type"
+    />
     <div class="order-last md:order-first">
       <TimePicker
         :isDisabled="activeView !== 'day'"
@@ -60,6 +65,8 @@ import {
   getBusinessHours,
   formatNewEvent,
 } from '@/utils/calendar/calendarActions'
+import NotificationToast from '@/components/Reusables/NotificationToast.vue'
+import { useNotification } from '@/composables/useNotification'
 
 const props = defineProps({
   tutorBookings: {
@@ -100,6 +107,8 @@ const selectedCellDate = ref('')
 const selectedStartTime = ref('')
 const selectedEndTime = ref('')
 
+const { notification, showNotification } = useNotification()
+
 const getCellDate = event => {
   selectedCellDate.value = event
 }
@@ -125,9 +134,7 @@ const addScheduleRequest = () => {
   const hasOverlap = checkEventOverlap(newStart, newEnd, events.value)
 
   if (hasOverlap) {
-    alert(
-      'Event time overlaps with an existing event. Please choose another time.',
-    )
+    showNotification('Event time overlaps with an existing event. Please choose another time.', 'error')
     return
   }
 
@@ -140,18 +147,16 @@ const addScheduleRequest = () => {
   events.value.push(newEvent.newEvent)
   addedPendingSchedules.value.push(newEvent.newEvent)
   emit('update:added-schedules', addedPendingSchedules.value)
-  //TODO: make a slide notification that item is added
 }
 
 //
 
 function deleteSchedule(id) {
   addedPendingSchedules.value = addedPendingSchedules.value.filter(
-    schedule => schedule.id !== id,
+    schedule => schedule.id !== id
   )
   events.value = events.value.filter(schedule => schedule.id !== id)
   emit('update:added-schedules', addedPendingSchedules.value)
-  //TODO: make a slide notification that item is deleted
 }
 
 //WATCHES
@@ -165,39 +170,44 @@ watch(
 watch(
   () => [props.tutorBookings, props.studentBookings],
   ([tutorBookings, studentBookings]) => {
-    events.value = [
-      ...(tutorBookings?.flatMap(
-        booking =>
-          booking.booking_dates?.map(date => ({
-            id: date.id,
-            booking_id: booking.booking_id,
-            start: formatRawDateTime(date.start_time),
-            end: formatRawDateTime(date.end_time),
-            title: booking.subject || '',
-            class: 'tutorBookings',
-          })) || [],
-      ) || []),
-      ...(studentBookings?.flatMap(
-        booking =>
-          booking.booking_dates?.map(date => ({
-            id: date.id,
-            booking_id: booking.booking_id,
-            start: formatRawDateTime(date.start_time),
-            end: formatRawDateTime(date.end_time),
-            title: booking.subject || '',
-            class: 'studentBookings',
-          })) || [],
-      ) || []),
-    ]
+    try {
+      events.value = [
+        ...(tutorBookings?.flatMap(
+          booking =>
+            booking.booking_dates?.map(date => ({
+              id: date.id,
+              booking_id: booking.booking_id,
+              start: formatRawDateTime(date.start_time),
+              end: formatRawDateTime(date.end_time),
+              title: booking.subject || '',
+              class: 'tutorBookings',
+            })) || [],
+        ) || []),
+        ...(studentBookings?.flatMap(
+          booking =>
+            booking.booking_dates?.map(date => ({
+              id: date.id,
+              booking_id: booking.booking_id,
+              start: formatRawDateTime(date.start_time),
+              end: formatRawDateTime(date.end_time),
+              title: booking.subject || '',
+              class: 'studentBookings',
+            })) || [],
+        ) || []),
+      ]
 
-    hiddenWeekDays.value = getHiddenWeekDays(props.tutorWorkDays)
-    specialHours.value = getSpecialHours(tutorWorkHours)
-    availableStartingDate.value = getAvailableStartingDate()
-    activeView.value = getActiveView()
-    tutorWorkHours.value = getBusinessHours(
-      formatTimeToInteger(props.tutorWorkDays.start_time),
-      formatTimeToInteger(props.tutorWorkDays.end_time),
-    )
+      hiddenWeekDays.value = getHiddenWeekDays(props.tutorWorkDays)
+      specialHours.value = getSpecialHours(tutorWorkHours)
+      availableStartingDate.value = getAvailableStartingDate()
+      activeView.value = getActiveView()
+      tutorWorkHours.value = getBusinessHours(
+        formatTimeToInteger(props.tutorWorkDays.start_time),
+        formatTimeToInteger(props.tutorWorkDays.end_time),
+      )
+    } catch (error) {
+      console.error('Error updating calendar:', error)
+      showNotification('Error updating calendar. Please try again.', 'error')
+    }
   },
   {
     immediate: true,

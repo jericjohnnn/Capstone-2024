@@ -23,7 +23,7 @@
       <template #cancelButton> Cancel </template>
     </PopUpModal>
 
-    <!-- Tutor Cards -->
+    <!-- Loading State -->
     <div
       v-if="!completedRequests"
       class="min-h-[calc(100vh-15rem)] justify-center flex"
@@ -32,7 +32,15 @@
         <LoaderSpinner />
       </div>
     </div>
-    <div v-if="completedRequests" v-for="book in completedRequests" :key="book.id" class="mb-3">
+    <!-- No Completed Requests Message -->
+    <div 
+      v-else-if="completedRequests.length === 0" 
+      class="min-h-[calc(100vh-15rem)] flex items-center justify-center"
+    >
+      <p class="text-gray-600 text-lg">Haven't done any tutoring yet</p>
+    </div>
+    <!-- Request Cards -->
+    <div v-else v-for="book in completedRequests" :key="book.id" class="mb-3">
       <div
         class="grid grid-rows-[auto,1fr,auto] md:grid-cols-3 md:grid-rows-1 p-3 gap-2 rounded-xl bg-blue-200 border-blue-50 border-2"
       >
