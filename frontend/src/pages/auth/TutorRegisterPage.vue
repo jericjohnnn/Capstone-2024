@@ -1,7 +1,9 @@
 <template>
   <NavBar />
-  <div class="min-h-[calc(100vh-5rem)] flex justify-center items-center bg-gray-50">
-    <NotificationToast 
+  <div
+    class="min-h-[calc(100vh-5rem)] flex justify-center items-center bg-gray-50"
+  >
+    <NotificationToast
       :show="notification.show"
       :message="notification.message"
       :type="notification.type"
@@ -16,17 +18,25 @@
         <!-- Stepper -->
         <div class="mb-8">
           <ul class="flex justify-center items-center">
-            <li v-for="step in steps" :key="step.id" 
-                class="group flex items-center">
+            <li
+              v-for="step in steps"
+              :key="step.id"
+              class="group flex items-center"
+            >
               <div class="flex items-center">
-                <span :class="{
-                  'bg-blue-600 text-white ring-2 ring-blue-100': currentStep >= step.id,
-                  'bg-gray-100 text-gray-600': currentStep < step.id,
-                }" 
-                class="h-8 w-8 flex justify-center items-center rounded-full font-semibold text-sm transition-all duration-200">
+                <span
+                  :class="{
+                    'bg-blue-600 text-white ring-2 ring-blue-100':
+                      currentStep >= step.id,
+                    'bg-gray-100 text-gray-600': currentStep < step.id,
+                  }"
+                  class="h-8 w-8 flex justify-center items-center rounded-full font-semibold text-sm transition-all duration-200"
+                >
                   {{ step.id }}
                 </span>
-                <div class="mx-4 h-0.5 w-20 bg-gray-200 group-last:hidden"></div>
+                <div
+                  class="mx-4 h-0.5 w-20 bg-gray-200 group-last:hidden"
+                ></div>
               </div>
             </li>
           </ul>
@@ -36,35 +46,74 @@
         <form @submit.prevent="handleSubmit" class="max-w-md mx-auto">
           <!-- Step 1: Personal Information -->
           <div v-if="currentStep === 1" class="space-y-4">
-            <h3 class="text-lg font-semibold text-gray-700 mb-4">Personal Information</h3>
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">
+              Personal Information
+            </h3>
             <div class="grid grid-cols-2 gap-4">
-              <input type="text" v-model="form.firstName" placeholder="First name" required 
-                     class="col-span-1 h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
-              <input type="text" v-model="form.lastName" placeholder="Last name" required 
-                     class="col-span-1 h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
+              <input
+                type="text"
+                v-model="form.firstName"
+                placeholder="First name"
+                required
+                class="col-span-1 h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200"
+              />
+              <input
+                type="text"
+                v-model="form.lastName"
+                placeholder="Last name"
+                required
+                class="col-span-1 h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200"
+              />
             </div>
-            <input type="text" v-model="form.address" placeholder="Address" required 
-                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
-            <input type="date" v-model="form.birthdate" required 
-                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200 text-gray-600" />
-            <select v-model="form.gender" required 
-                    class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200 bg-white text-gray-700">
+            <input
+              type="text"
+              v-model="form.address"
+              placeholder="Address"
+              required
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200"
+            />
+            <input
+              type="date"
+              v-model="form.birthdate"
+              required
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200 text-gray-600"
+            />
+            <select
+              v-model="form.gender"
+              required
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200 bg-white text-gray-700"
+            >
               <option value="" disabled>Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
-            <input type="text" v-model="form.contactNo" placeholder="Contact Number" required 
-                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
+            <input
+              type="text"
+              v-model="form.contactNo"
+              placeholder="Contact Number"
+              required
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200"
+            />
           </div>
 
           <!-- Step 2: Education Information -->
           <div v-if="currentStep === 2" class="space-y-4">
-            <h3 class="text-lg font-semibold text-gray-700 mb-4">Education Information</h3>
-            <input type="text" v-model="form.schoolIdNumber" placeholder="School ID Number" required 
-                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
-            <select v-model="form.course" required 
-                    class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200 bg-white text-gray-700">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">
+              Education Information
+            </h3>
+            <input
+              type="text"
+              v-model="form.schoolIdNumber"
+              placeholder="School ID Number"
+              required
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200"
+            />
+            <select
+              v-model="form.course"
+              required
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200 bg-white text-gray-700"
+            >
               <option value="" disabled>Select Course</option>
               <option value="BSED">BSED</option>
               <option value="BEED">BEED</option>
@@ -72,31 +121,36 @@
               <option value="BSHM">BSHM</option>
               <option value="BSENTREP">BSENTREP</option>
             </select>
-            <select v-model="form.year" required 
-                    class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200 bg-white text-gray-700">
+            <select
+              v-model="form.year"
+              required
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200 bg-white text-gray-700"
+            >
               <option value="" disabled>Select Year</option>
               <option v-for="n in 4" :key="n" :value="n">Year {{ n }}</option>
             </select>
 
             <!-- Subject Selection -->
             <div class="space-y-2">
-              <label class="text-sm font-medium text-gray-700">Select Subjects</label>
+              <label class="text-sm font-medium text-gray-700"
+                >Select Subjects</label
+              >
               <div class="flex flex-col sm:flex-row gap-2">
-                <select 
-                  v-model="selectedSubject" 
+                <select
+                  v-model="selectedSubject"
                   class="w-full px-3 py-1.5 border rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="" disabled selected>Select a subject</option>
-                  <option 
-                    v-for="subject in subjects" 
-                    :key="subject.id" 
+                  <option
+                    v-for="subject in subjects"
+                    :key="subject.id"
                     :value="subject.id"
                   >
                     {{ subject.name }}
                   </option>
                 </select>
-                <button 
-                  @click.prevent="addSubject" 
+                <button
+                  @click.prevent="addSubject"
                   class="w-full sm:w-auto px-4 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                   :disabled="!selectedSubject"
                 >
@@ -106,14 +160,14 @@
 
               <!-- Selected Subjects Tags -->
               <div class="flex flex-wrap gap-2 mt-3">
-                <span 
-                  v-for="subjectId in form.subjects" 
+                <span
+                  v-for="subjectId in form.subjects"
                   :key="subjectId"
                   class="inline-flex items-center px-3 py-1.5 rounded-full text-sm bg-blue-50 text-blue-700"
                 >
                   {{ getSubjectName(subjectId) }}
-                  <button 
-                    @click.prevent="removeSubject(subjectId)" 
+                  <button
+                    @click.prevent="removeSubject(subjectId)"
                     class="ml-2 text-blue-500 hover:text-blue-700 transition-colors"
                   >
                     ×
@@ -125,20 +179,44 @@
 
           <!-- Step 3: Account Information -->
           <div v-if="currentStep === 3" class="space-y-4">
-            <h3 class="text-lg font-semibold text-gray-700 mb-4">Account Information</h3>
-            <input type="email" v-model="form.email" placeholder="Email" required 
-                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
-            <input type="password" v-model="form.password" placeholder="Password" required 
-                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
-            <input type="password" v-model="form.confirmPassword" placeholder="Confirm password" required 
-                   class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200" />
-            
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">
+              Account Information
+            </h3>
+            <input
+              type="email"
+              v-model="form.email"
+              placeholder="Email"
+              required
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200"
+            />
+            <input
+              type="password"
+              v-model="form.password"
+              placeholder="Password"
+              required
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200"
+            />
+            <input
+              type="password"
+              v-model="form.confirmPassword"
+              placeholder="Confirm password"
+              required
+              class="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all duration-200"
+            />
+
             <div class="p-4 bg-gray-50 rounded-lg">
               <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" v-model="form.agreeToTerms" required 
-                       class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                <input
+                  type="checkbox"
+                  v-model="form.agreeToTerms"
+                  required
+                  class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                />
                 <span class="text-sm text-gray-600">
-                  I agree to <a href="#" class="text-blue-600 hover:text-blue-700">Terms & Conditions</a>
+                  I agree to
+                  <a href="#" class="text-blue-600 hover:text-blue-700"
+                    >Terms & Conditions</a
+                  >
                 </span>
               </label>
             </div>
@@ -146,18 +224,35 @@
 
           <!-- Navigation Buttons -->
           <div class="flex justify-end space-x-3 mt-8">
-            <button type="button" v-if="currentStep > 1" @click="prevStep"
-                    class="px-6 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200">
+            <button
+              type="button"
+              v-if="currentStep > 1"
+              @click="prevStep"
+              class="px-6 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+            >
               Back
             </button>
-            <button type="button" v-if="currentStep < 3" @click="nextStep"
-                    class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+            <button
+              type="button"
+              v-if="currentStep < 3"
+              @click="nextStep"
+              class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            >
               Next
             </button>
-            <button v-if="currentStep === 3" type="submit" :disabled="!form.agreeToTerms"
-                    class="px-6 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200"
-                    :class="form.agreeToTerms ? 'text-white bg-blue-600 hover:bg-blue-700' : 'text-gray-400 bg-gray-100 cursor-not-allowed'">
-              Sign up
+            <button
+              v-if="currentStep === 3"
+              type="submit"
+              :disabled="!form.agreeToTerms || isLoading"
+              class="px-6 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 flex items-center justify-center"
+              :class="
+                form.agreeToTerms
+                  ? 'text-white bg-blue-600 hover:bg-blue-700'
+                  : 'text-gray-400 bg-gray-100 cursor-not-allowed'
+              "
+            >
+              <span v-if="isLoading"><LoaderSpinner /></span>
+              <span v-else>Sign up</span>
             </button>
           </div>
         </form>
@@ -168,13 +263,14 @@
 </template>
 
 <script setup>
-import NavBar from '../../sections/NavBar.vue';
-import FooterSection from '../../sections/FooterSection.vue';
+import NavBar from '../../sections/NavBar.vue'
+import FooterSection from '../../sections/FooterSection.vue'
 import { reactive, ref, onMounted } from 'vue'
 import axiosInstance from '@/axiosInstance'
 import router from '@/router'
 import NotificationToast from '@/components/Reusables/NotificationToast.vue'
 import { useNotification } from '@/composables/useNotification'
+import LoaderSpinner from '@/components/Reusables/LoaderSpinner.vue'
 
 const { notification, showNotification } = useNotification()
 
@@ -207,7 +303,9 @@ const selectedSubject = ref('')
 
 const subjects = ref([])
 
-const getSubjectName = (id) => {
+const isLoading = ref(false)
+
+const getSubjectName = id => {
   const subject = subjects.value.find(subject => subject.id === id)
   return subject ? subject.name : ''
 }
@@ -228,14 +326,31 @@ const prevStep = () => {
 
 const validateCurrentStep = () => {
   if (currentStep.value === 1) {
-    if (!form.firstName.trim() || !form.lastName.trim() || !form.address.trim() || 
-        !form.birthdate || !form.gender || !form.contactNo.trim()) {
-      showNotification('Please fill in all personal information fields', 'error')
+    if (
+      !form.firstName.trim() ||
+      !form.lastName.trim() ||
+      !form.address.trim() ||
+      !form.birthdate ||
+      !form.gender ||
+      !form.contactNo.trim()
+    ) {
+      showNotification(
+        'Please fill in all personal information fields',
+        'error',
+      )
       return false
     }
   } else if (currentStep.value === 2) {
-    if (!form.schoolIdNumber.trim() || !form.course || !form.year || form.subjects.length === 0) {
-      showNotification('Please fill in all education information fields and select at least one subject', 'error')
+    if (
+      !form.schoolIdNumber.trim() ||
+      !form.course ||
+      !form.year ||
+      form.subjects.length === 0
+    ) {
+      showNotification(
+        'Please fill in all education information fields and select at least one subject',
+        'error',
+      )
       return false
     }
   }
@@ -247,7 +362,7 @@ const addSubject = () => {
     showNotification('Please select a subject first', 'error')
     return
   }
-  
+
   if (!form.subjects.includes(selectedSubject.value)) {
     form.subjects.push(selectedSubject.value)
     selectedSubject.value = ''
@@ -256,7 +371,7 @@ const addSubject = () => {
   }
 }
 
-const removeSubject = (subjectId) => {
+const removeSubject = subjectId => {
   form.subjects = form.subjects.filter(id => id !== subjectId)
 }
 
@@ -266,7 +381,10 @@ const fetchSubjects = async () => {
     subjects.value = response.data.subjects
   } catch (err) {
     console.error('Error fetching subjects:', err)
-    showNotification('Failed to load subjects. Please refresh the page.', 'error')
+    showNotification(
+      'Failed to load subjects. Please refresh the page.',
+      'error',
+    )
   }
 }
 
@@ -280,6 +398,8 @@ const handleSubmit = async () => {
     showNotification('Please agree to the Terms & Conditions', 'error')
     return
   }
+
+  isLoading.value = true
 
   const payload = {
     user_type_id: 2,
@@ -300,17 +420,18 @@ const handleSubmit = async () => {
 
   try {
     const response = await axiosInstance.post('api/register', payload)
-    const { user_email, user_full_name, user_type, user_data, token } = response.data
-    
+    const { user_email, user_full_name, user_type, user_data, token } =
+      response.data
+
     showNotification('Registration submitted!', 'success')
-    
+
     localStorage.setItem('app_auth_token', token)
     localStorage.setItem('newTutor', true)
     localStorage.setItem('user_type', user_type)
     localStorage.setItem('user_email', user_email)
     localStorage.setItem('user_full_name', user_full_name)
     localStorage.setItem('user_data', JSON.stringify(user_data))
-    
+
     setTimeout(() => {
       router.push('/tutor/pending-approval')
     }, 1500)
@@ -318,8 +439,10 @@ const handleSubmit = async () => {
     console.error('Registration error:', error)
     showNotification(
       error.response?.data?.message || 'Registration failed. Please try again.',
-      'error'
+      'error',
     )
+  } finally {
+    isLoading.value = false
   }
 }
 
