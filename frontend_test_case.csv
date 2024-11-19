@@ -1,0 +1,21 @@
+Module,Action,Event,Expected Result,Actual Result
+Tutor Registration,Personal Info Validation,Submit with empty fields,Should show error for missing personal information,As expected
+Tutor Registration,Education Info Validation,Submit without subjects,Should show error for missing education details and subjects,As expected
+Tutor Registration,Subject Selection,Add duplicate subject,Should show error message for duplicate subject,As expected
+Tutor Registration,Subject Selection,Add valid subject,Should add subject to selected list,As expected
+Tutor Registration,Subject Selection,Remove subject,Should remove subject from selected list,As expected
+Tutor Registration,Password Validation,Mismatched passwords,Should show error for non-matching passwords,As expected
+Tutor Registration,Terms Agreement,Submit without agreeing,Should show error for terms agreement,As expected
+Tutor Registration,Successful Submit,Complete all fields correctly,Should register and redirect to pending approval page,As expected
+Student Registration,Personal Info Validation,Submit with empty fields,Should show error for missing details,As expected
+Student Registration,Education Info,Submit without school ID/grade,Should show error for missing education details,As expected
+Student Registration,Password Validation,Mismatched passwords,Should show error for non-matching passwords,As expected
+Student Registration,Terms Agreement,Submit without agreeing,Should show error for terms agreement,As expected
+Student Registration,Successful Submit,Complete all fields correctly,Should register and store user data in localStorage,As expected
+Form Navigation,Previous Step,Click previous button,Should decrease step counter if above step 1,As expected
+Form Navigation,Next Step,Click next with valid data,Should advance to next step if validation passes,As expected
+Form Loading,Subject Loading,Page mount,Should fetch and display available subjects,As expected
+Form Loading,Subject Load Error,API error occurs,Should show error notification for failed subject load,As expected
+Form Submission,Network Error,API error on submit,Should show error notification with message from API,As expected
+Form Submission,Loading State,During submission,Should show loading state and disable form,As expected
+Data Storage,Successful Registration,After API success,Should store token and user data in localStorage,As expected

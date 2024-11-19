@@ -1,0 +1,21 @@
+Module,Action,Event,Expected Result,Actual Result
+Admin Login,Login Page,Admin enters credentials,Admin should be redirected to dashboard,As expected
+Admin Login,Invalid Credentials,Admin enters wrong credentials,Should show error message and stay on login page,As expected
+Tutor Applications,View All Tab,Admin clicks All tab,Should display all tutor applications regardless of status,As expected
+Tutor Applications,Search Function,Admin types in search bar,Should filter tutors based on search query,As expected
+Tutor Applications,View Pending,Admin clicks Pending tab,Should show only pending applications with blue header,As expected
+Tutor Applications,View Accepted,Admin clicks Accepted tab,Should show only accepted applications with green header,As expected
+Tutor Applications,View Rejected,Admin clicks Rejected tab,Should show only rejected applications with red header,As expected
+Active Tutors,View All,Admin clicks All tab,Should display all active tutors,As expected
+Active Tutors,View Unflagged,Admin clicks Unflagged tab,Should show tutors with clean records,As expected
+Active Tutors,View Warned,Admin clicks Warned tab,Should show tutors with warning status,As expected
+Active Tutors,View Penalized,Admin clicks Penalized tab,Should show tutors with penalties,As expected
+Active Tutors,View Banned,Admin clicks Banned tab,Should show banned tutors,As expected
+Tutor Details,View Profile,Admin clicks on tutor row,Should display complete tutor information,As expected
+Tutor Management,Change Status,Admin changes tutor status,Should update status and move to appropriate tab,As expected
+Tutor Management,Search Function,Admin uses search bar,Should filter tutors based on input,As expected
+Data Display,Table Headers,Load any tutor list,Should show ID Name Profile Address Contact Birthdate Gender Course SchoolID Rate Status,As expected
+Data Display,Scrolling,Many tutor entries,Should be scrollable with max height 400px,As expected
+Data Display,Profile Image,Load tutor data,Should show profile image in circular format,As expected
+Status Management,Status Colors,View different statuses,Pending-Blue Accepted-Green Rejected/Banned-Red,As expected
+Navigation,Tab Switching,Click different tabs,Should maintain search query while switching tabs,As expected
