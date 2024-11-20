@@ -3,7 +3,7 @@
 `TUDLO`
 
 <h1>⚡️HOW TO INSTALL⚡️</h1>
-<br>
+<hr>
 <h2>BACKEND</h2>
 <ol>
 <li>cd backend</li>
@@ -11,7 +11,7 @@
 <li>cp .env.example .env</li>
 <li>php artisan key:generate</li>
 <li>php artisan storage:link</li>
-<li>php artisan migrate –seed / php artisan migrate:fresh –seed </li>
+<li>php artisan migrate –seed / php artisan migrate:fresh –seed </li> <-- seed here is double dash(- -) -->
 <li>php artisan serve :love_you_gesture: </li>
 </ol>
 <br>
