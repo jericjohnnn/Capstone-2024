@@ -1,6 +1,6 @@
 # T.U.D.L.O. Online Tutor Booking App | CAPSTONE PROJECT 2024
 
-## ANNOUNCEMENT:
+## UPDATE:
 <p>The apps inside this monorepo are separated and are hosted individually on my GitHub under the following repositories: capstone_backend_2024, capstone_frontend_2024, and capstone_cms_2024</p>
 
 ## 🚀 How to Install
