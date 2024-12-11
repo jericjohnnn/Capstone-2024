@@ -29,6 +29,7 @@
 ### Backend
 - [Laravel](https://laravel.com/) - Backend framework
 - [Laravel Sanctum](https://laravel.com/docs/sanctum) - API authentication
+- [Laravel Scout](https://laravel.com/docs/11.x/scout) - Backend search
 
 ### Frontend
 - [Vue.js](https://vuejs.org/) - Frontend framework
